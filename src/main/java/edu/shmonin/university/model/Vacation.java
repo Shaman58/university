@@ -4,8 +4,8 @@ import java.time.LocalDate;
 
 public class Vacation {
 
-    private LocalDate startDate;
-    private LocalDate endDate;
+    private final LocalDate startDate;
+    private final LocalDate endDate;
 
     public Vacation(LocalDate startDate, LocalDate endDate) {
         this.startDate = startDate;
@@ -16,16 +16,7 @@ public class Vacation {
         return startDate;
     }
 
-    public void setStartDate(LocalDate startDate) {
-        this.startDate = startDate;
-    }
-
     public LocalDate getEndDate() {
         return endDate;
     }
-
-    public void setEndDate(LocalDate endDate) {
-        this.endDate = endDate;
-    }
-
 }

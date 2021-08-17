@@ -25,5 +25,4 @@ public class Audience {
     public void setCapacity(int capacity) {
         this.capacity = capacity;
     }
-
 }

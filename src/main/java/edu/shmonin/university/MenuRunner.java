@@ -75,10 +75,11 @@ public class MenuRunner {
         var inputKey = scanner.next();
         while (!inputKey.equals("q")) {
             switch (inputKey) {
-                case ("a") -> addCourse();
+                case ("a") -> university.getCourses().add(createNewCourse());
 
                 case ("b") -> {
                     printCourses(university.getCourses());
+                    out.println("Print number of course");
                     deleteObject(university.getCourses());
                 }
 
@@ -108,10 +109,6 @@ public class MenuRunner {
         updatedDuration.setName(course.getName());
     }
 
-    private void addCourse() {
-        university.getCourses().add(createNewCourse());
-    }
-
     private Course createNewCourse() {
         var scanner = new Scanner(in);
         out.println("Print name of the course:");
@@ -134,7 +131,7 @@ public class MenuRunner {
         var inputKey = scanner.next();
         while (!inputKey.equals("q")) {
             switch (inputKey) {
-                case ("a") -> addDuration();
+                case ("a") -> university.getDurations().add(createNewDuration());
 
                 case ("b") -> {
                     printDurations();
@@ -168,10 +165,6 @@ public class MenuRunner {
         updatedDuration.setEndTime(duration.getEndTime());
     }
 
-    private void addDuration() {
-        university.getDurations().add(createNewDuration());
-    }
-
     private Duration createNewDuration() {
         var scanner = new Scanner(in);
         out.println("Print start time of duration(hh:mm):");
@@ -196,7 +189,7 @@ public class MenuRunner {
         var inputKey = scanner.next();
         while (!inputKey.equals("q")) {
             switch (inputKey) {
-                case ("a") -> addLecture();
+                case ("a") -> university.getLectures().add(createNewLecture());
 
                 case ("b") -> {
                     printLectures(university.getLectures());
@@ -228,23 +221,6 @@ public class MenuRunner {
         ));
     }
 
-    private void deleteObject(List<?> objects) {
-        var scanner = new Scanner(in);
-        out.println("Print sequence number of audience:");
-        var number = scanner.nextInt();
-        objects.remove(number - 1);
-    }
-
-    private Object selectObject(List<?> objects) {
-        var scanner = new Scanner(in);
-        out.println("Print number:");
-        var number = scanner.nextInt();
-        while (number < 1 || number > objects.size()) {
-            out.println("Print correct number!");
-        }
-        return objects.get(number - 1);
-    }
-
     private void updateLecture() {
         var updatedLecture = (Lecture) selectObject(university.getLectures());
         var lecture = createNewLecture();
@@ -254,10 +230,6 @@ public class MenuRunner {
         updatedLecture.setAudience(lecture.getAudience());
         updatedLecture.setDuration(lecture.getDuration());
         updatedLecture.setTeacher(lecture.getTeacher());
-    }
-
-    private void addLecture() {
-        university.getLectures().add(createNewLecture());
     }
 
     private Lecture createNewLecture() {
@@ -330,7 +302,7 @@ public class MenuRunner {
         var inputKey = scanner.next();
         while (!inputKey.equals("q")) {
             switch (inputKey) {
-                case ("a") -> addAudience();
+                case ("a") -> university.getAudiences().add(createNewAudience());
 
                 case ("b") -> deleteObject(university.getAudiences());
 
@@ -358,10 +330,6 @@ public class MenuRunner {
         updatedAudience.setCapacity(audience.getCapacity());
     }
 
-    private void addAudience() {
-        university.getAudiences().add(createNewAudience());
-    }
-
     private Audience createNewAudience() {
         var scanner = new Scanner(in);
         out.println("Print audience number:");
@@ -386,7 +354,7 @@ public class MenuRunner {
         var inputKey = scanner.next();
         while (!inputKey.equals("q")) {
             switch (inputKey) {
-                case ("a") -> addGroup();
+                case ("a") -> university.getGroups().add(createNewGroup());
 
                 case ("b") -> deleteObject(university.getGroups());
 
@@ -429,10 +397,6 @@ public class MenuRunner {
         var audience = createNewGroup();
         updatedGroup.setName(audience.getName());
         updatedGroup.setStudents(audience.getStudents());
-    }
-
-    private void addGroup() {
-        university.getGroups().add(createNewGroup());
     }
 
     private Group createNewGroup() {
@@ -490,7 +454,7 @@ public class MenuRunner {
         var inputKey = scanner.next();
         while (!inputKey.equals("q")) {
             switch (inputKey) {
-                case ("a") -> addTeacher();
+                case ("a") -> university.getTeachers().add(createNewTeacher());
 
                 case ("b") -> deleteObject(university.getTeachers());
 
@@ -534,10 +498,6 @@ public class MenuRunner {
         updatedTeacher.setBirthdate(teacher.getBirthdate());
         updatedTeacher.setCourses(teacher.getCourses());
         updatedTeacher.setVacations(teacher.getVacations());
-    }
-
-    private void addTeacher() {
-        university.getTeachers().add(createNewTeacher());
     }
 
     private Teacher createNewTeacher() {
@@ -667,7 +627,7 @@ public class MenuRunner {
         var inputKey = scanner.next();
         while (!inputKey.equals("q")) {
             switch (inputKey) {
-                case ("a") -> addStudent();
+                case ("a") -> university.getStudents().add(createNewStudent());
 
                 case ("b") -> deleteObject(university.getStudents());
 
@@ -709,10 +669,6 @@ public class MenuRunner {
         updatedStudent.setBirthdate(student.getBirthdate());
     }
 
-    private void addStudent() {
-        university.getStudents().add(createNewStudent());
-    }
-
     private Student createNewStudent() {
         var scanner = new Scanner(in);
         var student = new Student();
@@ -751,7 +707,7 @@ public class MenuRunner {
         var inputKey = scanner.next();
         while (!inputKey.equals("q")) {
             switch (inputKey) {
-                case ("a") -> addHoliday();
+                case ("a") -> university.getHolidays().add(createNewHoliday());
 
                 case ("b") -> {
                     printHolidays();
@@ -782,10 +738,6 @@ public class MenuRunner {
         updatedHoliday.setDate(holiday.getDate());
     }
 
-    private void addHoliday() {
-        university.getHolidays().add(createNewHoliday());
-    }
-
     private Holiday createNewHoliday() {
         var scanner = new Scanner(in);
         out.println("Print name of holiday:");
@@ -795,4 +747,20 @@ public class MenuRunner {
         return new Holiday(name, date);
     }
 
+    private void deleteObject(List<?> objects) {
+        var scanner = new Scanner(in);
+        out.println("Print sequence number of audience:");
+        var number = scanner.nextInt();
+        objects.remove(number - 1);
+    }
+
+    private Object selectObject(List<?> objects) {
+        var scanner = new Scanner(in);
+        out.println("Print number:");
+        var number = scanner.nextInt();
+        while (number < 1 || number > objects.size()) {
+            out.println("Print correct number!");
+        }
+        return objects.get(number - 1);
+    }
 }

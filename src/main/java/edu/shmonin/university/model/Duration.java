@@ -1,6 +1,5 @@
 package edu.shmonin.university.model;
 
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 public class Duration {

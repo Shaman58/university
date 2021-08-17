@@ -1,7 +1,6 @@
 package edu.shmonin.university.model;
 
 import java.time.LocalDate;
-import java.util.Objects;
 
 public abstract class Human {
 
@@ -83,7 +82,7 @@ public abstract class Human {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        Human human = (Human) o;
+        var human = (Human) o;
 
         if (!firstName.equals(human.firstName)) return false;
         if (!lastName.equals(human.lastName)) return false;
