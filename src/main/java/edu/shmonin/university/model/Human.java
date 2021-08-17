@@ -85,26 +85,16 @@ public abstract class Human {
 
         Human human = (Human) o;
 
-        if (phone != human.phone) return false;
-        if (!Objects.equals(firstName, human.firstName)) return false;
-        if (!Objects.equals(lastName, human.lastName)) return false;
-        if (!Objects.equals(email, human.email)) return false;
-        if (!Objects.equals(country, human.country)) return false;
-        if (!Objects.equals(gender, human.gender)) return false;
-        if (!Objects.equals(address, human.address)) return false;
-        return Objects.equals(birthdate, human.birthdate);
+        if (!firstName.equals(human.firstName)) return false;
+        if (!lastName.equals(human.lastName)) return false;
+        return birthdate.equals(human.birthdate);
     }
 
     @Override
     public int hashCode() {
-        int result = firstName != null ? firstName.hashCode() : 0;
-        result = 31 * result + (lastName != null ? lastName.hashCode() : 0);
-        result = 31 * result + (email != null ? email.hashCode() : 0);
-        result = 31 * result + (country != null ? country.hashCode() : 0);
-        result = 31 * result + (gender != null ? gender.hashCode() : 0);
-        result = 31 * result + (int) (phone ^ (phone >>> 32));
-        result = 31 * result + (address != null ? address.hashCode() : 0);
-        result = 31 * result + (birthdate != null ? birthdate.hashCode() : 0);
+        int result = firstName.hashCode();
+        result = 31 * result + lastName.hashCode();
+        result = 31 * result + birthdate.hashCode();
         return result;
     }
 }
