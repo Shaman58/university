@@ -12,6 +12,15 @@ public class Lecture {
     private Duration duration;
     private Teacher teacher;
 
+    public Lecture(LocalDate date, Course course, List<Group> groups, Audience audience, Duration duration, Teacher teacher) {
+        this.date = date;
+        this.course = course;
+        this.groups = groups;
+        this.audience = audience;
+        this.duration = duration;
+        this.teacher = teacher;
+    }
+
     public LocalDate getDate() {
         return date;
     }

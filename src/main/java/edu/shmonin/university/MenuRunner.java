@@ -77,7 +77,10 @@ public class MenuRunner {
             switch (inputKey) {
                 case ("a") -> addCourse();
 
-                case ("b") -> deleteCourse();
+                case ("b") -> {
+                    printCourses(university.getCourses());
+                    deleteObject(university.getCourses());
+                }
 
                 case ("c") -> updateCourse();
 
@@ -103,13 +106,6 @@ public class MenuRunner {
         var updatedDuration = university.getCourses().get(number - 1);
         var course = createNewCourse();
         updatedDuration.setName(course.getName());
-    }
-
-    private void deleteCourse() {
-        var scanner = new Scanner(in);
-        out.println("Print sequence number of course:");
-        var number = scanner.nextInt();
-        university.getCourses().remove(number - 1);
     }
 
     private void addCourse() {
@@ -140,7 +136,10 @@ public class MenuRunner {
             switch (inputKey) {
                 case ("a") -> addDuration();
 
-                case ("b") -> deleteDuration();
+                case ("b") -> {
+                    printDurations();
+                    deleteObject(university.getDurations());
+                }
 
                 case ("c") -> updateDuration();
 
@@ -169,13 +168,6 @@ public class MenuRunner {
         updatedDuration.setEndTime(duration.getEndTime());
     }
 
-    private void deleteDuration() {
-        var scanner = new Scanner(in);
-        out.println("Print sequence number of duration:");
-        var number = scanner.nextInt();
-        university.getDurations().remove(number - 1);
-    }
-
     private void addDuration() {
         university.getDurations().add(createNewDuration());
     }
@@ -190,6 +182,137 @@ public class MenuRunner {
     }
 
     private void manageLectures() {
+        var scanner = new Scanner(in);
+        var menuText = """
+                LECTURES
+                Select menu item:
+                a. Add lecture
+                b. Delete lecture
+                c. Update lecture
+                d. Print lecture
+                q. Close lecture's manager
+                Input menu letter:""";
+        out.println(menuText);
+        var inputKey = scanner.next();
+        while (!inputKey.equals("q")) {
+            switch (inputKey) {
+                case ("a") -> addLecture();
+
+                case ("b") -> {
+                    printLectures(university.getLectures());
+                    deleteObject(university.getLectures());
+                }
+
+                case ("c") -> updateLecture();
+
+                case ("d") -> printLectures(university.getLectures());
+
+                default -> out.println("Input the right letter!");
+            }
+            out.println(menuText);
+            inputKey = scanner.next();
+        }
+    }
+
+    private void printLectures(List<Lecture> lectures) {
+        var serial = new AtomicInteger(1);
+        lectures.forEach(p -> out.printf("%d. %s %s %s %s %s %s %s%n",
+                serial.getAndIncrement(),
+                p.getDate(),
+                p.getCourse().getName(),
+                p.getAudience().getRoomNumber(),
+                p.getDuration().getStartTime(),
+                p.getDuration().getEndTime(),
+                p.getTeacher().getFirstName(),
+                p.getTeacher().getLastName()
+        ));
+    }
+
+    private void deleteObject(List<?> objects) {
+        var scanner = new Scanner(in);
+        out.println("Print sequence number of audience:");
+        var number = scanner.nextInt();
+        objects.remove(number - 1);
+    }
+
+    private Object selectObject(List<?> objects) {
+        var scanner = new Scanner(in);
+        out.println("Print number:");
+        var number = scanner.nextInt();
+        while (number < 1 || number > objects.size()) {
+            out.println("Print correct number!");
+        }
+        return objects.get(number - 1);
+    }
+
+    private void updateLecture() {
+        var updatedLecture = (Lecture) selectObject(university.getLectures());
+        var lecture = createNewLecture();
+        updatedLecture.setDate(lecture.getDate());
+        updatedLecture.setCourse(lecture.getCourse());
+        updatedLecture.setGroups(lecture.getGroups());
+        updatedLecture.setAudience(lecture.getAudience());
+        updatedLecture.setDuration(lecture.getDuration());
+        updatedLecture.setTeacher(lecture.getTeacher());
+    }
+
+    private void addLecture() {
+        university.getLectures().add(createNewLecture());
+    }
+
+    private Lecture createNewLecture() {
+        var scanner = new Scanner(in);
+        out.println("Print lecture date:");
+        var date = LocalDate.parse(scanner.nextLine());
+        printCourses(university.getCourses());
+        var course = (Course) selectObject(university.getCourses());
+        var groups = selectLectureGroups();
+        printAudiences();
+        var audience = (Audience) selectObject(university.getAudiences());
+        printDurations();
+        var duration = (Duration) selectObject(university.getDurations());
+        printTeachers(university.getTeachers());
+        var teacher = (Teacher) selectObject(university.getTeachers());
+        return new Lecture(date, course, groups, audience, duration, teacher);
+    }
+
+    private List<Group> selectLectureGroups() {
+        var groups = new ArrayList<Group>();
+        var scanner = new Scanner(in);
+        var menuText = """
+                GROUPS
+                Select menu item:
+                a. Add group to the list
+                b. Delete group from the list
+                c. Print groups list
+                q. Close lecture's group manager
+                Input menu letter:""";
+        out.println(menuText);
+        var inputKey = scanner.next();
+        while (!inputKey.equals("q")) {
+            switch (inputKey) {
+                case ("a") -> addGroupToList(groups);
+
+                case ("b") -> {
+                    printGroups(groups);
+                    deleteObject(groups);
+                }
+
+                case ("c") -> printGroups(groups);
+
+                default -> out.println("Input the right letter!");
+            }
+            out.println(menuText);
+            inputKey = scanner.next();
+        }
+        return groups;
+    }
+
+    private void addGroupToList(List<Group> groups) {
+        var groupList = new ArrayList<>(university.getGroups());
+        groupList.removeAll(groups);
+        printGroups(groupList);
+        groups.add((Group) selectObject(groupList));
     }
 
     private void manageAudiences() {
@@ -209,7 +332,7 @@ public class MenuRunner {
             switch (inputKey) {
                 case ("a") -> addAudience();
 
-                case ("b") -> deleteAudience();
+                case ("b") -> deleteObject(university.getAudiences());
 
                 case ("c") -> updateAudience();
 
@@ -229,20 +352,10 @@ public class MenuRunner {
     }
 
     private void updateAudience() {
-        var scanner = new Scanner(in);
-        out.println("Print sequence number of audience to update:");
-        var number = scanner.nextInt();
-        var updatedAudience = university.getAudiences().get(number - 1);
+        var updatedAudience = (Audience) selectObject(university.getAudiences());
         var audience = createNewAudience();
         updatedAudience.setRoomNumber(audience.getRoomNumber());
         updatedAudience.setCapacity(audience.getCapacity());
-    }
-
-    private void deleteAudience() {
-        var scanner = new Scanner(in);
-        out.println("Print sequence number of audience:");
-        var number = scanner.nextInt();
-        university.getAudiences().remove(number - 1);
     }
 
     private void addAudience() {
@@ -275,11 +388,11 @@ public class MenuRunner {
             switch (inputKey) {
                 case ("a") -> addGroup();
 
-                case ("b") -> deleteGroup();
+                case ("b") -> deleteObject(university.getGroups());
 
                 case ("c") -> updateGroup();
 
-                case ("d") -> printGroups();
+                case ("d") -> printGroups(university.getGroups());
 
                 default -> out.println("Input the right letter!");
             }
@@ -288,10 +401,9 @@ public class MenuRunner {
         }
     }
 
-    private void printGroups() {
+    private void printGroups(List<Group> groups) {
         var serial = new AtomicInteger(1);
-        university.getGroups()
-                .forEach(p -> out.printf("%d. %s%n%s", serial.getAndIncrement(), p.getName(), formatGroupStudents(p)));
+        groups.forEach(p -> out.printf("%d. %s%n%s", serial.getAndIncrement(), p.getName(), formatGroupStudents(p)));
     }
 
     private String formatGroupStudents(Group p) {
@@ -313,20 +425,10 @@ public class MenuRunner {
     }
 
     private void updateGroup() {
-        var scanner = new Scanner(in);
-        out.println("Print sequence number of group to update:");
-        var number = scanner.nextInt();
-        var updatedGroup = university.getGroups().get(number - 1);
+        var updatedGroup = (Group) selectObject(university.getGroups());
         var audience = createNewGroup();
         updatedGroup.setName(audience.getName());
         updatedGroup.setStudents(audience.getStudents());
-    }
-
-    private void deleteGroup() {
-        var scanner = new Scanner(in);
-        out.println("Print sequence number of group:");
-        var number = scanner.nextInt();
-        university.getGroups().remove(number - 1);
     }
 
     private void addGroup() {
@@ -390,7 +492,7 @@ public class MenuRunner {
             switch (inputKey) {
                 case ("a") -> addTeacher();
 
-                case ("b") -> deleteTeacher();
+                case ("b") -> deleteObject(university.getTeachers());
 
                 case ("c") -> updateTeacher();
 
@@ -419,10 +521,7 @@ public class MenuRunner {
     }
 
     private void updateTeacher() {
-        var scanner = new Scanner(in);
-        out.println("Print sequence number of teacher to update:");
-        var number = scanner.nextInt();
-        var updatedTeacher = university.getTeachers().get(number - 1);
+        var updatedTeacher = (Teacher) selectObject(university.getTeachers());
         var teacher = createNewTeacher();
         updatedTeacher.setFirstName(teacher.getFirstName());
         updatedTeacher.setLastName(teacher.getLastName());
@@ -435,13 +534,6 @@ public class MenuRunner {
         updatedTeacher.setBirthdate(teacher.getBirthdate());
         updatedTeacher.setCourses(teacher.getCourses());
         updatedTeacher.setVacations(teacher.getVacations());
-    }
-
-    private void deleteTeacher() {
-        var scanner = new Scanner(in);
-        out.println("Print sequence number of teacher:");
-        var number = scanner.nextInt();
-        university.getTeachers().remove(number - 1);
     }
 
     private void addTeacher() {
@@ -469,7 +561,7 @@ public class MenuRunner {
         out.println("Print teacher's birthdate(YYYY-MM-DD):");
         teacher.setBirthdate(LocalDate.parse(scanner.nextLine()));
         out.println("Select courses:");
-        teacher.setCourses(selectCourses());
+        teacher.setCourses(selectTeacherCourses());
         teacher.setVacations(manageVacations());
         return teacher;
     }
@@ -491,7 +583,10 @@ public class MenuRunner {
             switch (inputKey) {
                 case ("a") -> vacations.add(createVacation());
 
-                case ("b") -> deleteVacationFromList(vacations);
+                case ("b") -> {
+                    printVacations(vacations);
+                    deleteObject(vacations);
+                }
 
                 case ("c") -> printVacations(vacations);
 
@@ -501,16 +596,6 @@ public class MenuRunner {
             inputKey = scanner.next();
         }
         return vacations;
-    }
-
-    private void deleteVacationFromList(List<Vacation> vacations) {
-        printVacations(vacations);
-        var scanner = new Scanner(in);
-        out.println("Print number of vacation:");
-        var number = scanner.nextInt();
-        if (number > 0 && number <= vacations.size()) {
-            vacations.remove(number - 1);
-        }
     }
 
     private void printVacations(List<Vacation> vacations) {
@@ -528,7 +613,7 @@ public class MenuRunner {
         return new Vacation(startDate, endDate);
     }
 
-    private List<Course> selectCourses() {
+    private List<Course> selectTeacherCourses() {
         var courses = new ArrayList<Course>();
         var scanner = new Scanner(in);
         var menuText = """
@@ -545,7 +630,10 @@ public class MenuRunner {
             switch (inputKey) {
                 case ("a") -> addCourseToList(courses);
 
-                case ("b") -> deleteCourseFromList(courses);
+                case ("b") -> {
+                    printCourses(courses);
+                    deleteObject(courses);
+                }
 
                 case ("c") -> printCourses(courses);
 
@@ -558,25 +646,10 @@ public class MenuRunner {
     }
 
     private void addCourseToList(List<Course> courses) {
-        var scanner = new Scanner(in);
         var courseList = new ArrayList<>(university.getCourses());
         courseList.removeAll(courses);
         printCourses(courseList);
-        out.println("Print course number:");
-        var number = scanner.nextInt();
-        if (number >= 1 && number <= courseList.size()) {
-            courses.add(courseList.get(number - 1));
-        }
-    }
-
-    private void deleteCourseFromList(List<Course> courses) {
-        var scanner = new Scanner(in);
-        printCourses(courses);
-        out.println("Print course number:");
-        var number = scanner.nextInt();
-        if (number >= 1 && number <= courses.size()) {
-            courses.remove(number - 1);
-        }
+        courses.add((Course) selectObject(courseList));
     }
 
     private void manageStudents() {
@@ -596,7 +669,7 @@ public class MenuRunner {
             switch (inputKey) {
                 case ("a") -> addStudent();
 
-                case ("b") -> deleteStudent();
+                case ("b") -> deleteObject(university.getStudents());
 
                 case ("c") -> updateStudent();
 
@@ -624,10 +697,7 @@ public class MenuRunner {
     }
 
     private void updateStudent() {
-        var scanner = new Scanner(in);
-        out.println("Print sequence number of student to update:");
-        var number = scanner.nextInt();
-        var updatedStudent = university.getStudents().get(number - 1);
+        var updatedStudent = (Student) selectObject(university.getStudents());
         var student = createNewStudent();
         updatedStudent.setFirstName(student.getFirstName());
         updatedStudent.setLastName(student.getLastName());
@@ -637,13 +707,6 @@ public class MenuRunner {
         updatedStudent.setPhone(student.getPhone());
         updatedStudent.setAddress(student.getAddress());
         updatedStudent.setBirthdate(student.getBirthdate());
-    }
-
-    private void deleteStudent() {
-        var scanner = new Scanner(in);
-        out.println("Print sequence number of student:");
-        var number = scanner.nextInt();
-        university.getStudents().remove(number - 1);
     }
 
     private void addStudent() {
@@ -690,7 +753,10 @@ public class MenuRunner {
             switch (inputKey) {
                 case ("a") -> addHoliday();
 
-                case ("b") -> deleteHoliday();
+                case ("b") -> {
+                    printHolidays();
+                    deleteObject(university.getHolidays());
+                }
 
                 case ("c") -> updateHoliday();
 
@@ -710,20 +776,10 @@ public class MenuRunner {
     }
 
     private void updateHoliday() {
-        var scanner = new Scanner(in);
-        out.println("Print sequence number of holiday to update:");
-        var number = scanner.nextInt();
-        var updatedHoliday = university.getHolidays().get(number - 1);
+        var updatedHoliday = (Holiday) selectObject(university.getHolidays());
         var holiday = createNewHoliday();
         updatedHoliday.setName(holiday.getName());
         updatedHoliday.setDate(holiday.getDate());
-    }
-
-    private void deleteHoliday() {
-        var scanner = new Scanner(in);
-        out.println("Print sequence number of holiday:");
-        var number = scanner.nextInt();
-        university.getHolidays().remove(number - 1);
     }
 
     private void addHoliday() {
