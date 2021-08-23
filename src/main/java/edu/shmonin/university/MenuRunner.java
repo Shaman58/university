@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 import static java.lang.System.*;
 
@@ -31,6 +32,7 @@ public class MenuRunner {
                 f. Manage lectures
                 g. Manage durations
                 h. Manage courses
+                i. Schedule viewer
                 q. quit
                 Input menu letter:""";
         out.println(menuText);
@@ -53,11 +55,97 @@ public class MenuRunner {
 
                 case ("h") -> manageCourses();
 
+                case ("i") -> scheduleManager();
+
                 default -> out.println("Input the right letter!");
             }
             out.println(menuText);
             inputKey = scanner.next();
         }
+    }
+
+    private void scheduleManager() {
+        var scanner = new Scanner(in);
+        var menuText = """
+                Select menu item:
+                a. For teachers day schedule
+                b. For teachers month schedule
+                c. For students day schedule
+                d. For students month schedule
+                q. quit
+                Input menu letter:""";
+        out.println(menuText);
+        var inputKey = scanner.next();
+        while (!inputKey.equals("q")) {
+            switch (inputKey) {
+                case ("a") -> {
+                    printTeachers(university.getTeachers());
+                    var human = (Human) selectObject(university.getTeachers());
+                    var range = getDateRange();
+                    printLectures(getLecturesForSchedule(range.getStartDate(), range.getEndDate(), human));
+                }
+
+                case ("b") -> {
+                    printStudents(university.getStudents());
+                    var human = (Human) selectObject(university.getStudents());
+                    var range = getDateRange();
+                    printLectures(getLecturesForSchedule(range.getStartDate(), range.getEndDate(), human));
+                }
+
+                default -> out.println("Input the right letter!");
+            }
+            out.println(menuText);
+            inputKey = scanner.next();
+        }
+    }
+
+    private DateRange getDateRange() {
+        var scanner = new Scanner(in);
+        var menuText = """
+                Select menu item:
+                a. For day
+                b. For month
+                q. quit
+                Input menu letter:""";
+        out.println(menuText);
+        var inputKey = scanner.next();
+        while (!inputKey.equals("q")) {
+            switch (inputKey) {
+                case ("a") -> {
+                    out.println("Print date(YYYY-MM-DD):");
+                    var date = LocalDate.parse(scanner.nextLine());
+                    return new DateRange(date, date.plusDays(1));
+                }
+
+                case ("b") -> {
+                    out.println("Print start date(YYYY-MM-DD:");
+                    var date = LocalDate.parse(scanner.nextLine());
+                    return new DateRange(date, date.plusMonths(1));
+                }
+
+                default -> out.println("Input the right letter!");
+            }
+            out.println(menuText);
+            inputKey = scanner.next();
+        }
+        throw new NullPointerException();
+    }
+
+    private List<Lecture> getLecturesForSchedule(LocalDate startDate, LocalDate endDate, Human human) {
+        return university.
+                getLectures().
+                stream().
+                filter(p -> p.getDate().isAfter(startDate) && p.getDate().isBefore(endDate) && (p.getTeacher().equals(human) || studentInGroups(p.getGroups(), human))).
+                collect(Collectors.toList());
+    }
+
+    private boolean studentInGroups(List<Group> groups, Human student) {
+        for (Group group : groups) {
+            if (group.getStudents().contains((Student) student)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void manageCourses() {
@@ -762,5 +850,24 @@ public class MenuRunner {
             out.println("Print correct number!");
         }
         return objects.get(number - 1);
+    }
+
+}
+
+class DateRange {
+    private final LocalDate startDate;
+    private final LocalDate endDate;
+
+    public DateRange(LocalDate startDate, LocalDate endDate) {
+        this.startDate = startDate;
+        this.endDate = endDate;
+    }
+
+    public LocalDate getStartDate() {
+        return startDate;
+    }
+
+    public LocalDate getEndDate() {
+        return endDate;
     }
 }
