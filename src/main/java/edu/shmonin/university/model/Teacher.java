@@ -5,15 +5,15 @@ import java.util.Objects;
 
 public class Teacher extends Human{
 
-    private String scientificDegree;
+    private ScientificDegree scientificDegree;
     private List<Course> courses;
     private List<Vacation> vacations;
 
-    public String getScientificDegree() {
+    public ScientificDegree getScientificDegree() {
         return scientificDegree;
     }
 
-    public void setScientificDegree(String scientificDegree) {
+    public void setScientificDegree(ScientificDegree scientificDegree) {
         this.scientificDegree = scientificDegree;
     }
 
@@ -41,8 +41,7 @@ public class Teacher extends Human{
 
         var teacher = (Teacher) o;
 
-        if (!Objects.equals(scientificDegree, teacher.scientificDegree))
-            return false;
+        if (scientificDegree != teacher.scientificDegree) return false;
         if (!Objects.equals(courses, teacher.courses)) return false;
         return Objects.equals(vacations, teacher.vacations);
     }

@@ -8,10 +8,10 @@ public abstract class Human {
     private String lastName;
     private String email;
     private String country;
-    private String gender;
-    private long phone;
+    private Gender gender;
+    private String phone;
     private String address;
-    private LocalDate birthdate;
+    private LocalDate birthDate;
 
     public String getFirstName() {
         return firstName;
@@ -45,19 +45,19 @@ public abstract class Human {
         this.country = country;
     }
 
-    public String getGender() {
+    public Gender getGender() {
         return gender;
     }
 
-    public void setGender(String gender) {
+    public void setGender(Gender gender) {
         this.gender = gender;
     }
 
-    public long getPhone() {
+    public String getPhone() {
         return phone;
     }
 
-    public void setPhone(long phone) {
+    public void setPhone(String phone) {
         this.phone = phone;
     }
 
@@ -69,12 +69,12 @@ public abstract class Human {
         this.address = address;
     }
 
-    public LocalDate getBirthdate() {
-        return birthdate;
+    public LocalDate getBirthDate() {
+        return birthDate;
     }
 
-    public void setBirthdate(LocalDate birthdate) {
-        this.birthdate = birthdate;
+    public void setBirthDate(LocalDate birthDate) {
+        this.birthDate = birthDate;
     }
 
     @Override
@@ -86,14 +86,14 @@ public abstract class Human {
 
         if (!firstName.equals(human.firstName)) return false;
         if (!lastName.equals(human.lastName)) return false;
-        return birthdate.equals(human.birthdate);
+        return birthDate.equals(human.birthDate);
     }
 
     @Override
     public int hashCode() {
         int result = firstName.hashCode();
         result = 31 * result + lastName.hashCode();
-        result = 31 * result + birthdate.hashCode();
+        result = 31 * result + birthDate.hashCode();
         return result;
     }
 }

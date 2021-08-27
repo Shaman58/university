@@ -6,7 +6,6 @@ public class Main {
         var university = new University();
         var menu = new MenuRunner(university);
         menu.run();
-
     }
 
 }
