@@ -1,17 +1,28 @@
 package edu.shmonin.university.menu;
 
+import edu.shmonin.university.dao.HolidayDao;
 import edu.shmonin.university.model.Holiday;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Scanner;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import static java.lang.System.in;
 import static java.lang.System.out;
 
+@Repository
 public class HolidayManager {
-    public void manageHolidays(List<Holiday> holidays) {
+
+    private HolidayDao holidayDao;
+
+    @Autowired
+    public void setHolidayDao(HolidayDao holidayDao) {
+        this.holidayDao = holidayDao;
+    }
+
+    public void manageHolidays() {
         var scanner = new Scanner(in);
         var menuText = """
                 HOLIDAYS
@@ -26,13 +37,10 @@ public class HolidayManager {
         var inputKey = scanner.next();
         while (!inputKey.equals("q")) {
             switch (inputKey) {
-                case ("a") -> holidays.add(createNewHoliday());
-                case ("b") -> {
-                    printHolidays(holidays);
-                    deleteHoliday(holidays);
-                }
-                case ("c") -> updateHoliday(holidays);
-                case ("d") -> printHolidays(holidays);
+                case ("a") -> holidayDao.create(createNewHoliday());
+                case ("b") -> holidayDao.delete(selectId());
+                case ("c") -> holidayDao.update(updateHoliday());
+                case ("d") -> printHolidays(holidayDao.getAll());
                 default -> out.println("Input the right letter!");
             }
             out.println(menuText);
@@ -41,19 +49,8 @@ public class HolidayManager {
     }
 
     private void printHolidays(List<Holiday> holidays) {
-        var serial = new AtomicInteger(1);
         holidays
-                .forEach(p -> out.println(serial.getAndIncrement() + ". " + p.getName() + " " + p.getDate()));
-    }
-
-    private void updateHoliday(List<Holiday> holidays) {
-        var scanner = new Scanner(in);
-        out.println("Print sequence number of holiday to update:");
-        var number = scanner.nextInt();
-        var updatedHoliday = holidays.get(number - 1);
-        var holiday = createNewHoliday();
-        updatedHoliday.setName(holiday.getName());
-        updatedHoliday.setDate(holiday.getDate());
+                .forEach(p -> out.println(p.getId() + ". " + p.getName() + " " + p.getDate()));
     }
 
     private Holiday createNewHoliday() {
@@ -65,10 +62,18 @@ public class HolidayManager {
         return new Holiday(name, date);
     }
 
-    private void deleteHoliday(List<Holiday> holidays) {
+    private Holiday updateHoliday() {
         var scanner = new Scanner(in);
-        out.println("Print sequence number of holiday:");
-        var number = scanner.nextInt();
-        holidays.remove(number - 1);
+        out.println("Print holiday's id:");
+        var id = scanner.nextInt();
+        var holiday = createNewHoliday();
+        holiday.setId(id);
+        return holiday;
+    }
+
+    private int selectId() {
+        var scanner = new Scanner(in);
+        out.println("Print holiday's id:");
+        return scanner.nextInt();
     }
 }

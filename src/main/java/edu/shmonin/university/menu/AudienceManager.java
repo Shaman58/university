@@ -1,16 +1,27 @@
 package edu.shmonin.university.menu;
 
+import edu.shmonin.university.dao.AudienceDao;
 import edu.shmonin.university.model.Audience;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Scanner;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import static java.lang.System.in;
 import static java.lang.System.out;
 
+@Repository
 public class AudienceManager {
-    public void manageAudiences(List<Audience> audiences) {
+
+    private AudienceDao audienceDao;
+
+    @Autowired
+    public void setAudienceDao(AudienceDao audienceDao) {
+        this.audienceDao = audienceDao;
+    }
+
+    public void manageAudiences() {
         var scanner = new Scanner(in);
         var menuText = """
                 AUDIENCES
@@ -25,10 +36,10 @@ public class AudienceManager {
         var inputKey = scanner.next();
         while (!inputKey.equals("q")) {
             switch (inputKey) {
-                case ("a") -> audiences.add(createNewAudience());
-                case ("b") -> deleteAudience(audiences);
-                case ("c") -> updateAudience(audiences);
-                case ("d") -> printAudiences(audiences);
+                case ("a") -> audienceDao.create(createNewAudience());
+                case ("b") -> audienceDao.delete(selectId());
+                case ("c") -> audienceDao.update(updateAudience());
+                case ("d") -> printAudiences(audienceDao.getAll());
                 default -> out.println("Input the right letter!");
             }
             out.println(menuText);
@@ -37,17 +48,10 @@ public class AudienceManager {
     }
 
     public void printAudiences(List<Audience> audiences) {
-        var serial = new AtomicInteger(1);
         audiences
-                .forEach(p -> out.println(serial.getAndIncrement() + ". " + p.getRoomNumber() + " capacity " + p.getCapacity()));
+                .forEach(p -> out.println(p.getId() + ". " + p.getRoomNumber() + " capacity " + p.getCapacity()));
     }
 
-    private void updateAudience(List<Audience> audiences) {
-        var updatedAudience = selectAudience(audiences);
-        var audience = createNewAudience();
-        updatedAudience.setRoomNumber(audience.getRoomNumber());
-        updatedAudience.setCapacity(audience.getCapacity());
-    }
 
     private Audience createNewAudience() {
         var scanner = new Scanner(in);
@@ -58,16 +62,24 @@ public class AudienceManager {
         return new Audience(number, capacity);
     }
 
-    private void deleteAudience(List<Audience> audiences) {
+    private Audience updateAudience() {
         var scanner = new Scanner(in);
-        out.println("Print sequence number of audience:");
-        var number = scanner.nextInt();
-        audiences.remove(number - 1);
+        out.println("Print audience id:");
+        var id = scanner.nextInt();
+        var audience = createNewAudience();
+        audience.setId(id);
+        return audience;
+    }
+
+    private int selectId() {
+        var scanner = new Scanner(in);
+        out.println("Print audience's id:");
+        return scanner.nextInt();
     }
 
     public Audience selectAudience(List<Audience> audiences) {
         var scanner = new Scanner(in);
-        out.println("Print number:");
+        out.println("Print room number:");
         var number = scanner.nextInt();
         while (number < 1 || number > audiences.size()) {
             out.println("Print correct number of audience!");

@@ -4,12 +4,24 @@ import java.time.LocalTime;
 
 public class Duration {
 
+    private int id;
     private LocalTime startTime;
     private LocalTime endTime;
+
+    public Duration() {
+    }
 
     public Duration(LocalTime startTime, LocalTime endTime) {
         this.startTime = startTime;
         this.endTime = endTime;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public LocalTime getStartTime() {

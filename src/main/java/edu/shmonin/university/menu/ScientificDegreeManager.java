@@ -1,12 +1,14 @@
 package edu.shmonin.university.menu;
 
 import edu.shmonin.university.model.ScientificDegree;
+import org.springframework.stereotype.Repository;
 
 import java.util.Scanner;
 
 import static java.lang.System.in;
 import static java.lang.System.out;
 
+@Repository
 public class ScientificDegreeManager {
     public ScientificDegree selectScientificDegree() {
         var scanner = new Scanner(in);

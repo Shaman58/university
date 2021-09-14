@@ -1,17 +1,47 @@
 package edu.shmonin.university.menu;
 
+import edu.shmonin.university.dao.GroupDao;
+import edu.shmonin.university.dao.StudentDao;
 import edu.shmonin.university.model.Student;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Scanner;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import static java.lang.System.in;
 import static java.lang.System.out;
 
+@Repository
 public class StudentManager {
-    public void manageStudents(List<Student> students) {
+
+    private StudentDao studentDao;
+    private GroupDao groupDao;
+    private GroupManager groupManager;
+    private GenderManager genderManager;
+
+    @Autowired
+    public void setStudentDao(StudentDao studentDao) {
+        this.studentDao = studentDao;
+    }
+
+    @Autowired
+    public void setGroupDao(GroupDao groupDao) {
+        this.groupDao = groupDao;
+    }
+
+    @Autowired
+    public void setGroupManager(GroupManager groupManager) {
+        this.groupManager = groupManager;
+    }
+
+    @Autowired
+    public void setGenderManager(GenderManager genderManager) {
+        this.genderManager = genderManager;
+    }
+
+    public void manageStudents() {
         var scanner = new Scanner(in);
         var menuText = """
                 STUDENTS
@@ -20,16 +50,20 @@ public class StudentManager {
                 b. Delete student
                 c. Update student
                 d. Print students
+                e. Add student to the group
                 q. Close student's manager
                 Input menu letter:""";
         out.println(menuText);
         var inputKey = scanner.next();
         while (!inputKey.equals("q")) {
             switch (inputKey) {
-                case ("a") -> students.add(createNewStudent());
-                case ("b") -> deleteStudent(students);
-                case ("c") -> updateStudent(students);
-                case ("d") -> printStudents(students);
+                case ("a") -> studentDao.create(createNewStudent());
+                case ("b") -> studentDao.delete(selectId());
+                case ("c") -> studentDao.update(updateStudent());
+                case ("d") -> printStudents(studentDao.getAll());
+                case ("e") -> studentDao.addStudentToTheGroup(
+                        selectStudent(studentDao.getAll()),
+                        groupManager.selectGroup(groupDao.getAll()));
                 default -> out.println("Input the right letter!");
             }
             out.println(menuText);
@@ -38,9 +72,8 @@ public class StudentManager {
     }
 
     public void printStudents(List<Student> students) {
-        var serial = new AtomicInteger(1);
         students.forEach(p -> out.printf("%d. %s %s %s %s %s %s %s %s%n",
-                serial.getAndIncrement(),
+                p.getId(),
                 p.getFirstName(),
                 p.getLastName(),
                 p.getEmail(),
@@ -49,19 +82,6 @@ public class StudentManager {
                 p.getPhone(),
                 p.getAddress(),
                 p.getBirthDate()));
-    }
-
-    private void updateStudent(List<Student> students) {
-        var updatedStudent = selectStudent(students);
-        var student = createNewStudent();
-        updatedStudent.setFirstName(student.getFirstName());
-        updatedStudent.setLastName(student.getLastName());
-        updatedStudent.setEmail(student.getEmail());
-        updatedStudent.setCountry(student.getCountry());
-        updatedStudent.setGender(student.getGender());
-        updatedStudent.setPhone(student.getPhone());
-        updatedStudent.setAddress(student.getAddress());
-        updatedStudent.setBirthDate(student.getBirthDate());
     }
 
     public Student createNewStudent() {
@@ -76,7 +96,7 @@ public class StudentManager {
         out.println("Print student's country:");
         student.setCountry(scanner.nextLine());
         out.println("Print student's gender:");
-        student.setGender(new GenderManager().selectGender());
+        student.setGender(genderManager.selectGender());
         out.println("Print student's address:");
         student.setAddress(scanner.nextLine());
         out.println("Print student's phone:");
@@ -86,20 +106,26 @@ public class StudentManager {
         return student;
     }
 
-    private void deleteStudent(List<Student> students) {
+    private Student updateStudent() {
         var scanner = new Scanner(in);
-        out.println("Print sequence number of audience:");
-        var number = scanner.nextInt();
-        students.remove(number - 1);
+        out.println("Print student's id:");
+        var id = scanner.nextInt();
+        var student = createNewStudent();
+        student.setId(id);
+        return student;
+    }
+
+    private int selectId() {
+        var scanner = new Scanner(in);
+        out.println("Print student' id:");
+        return scanner.nextInt();
     }
 
     public Student selectStudent(List<Student> students) {
         var scanner = new Scanner(in);
-        out.println("Print number:");
-        var number = scanner.nextInt();
-        while (number < 1 || number > students.size()) {
-            out.println("Print correct number of student!");
-        }
-        return students.get(number - 1);
+        printStudents(students);
+        out.println("Print student id:");
+        var id = scanner.nextInt();
+        return students.stream().filter(p -> p.getId() == id).findAny().orElse(null);
     }
 }

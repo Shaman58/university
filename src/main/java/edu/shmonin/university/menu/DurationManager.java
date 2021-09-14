@@ -1,17 +1,28 @@
 package edu.shmonin.university.menu;
 
+import edu.shmonin.university.dao.DurationDao;
 import edu.shmonin.university.model.Duration;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Scanner;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import static java.lang.System.in;
 import static java.lang.System.out;
 
+@Repository
 public class DurationManager {
-    public void manageDurations(List<Duration> durations) {
+
+    private DurationDao durationDao;
+
+    @Autowired
+    public void setDurationDao(DurationDao durationDao) {
+        this.durationDao = durationDao;
+    }
+
+    public void manageDurations() {
         var scanner = new Scanner(in);
         var menuText = """
                 DURATIONS
@@ -26,13 +37,10 @@ public class DurationManager {
         var inputKey = scanner.next();
         while (!inputKey.equals("q")) {
             switch (inputKey) {
-                case ("a") -> durations.add(createNewDuration());
-                case ("b") -> {
-                    printDurations(durations);
-                    deleteDuration(durations);
-                }
-                case ("c") -> updateDuration(durations);
-                case ("d") -> printDurations(durations);
+                case ("a") -> durationDao.create(createNewDuration());
+                case ("b") -> durationDao.delete(selectId());
+                case ("c") -> durationDao.update(updateDuration());
+                case ("d") -> printDurations(durationDao.getAll());
                 default -> out.println("Input the right letter!");
             }
             out.println(menuText);
@@ -41,19 +49,8 @@ public class DurationManager {
     }
 
     public void printDurations(List<Duration> durations) {
-        var serial = new AtomicInteger(1);
         durations
-                .forEach(p -> out.println(serial.getAndIncrement() + ". " + p.getStartTime() + " " + p.getEndTime()));
-    }
-
-    private void updateDuration(List<Duration> durations) {
-        var scanner = new Scanner(in);
-        out.println("Print sequence number of duration to update:");
-        var number = scanner.nextInt();
-        var updatedDuration = durations.get(number - 1);
-        var duration = createNewDuration();
-        updatedDuration.setStartTime(duration.getStartTime());
-        updatedDuration.setEndTime(duration.getEndTime());
+                .forEach(p -> out.println(p.getId() + ". " + p.getStartTime() + " " + p.getEndTime()));
     }
 
     private Duration createNewDuration() {
@@ -65,20 +62,25 @@ public class DurationManager {
         return new Duration(startTime, endTime);
     }
 
-    private void deleteDuration(List<Duration> durations) {
+    private Duration updateDuration() {
         var scanner = new Scanner(in);
-        out.println("Print sequence number of duration:");
-        var number = scanner.nextInt();
-        durations.remove(number - 1);
+        out.println("Print duration id to update:");
+        var id = scanner.nextInt();
+        var duration = createNewDuration();
+        duration.setId(id);
+        return duration;
+    }
+
+    private int selectId() {
+        var scanner = new Scanner(in);
+        out.println("Print duration id:");
+        return scanner.nextInt();
     }
 
     public Duration selectDuration(List<Duration> durations) {
         var scanner = new Scanner(in);
         out.println("Print number:");
         var number = scanner.nextInt();
-        while (number < 1 || number > durations.size()) {
-            out.println("Print correct number of duration!");
-        }
         return durations.get(number - 1);
     }
 }

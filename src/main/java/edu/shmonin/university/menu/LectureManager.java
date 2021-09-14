@@ -1,6 +1,7 @@
 package edu.shmonin.university.menu;
 
 import edu.shmonin.university.model.*;
+import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -11,6 +12,7 @@ import java.util.stream.Collectors;
 import static java.lang.System.in;
 import static java.lang.System.out;
 
+@Repository
 public class LectureManager {
     public void manageLectures(List<Lecture> lectures, List<Course> courses, List<Audience> audiences, List<Duration> durations, List<Teacher> teachers, List<Group> groups) {
         var scanner = new Scanner(in);
@@ -76,8 +78,8 @@ public class LectureManager {
         out.println("Print lecture date:");
         var date = LocalDate.parse(scanner.nextLine());
         courseManager.printCourses(courses);
-        var course = courseManager.selectCourse(courses);
-        var targetGroups = groupManager.selectLectureGroups(groups);
+        var course = new Course();//courseManager.selectCourse(courses);
+        var targetGroups = groupManager.getLectureGroups(groups);
         audienceManager.printAudiences(audiences);
         var audience = audienceManager.selectAudience(audiences);
         durationManager.printDurations(durations);
@@ -119,6 +121,6 @@ public class LectureManager {
     }
 
     private boolean studentInGroups(List<Group> groups, Student student) {
-        return groups.stream().anyMatch(p -> p.getStudents().contains(student));
+        return true;//groups.stream().anyMatch(p -> p.getStudents().contains(student));
     }
 }

@@ -1,11 +1,12 @@
 package edu.shmonin.university;
 
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+
 public class Main {
 
     public static void main(String[] args) {
-        var university = new University();
-        var menu = new MenuRunner(university);
+        var context = new AnnotationConfigApplicationContext(SpringConfig.class);
+        var menu = context.getBean("menuRunner", MenuRunner.class);
         menu.run();
     }
-
 }

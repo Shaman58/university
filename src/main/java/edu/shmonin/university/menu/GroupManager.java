@@ -1,7 +1,11 @@
 package edu.shmonin.university.menu;
 
+import edu.shmonin.university.dao.GroupDao;
+import edu.shmonin.university.dao.StudentDao;
 import edu.shmonin.university.model.Group;
 import edu.shmonin.university.model.Student;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,8 +15,23 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static java.lang.System.in;
 import static java.lang.System.out;
 
+@Repository
 public class GroupManager {
-    public void manageGroups(List<Group> groups, List<Student> students) {
+
+    private GroupDao groupDao;
+    private StudentDao studentDao;
+
+    @Autowired
+    public void setGroupDao(GroupDao groupDao) {
+        this.groupDao = groupDao;
+    }
+
+    @Autowired
+    public void setStudentDao(StudentDao studentDao) {
+        this.studentDao = studentDao;
+    }
+
+    public void manageGroups() {
         var scanner = new Scanner(in);
         var menuText = """
                 GROUPS
@@ -27,10 +46,10 @@ public class GroupManager {
         var inputKey = scanner.next();
         while (!inputKey.equals("q")) {
             switch (inputKey) {
-                case ("a") -> groups.add(createNewGroup(groups, students));
-                case ("b") -> deleteGroup(groups);
-                case ("c") -> updateGroup(groups, students);
-                case ("d") -> printGroups(groups);
+                case ("a") -> groupDao.create(createNewGroup());
+                case ("b") -> groupDao.delete(selectId());
+                case ("c") -> groupDao.update(updateGroup());
+                case ("d") -> printGroupsWithStudents();
                 default -> out.println("Input the right letter!");
             }
             out.println(menuText);
@@ -39,14 +58,49 @@ public class GroupManager {
     }
 
     private void printGroups(List<Group> groups) {
-        var serial = new AtomicInteger(1);
-        groups.forEach(p -> out.printf("%d. %s%n%s", serial.getAndIncrement(), p.getName(), formatGroupStudents(p)));
+        groups.forEach(p -> out.printf("%d. %s%n", p.getId(), p.getName()));
     }
 
-    private String formatGroupStudents(Group group) {
+    private Group createNewGroup() {
+        var scanner = new Scanner(in);
+        out.println("Print name of group:");
+        var name = scanner.nextLine();
+        return new Group(name);
+    }
+
+    private Group updateGroup() {
+        var scanner = new Scanner(in);
+        out.println("Print group id:");
+        var id = scanner.nextInt();
+        var group = createNewGroup();
+        group.setId(id);
+        return group;
+    }
+
+    private int selectId() {
+        var scanner = new Scanner(in);
+        out.println("Print group id:");
+        return scanner.nextInt();
+    }
+
+    public Group selectGroup(List<Group> groups) {
+        var scanner = new Scanner(in);
+        printGroups(groups);
+        out.println("Print group id:");
+        var id = scanner.nextInt();
+        return groups.stream().filter(p -> p.getId() == id).findAny().orElse(null);
+    }
+
+    private void printGroupsWithStudents() {
+        groupDao.getAll().forEach(p -> out.printf("%d. %s%n%s", p.getId(),
+                p.getName(), formatGroupStudents(p, studentDao)));
+    }
+
+    private String formatGroupStudents(Group group, StudentDao studentDao) {
         var result = "";
         var serial = new AtomicInteger(1);
-        for (Student student : group.getStudents()) {
+        var students = studentDao.selectStudentsRelatedTOTheGroup(group);
+        for (Student student : students) {
             result = result.concat(String.format("  %d. %s %s %s %s %s %s %s %s%n",
                     serial.getAndIncrement(),
                     student.getFirstName(),
@@ -61,68 +115,7 @@ public class GroupManager {
         return result;
     }
 
-    private void updateGroup(List<Group> groups, List<Student> students) {
-        var updatedGroup = selectGroup(groups);
-        var group = createNewGroup(groups, students);
-        updatedGroup.setName(group.getName());
-        updatedGroup.setStudents(group.getStudents());
-    }
-
-    private Group createNewGroup(List<Group> groups, List<Student> students) {
-        var scanner = new Scanner(in);
-        var studentManager = new StudentManager();
-        var studentsInGroup = new ArrayList<Student>();
-        out.println("Print name of group:");
-        var name = scanner.nextLine();
-        var menuText = """
-                Select menu item:
-                a. Add new student to the group
-                b. Add student to the group
-                q. quit
-                Input menu letter:""";
-        out.println(menuText);
-        var inputKey = scanner.next();
-        while (!inputKey.equals("q")) {
-            switch (inputKey) {
-                case ("a") -> {
-                    var student = studentManager.createNewStudent();
-                    students.add(student);
-                    studentsInGroup.add(student);
-                }
-                case ("b") -> {
-                    var ableStudents = new ArrayList<>(students);
-                    ableStudents.removeAll(studentsInGroup);
-                    studentManager.printStudents(ableStudents);
-                    var targetStudent = studentManager.selectStudent(ableStudents);
-                    studentsInGroup.add(targetStudent);
-                    groups.forEach(p -> p.getStudents().remove(targetStudent));
-                }
-                default -> out.println("Input the right letter!");
-            }
-            out.println(menuText);
-            inputKey = scanner.next();
-        }
-        return new Group(name, studentsInGroup);
-    }
-
-    private void deleteGroup(List<Group> groups) {
-        var scanner = new Scanner(in);
-        out.println("Print sequence number of audience:");
-        var number = scanner.nextInt();
-        groups.remove(number - 1);
-    }
-
-    private Group selectGroup(List<Group> groups) {
-        var scanner = new Scanner(in);
-        out.println("Print number:");
-        var number = scanner.nextInt();
-        while (number < 1 || number > groups.size()) {
-            out.println("Print correct number o group!");
-        }
-        return groups.get(number - 1);
-    }
-
-    public List<Group> selectLectureGroups(List<Group> sourceGroups) {
+    public List<Group> getLectureGroups(List<Group> sourceGroups) {
         var targetGroups = new ArrayList<Group>();
         var scanner = new Scanner(in);
         var menuText = """
@@ -140,7 +133,7 @@ public class GroupManager {
                 case ("a") -> addGroupToList(targetGroups, sourceGroups);
                 case ("b") -> {
                     printGroups(targetGroups);
-                    deleteGroup(targetGroups);
+                    //deleteGroup(targetGroups);
                 }
                 case ("c") -> printGroups(targetGroups);
                 default -> out.println("Input the right letter!");

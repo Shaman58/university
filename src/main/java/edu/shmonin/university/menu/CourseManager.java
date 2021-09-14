@@ -1,17 +1,27 @@
 package edu.shmonin.university.menu;
 
+import edu.shmonin.university.dao.CourseDao;
 import edu.shmonin.university.model.Course;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import static java.lang.System.in;
 import static java.lang.System.out;
 
+@Repository
 public class CourseManager {
-    public void manageCourses(List<Course> courses) {
+
+    private CourseDao courseDao;
+
+    @Autowired
+    public void setCourseDao(CourseDao courseDao) {
+        this.courseDao = courseDao;
+    }
+
+    public void manageCourses() {
         var scanner = new Scanner(in);
         var menuText = """
                 COURSES
@@ -26,14 +36,10 @@ public class CourseManager {
         var inputKey = scanner.next();
         while (!inputKey.equals("q")) {
             switch (inputKey) {
-                case ("a") -> courses.add(createNewCourse());
-                case ("b") -> {
-                    printCourses(courses);
-                    out.println("Print number of course");
-                    deleteCourse(courses);
-                }
-                case ("c") -> updateCourse(courses);
-                case ("d") -> printCourses(courses);
+                case ("a") -> courseDao.create(createNewCourse());
+                case ("b") -> courseDao.delete(selectId());
+                case ("c") -> courseDao.update(updateCourse());
+                case ("d") -> printCourses(courseDao.getAll());
                 default -> out.println("Input the right letter!");
             }
             out.println(menuText);
@@ -42,18 +48,7 @@ public class CourseManager {
     }
 
     public void printCourses(List<Course> courses) {
-        var serial = new AtomicInteger(1);
-        courses
-                .forEach(p -> out.println(serial.getAndIncrement() + ". " + p.getName()));
-    }
-
-    private void updateCourse(List<Course> courses) {
-        var scanner = new Scanner(in);
-        out.println("Print sequence number of course to update:");
-        var number = scanner.nextInt();
-        var updatedDuration = courses.get(number - 1);
-        var course = createNewCourse();
-        updatedDuration.setName(course.getName());
+        courses.forEach(p -> out.println(p.getId() + ". " + p.getName()));
     }
 
     private Course createNewCourse() {
@@ -63,56 +58,28 @@ public class CourseManager {
         return new Course(name);
     }
 
-    private void deleteCourse(List<Course> courses) {
+    private Course updateCourse() {
         var scanner = new Scanner(in);
-        out.println("Print sequence number of course:");
-        var number = scanner.nextInt();
-        courses.remove(number - 1);
+        out.println("Print course id:");
+        var id = scanner.nextInt();
+        var course = createNewCourse();
+        course.setId(id);
+        return course;
+    }
+
+    private int selectId() {
+        var scanner = new Scanner(in);
+        out.println("Print course id:");
+        return scanner.nextInt();
     }
 
     public Course selectCourse(List<Course> courses) {
         var scanner = new Scanner(in);
-        out.println("Print number:");
+        out.println("Print course number:");
         var number = scanner.nextInt();
         while (number < 1 || number > courses.size()) {
             out.println("Print correct number of course!");
         }
         return courses.get(number - 1);
-    }
-
-    public List<Course> selectCourses(List<Course> sourceCourses) {
-        var targetCourses = new ArrayList<Course>();
-        var scanner = new Scanner(in);
-        var menuText = """
-                COURSES
-                Select menu item:
-                a. Add course to the list
-                b. Delete course from the list
-                c. Print courses list
-                q. Close teacher's courses manager
-                Input menu letter:""";
-        out.println(menuText);
-        var inputKey = scanner.next();
-        while (!inputKey.equals("q")) {
-            switch (inputKey) {
-                case ("a") -> addCourseToList(targetCourses,sourceCourses);
-                case ("b") -> {
-                    printCourses(targetCourses);
-                    deleteCourse(targetCourses);
-                }
-                case ("c") -> printCourses(targetCourses);
-                default -> out.println("Input the right letter!");
-            }
-            out.println(menuText);
-            inputKey = scanner.next();
-        }
-        return targetCourses;
-    }
-
-    private void addCourseToList(List<Course> targetCourses, List<Course> sourceCourses) {
-        var courseList = new ArrayList<>(sourceCourses);
-        courseList.removeAll(targetCourses);
-        printCourses(courseList);
-        targetCourses.add(selectCourse(courseList));
     }
 }

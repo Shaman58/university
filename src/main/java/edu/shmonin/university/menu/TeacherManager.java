@@ -1,7 +1,11 @@
 package edu.shmonin.university.menu;
 
-import edu.shmonin.university.model.Course;
+import edu.shmonin.university.dao.CourseDao;
+import edu.shmonin.university.dao.TeacherDao;
+import edu.shmonin.university.dao.VacationDao;
 import edu.shmonin.university.model.Teacher;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -11,8 +15,53 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static java.lang.System.in;
 import static java.lang.System.out;
 
+@Repository
 public class TeacherManager {
-    public void manageTeachers(List<Teacher> teachers, List<Course> courses) {
+
+    private TeacherDao teacherDao;
+    private CourseDao courseDao;
+    private VacationDao vacationDao;
+    private CourseManager courseManager;
+    private GenderManager genderManager;
+    private ScientificDegreeManager scientificDegreeManager;
+    private VacationManager vacationManager;
+
+    @Autowired
+    public void setTeacherDao(TeacherDao teacherDao) {
+        this.teacherDao = teacherDao;
+    }
+
+    @Autowired
+    public void setCourseDao(CourseDao courseDao) {
+        this.courseDao = courseDao;
+    }
+
+    @Autowired
+    public void setVacationDao(VacationDao vacationDao) {
+        this.vacationDao = vacationDao;
+    }
+
+    @Autowired
+    public void setCourseManager(CourseManager courseManager) {
+        this.courseManager = courseManager;
+    }
+
+    @Autowired
+    public void setGenderManager(GenderManager genderManager) {
+        this.genderManager = genderManager;
+    }
+
+    @Autowired
+    public void setScientificDegreeManager(ScientificDegreeManager scientificDegreeManager) {
+        this.scientificDegreeManager = scientificDegreeManager;
+    }
+
+    @Autowired
+    public void setVacationManager(VacationManager vacationManager) {
+        this.vacationManager = vacationManager;
+    }
+
+    public void manageTeachers() {
         var scanner = new Scanner(in);
         var menuText = """
                 TEACHERS
@@ -21,16 +70,20 @@ public class TeacherManager {
                 b. Delete teacher
                 c. Update teacher
                 d. Print teachers
+                e. Set course to the teacher
+                f. Add vacation to the teacher
                 q. Close teacher's manager
                 Input menu letter:""";
         out.println(menuText);
         var inputKey = scanner.next();
         while (!inputKey.equals("q")) {
             switch (inputKey) {
-                case ("a") -> teachers.add(createNewTeacher(courses));
-                case ("b") -> deleteTeacher(teachers);
-                case ("c") -> updateTeacher(teachers, courses);
-                case ("d") -> printTeachers(teachers);
+                case ("a") -> teacherDao.create(createNewTeacher());
+                case ("b") -> teacherDao.delete(selectId());
+                case ("c") -> teacherDao.update(updateTeacher());
+                case ("d") -> printTeachers(teacherDao.getAll());
+                case ("e") -> addCourseToTheTeacher();
+                case ("f") -> addVacationToTheTeacher();
                 default -> out.println("Input the right letter!");
             }
             out.println(menuText);
@@ -53,27 +106,9 @@ public class TeacherManager {
                 p.getBirthDate()));
     }
 
-    private void updateTeacher(List<Teacher> teachers, List<Course> courses) {
-        var updatedTeacher = selectTeacher(teachers);
-        var teacher = createNewTeacher(courses);
-        updatedTeacher.setFirstName(teacher.getFirstName());
-        updatedTeacher.setLastName(teacher.getLastName());
-        updatedTeacher.setEmail(teacher.getEmail());
-        updatedTeacher.setCountry(teacher.getCountry());
-        updatedTeacher.setGender(teacher.getGender());
-        updatedTeacher.setPhone(teacher.getPhone());
-        updatedTeacher.setAddress(teacher.getAddress());
-        updatedTeacher.setScientificDegree(teacher.getScientificDegree());
-        updatedTeacher.setBirthDate(teacher.getBirthDate());
-        updatedTeacher.setCourses(teacher.getCourses());
-        updatedTeacher.setVacations(teacher.getVacations());
-    }
-
-    private Teacher createNewTeacher(List<Course> courses) {
+    private Teacher createNewTeacher() {
         var scanner = new Scanner(in);
         var teacher = new Teacher();
-        var vacationManager = new VacationManager();
-        var courseManager = new CourseManager();
         out.println("Print teacher's firstname:");
         teacher.setFirstName(scanner.nextLine());
         out.println("Print teacher's lastname:");
@@ -83,35 +118,57 @@ public class TeacherManager {
         out.println("Print teacher's country:");
         teacher.setCountry(scanner.nextLine());
         out.println("Select teacher's gender:");
-        teacher.setGender(new GenderManager().selectGender());
+        teacher.setGender(genderManager.selectGender());
         out.println("Print teacher's address:");
         teacher.setAddress(scanner.nextLine());
         out.println("Print teacher's phone:");
         teacher.setPhone(scanner.nextLine());
         out.println("Select teacher's scientific degree:");
-        teacher.setScientificDegree(new ScientificDegreeManager().selectScientificDegree());
+        teacher.setScientificDegree(scientificDegreeManager.selectScientificDegree());
         out.println("Print teacher's birthdate(YYYY-MM-DD):");
         teacher.setBirthDate(LocalDate.parse(scanner.nextLine()));
-        out.println("Select courses:");
-        teacher.setCourses(courseManager.selectCourses(courses));
-        teacher.setVacations(vacationManager.manageVacations());
         return teacher;
     }
 
-    private void deleteTeacher(List<Teacher> teachers) {
+    private Teacher updateTeacher() {
         var scanner = new Scanner(in);
-        out.println("Print sequence number of teacher:");
-        var number = scanner.nextInt();
-        teachers.remove(number - 1);
+        var teacher = createNewTeacher();
+        out.println("Print updated teacher's id:");
+        var id = scanner.nextInt();
+        teacher.setId(id);
+        return teacher;
+    }
+
+    private int selectId() {
+        var scanner = new Scanner(in);
+        out.println("Print teacher's id:");
+        return scanner.nextInt();
     }
 
     public Teacher selectTeacher(List<Teacher> teachers) {
         var scanner = new Scanner(in);
-        out.println("Print number:");
-        var number = scanner.nextInt();
-        while (number < 1 || number > teachers.size()) {
-            out.println("Print correct number of teacher!");
-        }
-        return teachers.get(number - 1);
+        out.println("Print teacher's id:");
+        var id = scanner.nextInt();
+        return teachers.stream().filter(p -> p.getId() == id).findAny().orElse(null);
+    }
+
+    private void addCourseToTheTeacher() {
+        var teachers = teacherDao.getAll();
+        printTeachers(teachers);
+        var teacher = selectTeacher(teachers);
+        var courses = courseDao.getAll();
+        courseManager.printCourses(courses);
+        var course = courseManager.selectCourse(courses);
+        teacherDao.addCourseTeacher(course, teacher);
+    }
+
+    private void addVacationToTheTeacher() {
+        var teachers = teacherDao.getAll();
+        printTeachers(teachers);
+        var teacher = selectTeacher(teachers);
+        var vacations = vacationDao.getAll();
+        vacationManager.printVacations(vacations);
+        var vacation = vacationManager.selectVacation(vacations);
+        teacherDao.addVacationTeacher(vacation, teacher);
     }
 }

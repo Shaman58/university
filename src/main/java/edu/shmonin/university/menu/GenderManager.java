@@ -1,12 +1,14 @@
 package edu.shmonin.university.menu;
 
 import edu.shmonin.university.model.Gender;
+import org.springframework.stereotype.Repository;
 
 import java.util.Scanner;
 
 import static java.lang.System.in;
 import static java.lang.System.out;
 
+@Repository
 public class GenderManager {
     public Gender selectGender() {
         var scanner = new Scanner(in);
