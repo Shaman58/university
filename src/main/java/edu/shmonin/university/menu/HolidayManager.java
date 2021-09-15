@@ -63,9 +63,7 @@ public class HolidayManager {
     }
 
     private Holiday updateHoliday() {
-        var scanner = new Scanner(in);
-        out.println("Print holiday's id:");
-        var id = scanner.nextInt();
+        var id = selectId();
         var holiday = createNewHoliday();
         holiday.setId(id);
         return holiday;

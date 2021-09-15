@@ -61,11 +61,11 @@ CREATE TABLE courses_teachers
     FOREIGN KEY (teacher_id) REFERENCES teachers (id) ON DELETE CASCADE ON UPDATE CASCADE,
     UNIQUE (course_id, teacher_id)
 );
-CREATE TABLE duration_teachers
+CREATE TABLE vacations
 (
-    duration_id  INT,
+    id         SERIAL PRIMARY KEY NOT NULL,
+    start_date DATE,
+    end_date   DATE,
     teacher_id INT,
-    FOREIGN KEY (duration_id) REFERENCES durations (id) ON DELETE CASCADE ON UPDATE CASCADE,
-    FOREIGN KEY (teacher_id) REFERENCES teachers (id) ON DELETE CASCADE ON UPDATE CASCADE,
-    UNIQUE (duration_id, teacher_id)
+    FOREIGN KEY (teacher_id) REFERENCES teachers (id) ON DELETE CASCADE ON UPDATE CASCADE
 );

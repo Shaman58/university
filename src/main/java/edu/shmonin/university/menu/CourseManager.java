@@ -48,7 +48,7 @@ public class CourseManager {
     }
 
     public void printCourses(List<Course> courses) {
-        courses.forEach(p -> out.println(p.getId() + ". " + p.getName()));
+        courses.forEach(p -> out.println(p.getCourseId() + ". " + p.getName()));
     }
 
     private Course createNewCourse() {
@@ -59,11 +59,9 @@ public class CourseManager {
     }
 
     private Course updateCourse() {
-        var scanner = new Scanner(in);
-        out.println("Print course id:");
-        var id = scanner.nextInt();
+        var id = selectId();
         var course = createNewCourse();
-        course.setId(id);
+        course.setCourseId(id);
         return course;
     }
 
@@ -73,13 +71,8 @@ public class CourseManager {
         return scanner.nextInt();
     }
 
-    public Course selectCourse(List<Course> courses) {
-        var scanner = new Scanner(in);
-        out.println("Print course number:");
-        var number = scanner.nextInt();
-        while (number < 1 || number > courses.size()) {
-            out.println("Print correct number of course!");
-        }
-        return courses.get(number - 1);
+    public Course selectCourse() {
+        printCourses(courseDao.getAll());
+        return courseDao.get(selectId());
     }
 }

@@ -2,9 +2,7 @@ package edu.shmonin.university.dao;
 
 import edu.shmonin.university.model.Course;
 import edu.shmonin.university.model.Teacher;
-import edu.shmonin.university.model.Vacation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -13,30 +11,35 @@ import java.util.List;
 @Repository
 public class TeacherDao implements Dao<Teacher> {
 
-    private static final String GET_QUERY = "SELECT * FROM teachers WHERE id=?";
+    private static final String GET_QUERY = "SELECT * FROM teachers WHERE teacher_id=?";
     private static final String GET_ALL_QUERY = "SELECT * FROM teachers";
     private static final String CREATE_QUERY = "INSERT INTO teachers(first_name, last_name, email, country, gender, phone, address, birth_date, scientific_degree) VALUES (?,?,?,?,?,?,?,?,?)";
-    private static final String UPDATE_QUERY = "UPDATE teachers SET first_name=?,last_name=?,email=?,country=?,gender=?,phone=?,address=?,birth_date=?, scientific_degree=? WHERE id=?";
-    private static final String DELETE_QUERY = "DELETE FROM teachers WHERE id=?";
+    private static final String UPDATE_QUERY = "UPDATE teachers SET first_name=?,last_name=?,email=?,country=?,gender=?,phone=?,address=?,birth_date=?, scientific_degree=? WHERE teacher_id=?";
+    private static final String DELETE_QUERY = "DELETE FROM teachers WHERE teacher_id=?";
     private static final String CREATE_COURSE_TEACHER_QUERY = "INSERT INTO courses_teachers(course_id, teacher_id) VALUES (?,?)";
-    private static final String CREATE_VACATION_TEACHER_QUERY = "INSERT INTO vacations_teachers(vacation_id, teacher_id) VALUES (?,?)";
 
     private JdbcTemplate jdbcTemplate;
+    private TeacherMapper teacherMapper;
 
     @Autowired
     public void setJdbcTemplate(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 
+    @Autowired
+    public void setTeacherMapper(TeacherMapper teacherMapper) {
+        this.teacherMapper = teacherMapper;
+    }
+
     @Override
     public Teacher get(int id) {
-        return jdbcTemplate.query(GET_QUERY, new BeanPropertyRowMapper<>(Teacher.class), id).
+        return jdbcTemplate.query(GET_QUERY, teacherMapper, id).
                 stream().findAny().orElse(null);
     }
 
     @Override
     public List<Teacher> getAll() {
-        return jdbcTemplate.query(GET_ALL_QUERY, new BeanPropertyRowMapper<>(Teacher.class));
+        return jdbcTemplate.query(GET_ALL_QUERY, teacherMapper);
     }
 
     @Override
@@ -59,10 +62,6 @@ public class TeacherDao implements Dao<Teacher> {
     }
 
     public void addCourseTeacher(Course course, Teacher teacher) {
-        jdbcTemplate.update(CREATE_COURSE_TEACHER_QUERY, course.getId(), teacher.getId());
-    }
-
-    public void addVacationTeacher(Vacation vacation, Teacher teacher) {
-        jdbcTemplate.update(CREATE_VACATION_TEACHER_QUERY, vacation.getId(), teacher.getId());
+        jdbcTemplate.update(CREATE_COURSE_TEACHER_QUERY, course.getCourseId(), teacher.getId());
     }
 }

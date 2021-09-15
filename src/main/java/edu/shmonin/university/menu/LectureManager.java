@@ -81,11 +81,11 @@ public class LectureManager {
         var course = new Course();//courseManager.selectCourse(courses);
         var targetGroups = groupManager.getLectureGroups(groups);
         audienceManager.printAudiences(audiences);
-        var audience = audienceManager.selectAudience(audiences);
+        var audience = audienceManager.selectAudience();
         durationManager.printDurations(durations);
-        var duration = durationManager.selectDuration(durations);
+        var duration = durationManager.selectDuration();
         teacherManager.printTeachers(teachers);
-        var teacher = teacherManager.selectTeacher(teachers);
+        var teacher = teacherManager.selectTeacher();
         return new Lecture(date, course, targetGroups, audience, duration, teacher);
     }
 

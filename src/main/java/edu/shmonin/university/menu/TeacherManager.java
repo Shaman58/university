@@ -10,7 +10,6 @@ import org.springframework.stereotype.Repository;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Scanner;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import static java.lang.System.in;
 import static java.lang.System.out;
@@ -72,6 +71,9 @@ public class TeacherManager {
                 d. Print teachers
                 e. Set course to the teacher
                 f. Add vacation to the teacher
+                g. Print teacher's vacations
+                h. Delete teacher's vacation
+                i. Print teacher's courses
                 q. Close teacher's manager
                 Input menu letter:""";
         out.println(menuText);
@@ -79,11 +81,14 @@ public class TeacherManager {
         while (!inputKey.equals("q")) {
             switch (inputKey) {
                 case ("a") -> teacherDao.create(createNewTeacher());
-                case ("b") -> teacherDao.delete(selectId());
+                case ("b") -> teacherDao.delete(selectTeacher().getId());
                 case ("c") -> teacherDao.update(updateTeacher());
                 case ("d") -> printTeachers(teacherDao.getAll());
-                case ("e") -> addCourseToTheTeacher();
-                case ("f") -> addVacationToTheTeacher();
+                case ("e") -> teacherDao.addCourseTeacher(courseManager.selectCourse(), selectTeacher());
+                case ("f") -> vacationManager.createVacation(selectTeacher());
+                case ("g") -> vacationManager.printVacations(vacationDao.getTeacherVacations(selectTeacher()));
+                case ("h") -> vacationDao.delete(vacationManager.selectTeacherVacation(selectTeacher()).getId());
+                case ("i") -> courseManager.printCourses(courseDao.getTeacherCourses(selectTeacher()));
                 default -> out.println("Input the right letter!");
             }
             out.println(menuText);
@@ -92,9 +97,8 @@ public class TeacherManager {
     }
 
     public void printTeachers(List<Teacher> teachers) {
-        var serial = new AtomicInteger(1);
         teachers.forEach(p -> out.printf("%d. %s %s %s %s %s %s %s %s %s%n",
-                serial.getAndIncrement(),
+                p.getId(),
                 p.getFirstName(),
                 p.getLastName(),
                 p.getEmail(),
@@ -131,10 +135,8 @@ public class TeacherManager {
     }
 
     private Teacher updateTeacher() {
-        var scanner = new Scanner(in);
+        var id = selectId();
         var teacher = createNewTeacher();
-        out.println("Print updated teacher's id:");
-        var id = scanner.nextInt();
         teacher.setId(id);
         return teacher;
     }
@@ -145,30 +147,8 @@ public class TeacherManager {
         return scanner.nextInt();
     }
 
-    public Teacher selectTeacher(List<Teacher> teachers) {
-        var scanner = new Scanner(in);
-        out.println("Print teacher's id:");
-        var id = scanner.nextInt();
-        return teachers.stream().filter(p -> p.getId() == id).findAny().orElse(null);
-    }
-
-    private void addCourseToTheTeacher() {
-        var teachers = teacherDao.getAll();
-        printTeachers(teachers);
-        var teacher = selectTeacher(teachers);
-        var courses = courseDao.getAll();
-        courseManager.printCourses(courses);
-        var course = courseManager.selectCourse(courses);
-        teacherDao.addCourseTeacher(course, teacher);
-    }
-
-    private void addVacationToTheTeacher() {
-        var teachers = teacherDao.getAll();
-        printTeachers(teachers);
-        var teacher = selectTeacher(teachers);
-        var vacations = vacationDao.getAll();
-        vacationManager.printVacations(vacations);
-        var vacation = vacationManager.selectVacation(vacations);
-        teacherDao.addVacationTeacher(vacation, teacher);
+    public Teacher selectTeacher() {
+        printTeachers(teacherDao.getAll());
+        return teacherDao.get(selectId());
     }
 }

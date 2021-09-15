@@ -83,12 +83,9 @@ public class GroupManager {
         return scanner.nextInt();
     }
 
-    public Group selectGroup(List<Group> groups) {
-        var scanner = new Scanner(in);
-        printGroups(groups);
-        out.println("Print group id:");
-        var id = scanner.nextInt();
-        return groups.stream().filter(p -> p.getId() == id).findAny().orElse(null);
+    public Group selectGroup() {
+        printGroups(groupDao.getAll());
+        return groupDao.get(selectId());
     }
 
     private void printGroupsWithStudents() {
@@ -148,6 +145,6 @@ public class GroupManager {
         var groupList = new ArrayList<>(sourceGroups);
         groupList.removeAll(targetGroups);
         printGroups(groupList);
-        targetGroups.add(selectGroup(groupList));
+        targetGroups.add(selectGroup());
     }
 }

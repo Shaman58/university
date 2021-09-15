@@ -1,5 +1,6 @@
 package edu.shmonin.university.dao;
 
+import edu.shmonin.university.model.Teacher;
 import edu.shmonin.university.model.Vacation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -13,9 +14,10 @@ public class VacationDao implements Dao<Vacation> {
 
     private static final String GET_QUERY = "SELECT * FROM vacations WHERE id=?";
     private static final String GET_ALL_QUERY = "SELECT * FROM vacations";
-    private static final String CREATE_QUERY = "INSERT INTO vacations(start_date, end_date) VALUES (?,?)";
-    private static final String UPDATE_QUERY = "UPDATE vacations SET start_date=?, end_date=? WHERE id=?";
+    private static final String CREATE_QUERY = "INSERT INTO vacations(start_date, end_date, teacher_id) VALUES (?,?,?)";
+    private static final String UPDATE_QUERY = "UPDATE vacations SET start_date=?, end_date=?, teacher_id=? WHERE id=?";
     private static final String DELETE_QUERY = "DELETE FROM vacations WHERE id=?";
+    private static final String GET_TEACHER_VACATIONS_QUERY = "SELECT * FROM vacations WHERE teacher_id=?";
 
     private JdbcTemplate jdbcTemplate;
 
@@ -37,16 +39,20 @@ public class VacationDao implements Dao<Vacation> {
 
     @Override
     public void create(Vacation entity) {
-        jdbcTemplate.update(CREATE_QUERY, entity.getStartDate(), entity.getEndDate());
+        jdbcTemplate.update(CREATE_QUERY, entity.getStartDate(), entity.getEndDate(), entity.getTeacher().getId());
     }
 
     @Override
     public void update(Vacation entity) {
-        jdbcTemplate.update(UPDATE_QUERY, entity.getStartDate(), entity.getEndDate(), entity.getId());
+        jdbcTemplate.update(UPDATE_QUERY, entity.getStartDate(), entity.getEndDate(), entity.getId(), entity.getTeacher().getId());
     }
 
     @Override
     public void delete(int id) {
         jdbcTemplate.update(DELETE_QUERY, id);
+    }
+
+    public List<Vacation> getTeacherVacations(Teacher teacher) {
+        return jdbcTemplate.query(GET_TEACHER_VACATIONS_QUERY, new BeanPropertyRowMapper<>(Vacation.class), teacher.getId());
     }
 }

@@ -7,10 +7,12 @@ public class Vacation {
     private int id;
     private LocalDate startDate;
     private LocalDate endDate;
+    private Teacher teacher;
 
-    public Vacation(LocalDate startDate, LocalDate endDate) {
+    public Vacation(LocalDate startDate, LocalDate endDate, Teacher teacher) {
         this.startDate = startDate;
         this.endDate = endDate;
+        this.teacher = teacher;
     }
 
     public Vacation() {
@@ -38,5 +40,13 @@ public class Vacation {
 
     public void setEndDate(LocalDate endDate) {
         this.endDate = endDate;
+    }
+
+    public Teacher getTeacher() {
+        return teacher;
+    }
+
+    public void setTeacher(Teacher teacher) {
+        this.teacher = teacher;
     }
 }

@@ -21,21 +21,27 @@ public class StudentDao implements Dao<Student> {
     private static final String ADD_STUDENT_TO_THE_GROUP_QUERY = "UPDATE students SET group_id=? WHERE id=?";
 
     private JdbcTemplate jdbcTemplate;
+    private StudentMapper studentMapper;
 
     @Autowired
     public void setJdbcTemplate(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 
+    @Autowired
+    public void setStudentMapper(StudentMapper studentMapper) {
+        this.studentMapper = studentMapper;
+    }
+
     @Override
     public Student get(int id) {
-        return jdbcTemplate.query(GET_QUERY, new StudentMapper(), id).
+        return jdbcTemplate.query(GET_QUERY, studentMapper, id).
                 stream().findAny().orElse(null);
     }
 
     @Override
     public List<Student> getAll() {
-        return jdbcTemplate.query(GET_ALL_QUERY, new StudentMapper());
+        return jdbcTemplate.query(GET_ALL_QUERY, studentMapper);
     }
 
     @Override

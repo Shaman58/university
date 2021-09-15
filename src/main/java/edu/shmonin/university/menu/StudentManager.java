@@ -1,6 +1,5 @@
 package edu.shmonin.university.menu;
 
-import edu.shmonin.university.dao.GroupDao;
 import edu.shmonin.university.dao.StudentDao;
 import edu.shmonin.university.model.Student;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,18 +16,12 @@ import static java.lang.System.out;
 public class StudentManager {
 
     private StudentDao studentDao;
-    private GroupDao groupDao;
     private GroupManager groupManager;
     private GenderManager genderManager;
 
     @Autowired
     public void setStudentDao(StudentDao studentDao) {
         this.studentDao = studentDao;
-    }
-
-    @Autowired
-    public void setGroupDao(GroupDao groupDao) {
-        this.groupDao = groupDao;
     }
 
     @Autowired
@@ -61,9 +54,7 @@ public class StudentManager {
                 case ("b") -> studentDao.delete(selectId());
                 case ("c") -> studentDao.update(updateStudent());
                 case ("d") -> printStudents(studentDao.getAll());
-                case ("e") -> studentDao.addStudentToTheGroup(
-                        selectStudent(studentDao.getAll()),
-                        groupManager.selectGroup(groupDao.getAll()));
+                case ("e") -> studentDao.addStudentToTheGroup(selectStudent(), groupManager.selectGroup());
                 default -> out.println("Input the right letter!");
             }
             out.println(menuText);
@@ -72,7 +63,7 @@ public class StudentManager {
     }
 
     public void printStudents(List<Student> students) {
-        students.forEach(p -> out.printf("%d. %s %s %s %s %s %s %s %s%n",
+        students.forEach(p -> out.printf("%d. %s %s %s %s %s %s %s %s %s%n",
                 p.getId(),
                 p.getFirstName(),
                 p.getLastName(),
@@ -81,7 +72,8 @@ public class StudentManager {
                 p.getGender(),
                 p.getPhone(),
                 p.getAddress(),
-                p.getBirthDate()));
+                p.getBirthDate(),
+                p.getGroup().getName()));
     }
 
     public Student createNewStudent() {
@@ -107,9 +99,7 @@ public class StudentManager {
     }
 
     private Student updateStudent() {
-        var scanner = new Scanner(in);
-        out.println("Print student's id:");
-        var id = scanner.nextInt();
+        var id = selectId();
         var student = createNewStudent();
         student.setId(id);
         return student;
@@ -121,11 +111,8 @@ public class StudentManager {
         return scanner.nextInt();
     }
 
-    public Student selectStudent(List<Student> students) {
-        var scanner = new Scanner(in);
-        printStudents(students);
-        out.println("Print student id:");
-        var id = scanner.nextInt();
-        return students.stream().filter(p -> p.getId() == id).findAny().orElse(null);
+    public Student selectStudent() {
+        printStudents(studentDao.getAll());
+        return studentDao.get(selectId());
     }
 }

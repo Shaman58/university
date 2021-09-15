@@ -63,9 +63,7 @@ public class AudienceManager {
     }
 
     private Audience updateAudience() {
-        var scanner = new Scanner(in);
-        out.println("Print audience id:");
-        var id = scanner.nextInt();
+        var id = selectId();
         var audience = createNewAudience();
         audience.setId(id);
         return audience;
@@ -77,13 +75,8 @@ public class AudienceManager {
         return scanner.nextInt();
     }
 
-    public Audience selectAudience(List<Audience> audiences) {
-        var scanner = new Scanner(in);
-        out.println("Print room number:");
-        var number = scanner.nextInt();
-        while (number < 1 || number > audiences.size()) {
-            out.println("Print correct number of audience!");
-        }
-        return audiences.get(number - 1);
+    public Audience selectAudience() {
+        printAudiences(audienceDao.getAll());
+        return audienceDao.get(selectId());
     }
 }

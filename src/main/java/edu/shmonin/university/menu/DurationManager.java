@@ -63,9 +63,7 @@ public class DurationManager {
     }
 
     private Duration updateDuration() {
-        var scanner = new Scanner(in);
-        out.println("Print duration id to update:");
-        var id = scanner.nextInt();
+        var id = selectId();
         var duration = createNewDuration();
         duration.setId(id);
         return duration;
@@ -77,10 +75,8 @@ public class DurationManager {
         return scanner.nextInt();
     }
 
-    public Duration selectDuration(List<Duration> durations) {
-        var scanner = new Scanner(in);
-        out.println("Print number:");
-        var number = scanner.nextInt();
-        return durations.get(number - 1);
+    public Duration selectDuration() {
+        printDurations(durationDao.getAll());
+        return durationDao.get(selectId());
     }
 }
