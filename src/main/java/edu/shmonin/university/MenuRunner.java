@@ -1,10 +1,10 @@
 package edu.shmonin.university;
 
+import edu.shmonin.university.dao.LectureDao;
 import edu.shmonin.university.menu.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDate;
 import java.util.Scanner;
 
 import static java.lang.System.in;
@@ -18,23 +18,47 @@ public class MenuRunner {
     private StudentManager studentManager;
     private GroupManager groupManager;
     private DurationManager durationManager;
-    private VacationManager vacationManager;
     private TeacherManager teacherManager;
     private LectureManager lectureManager;
     private AudienceManager audienceManager;
 
     @Autowired
-    public MenuRunner(HolidayManager holidayManager, CourseManager courseManager, StudentManager studentManager,
-                      GroupManager groupManager, DurationManager durationManager, VacationManager vacationManager,
-                      TeacherManager teacherManager, LectureManager lectureManager, AudienceManager audienceManager) {
+    public void setHolidayManager(HolidayManager holidayManager) {
         this.holidayManager = holidayManager;
+    }
+
+    @Autowired
+    public void setCourseManager(CourseManager courseManager) {
         this.courseManager = courseManager;
+    }
+
+    @Autowired
+    public void setStudentManager(StudentManager studentManager) {
         this.studentManager = studentManager;
+    }
+
+    @Autowired
+    public void setGroupManager(GroupManager groupManager) {
         this.groupManager = groupManager;
+    }
+
+    @Autowired
+    public void setDurationManager(DurationManager durationManager) {
         this.durationManager = durationManager;
-        this.vacationManager = vacationManager;
+    }
+
+    @Autowired
+    public void setTeacherManager(TeacherManager teacherManager) {
         this.teacherManager = teacherManager;
+    }
+
+    @Autowired
+    public void setLectureManager(LectureManager lectureManager) {
         this.lectureManager = lectureManager;
+    }
+
+    @Autowired
+    public void setAudienceManager(AudienceManager audienceManager) {
         this.audienceManager = audienceManager;
     }
 
@@ -62,7 +86,7 @@ public class MenuRunner {
                 case ("c") -> teacherManager.manageTeachers();
                 case ("d") -> groupManager.manageGroups();
                 case ("e") -> audienceManager.manageAudiences();
-                //case ("f") -> new LectureManager().manageLectures(university.getLectures(), university.getCourses(), university.getAudiences(), university.getDurations(), university.getTeachers(), university.getGroups());
+                case ("f") -> lectureManager.manageLectures();
                 case ("g") -> durationManager.manageDurations();
                 case ("h") -> courseManager.manageCourses();
                 //case ("i") -> scheduleManager();

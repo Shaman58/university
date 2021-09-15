@@ -42,7 +42,7 @@ CREATE TABLE durations
 );
 CREATE TABLE teachers
 (
-    id                SERIAL PRIMARY KEY NOT NULL,
+    teacher_id                SERIAL PRIMARY KEY NOT NULL,
     first_name        VARCHAR(255),
     last_name         VARCHAR(255),
     email             VARCHAR(255),
@@ -57,8 +57,8 @@ CREATE TABLE courses_teachers
 (
     course_id  INT,
     teacher_id INT,
-    FOREIGN KEY (course_id) REFERENCES courses (id) ON DELETE CASCADE ON UPDATE CASCADE,
-    FOREIGN KEY (teacher_id) REFERENCES teachers (id) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (course_id) REFERENCES courses (course_id) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (teacher_id) REFERENCES teachers (teacher_id) ON DELETE CASCADE ON UPDATE CASCADE,
     UNIQUE (course_id, teacher_id)
 );
 CREATE TABLE vacations
@@ -67,5 +67,5 @@ CREATE TABLE vacations
     start_date DATE,
     end_date   DATE,
     teacher_id INT,
-    FOREIGN KEY (teacher_id) REFERENCES teachers (id) ON DELETE CASCADE ON UPDATE CASCADE
+    FOREIGN KEY (teacher_id) REFERENCES teachers (teacher_id) ON DELETE CASCADE ON UPDATE CASCADE
 );

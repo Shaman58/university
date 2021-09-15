@@ -49,7 +49,7 @@ public class GroupManager {
                 case ("a") -> groupDao.create(createNewGroup());
                 case ("b") -> groupDao.delete(selectId());
                 case ("c") -> groupDao.update(updateGroup());
-                case ("d") -> printGroupsWithStudents();
+                case ("d") -> printGroupsWithStudents(groupDao.getAll());
                 default -> out.println("Input the right letter!");
             }
             out.println(menuText);
@@ -69,9 +69,7 @@ public class GroupManager {
     }
 
     private Group updateGroup() {
-        var scanner = new Scanner(in);
-        out.println("Print group id:");
-        var id = scanner.nextInt();
+        var id = selectId();
         var group = createNewGroup();
         group.setId(id);
         return group;
@@ -79,7 +77,7 @@ public class GroupManager {
 
     private int selectId() {
         var scanner = new Scanner(in);
-        out.println("Print group id:");
+        out.println("Print group's id:");
         return scanner.nextInt();
     }
 
@@ -88,8 +86,8 @@ public class GroupManager {
         return groupDao.get(selectId());
     }
 
-    private void printGroupsWithStudents() {
-        groupDao.getAll().forEach(p -> out.printf("%d. %s%n%s", p.getId(),
+    private void printGroupsWithStudents(List<Group> groups) {
+        groups.forEach(p -> out.printf("%d. %s%n%s", p.getId(),
                 p.getName(), formatGroupStudents(p, studentDao)));
     }
 
@@ -112,7 +110,7 @@ public class GroupManager {
         return result;
     }
 
-    public List<Group> getLectureGroups(List<Group> sourceGroups) {
+    public List<Group> getLectureGroups() {
         var targetGroups = new ArrayList<Group>();
         var scanner = new Scanner(in);
         var menuText = """
@@ -127,10 +125,10 @@ public class GroupManager {
         var inputKey = scanner.next();
         while (!inputKey.equals("q")) {
             switch (inputKey) {
-                case ("a") -> addGroupToList(targetGroups, sourceGroups);
+                case ("a") -> addGroupToList(targetGroups, groupDao.getAll());
                 case ("b") -> {
                     printGroups(targetGroups);
-                    //deleteGroup(targetGroups);
+                    deleteGroup(targetGroups);
                 }
                 case ("c") -> printGroups(targetGroups);
                 default -> out.println("Input the right letter!");
@@ -139,6 +137,11 @@ public class GroupManager {
             inputKey = scanner.next();
         }
         return targetGroups;
+    }
+
+    private void deleteGroup(List<Group> groups) {
+        var id = selectId();
+        groups.remove(groupDao.get(id));
     }
 
     private void addGroupToList(List<Group> targetGroups, List<Group> sourceGroups) {

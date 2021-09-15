@@ -5,12 +5,16 @@ import java.util.List;
 
 public class Lecture {
 
+    private int id;
     private LocalDate date;
     private Course course;
     private List<Group> groups;
     private Audience audience;
     private Duration duration;
     private Teacher teacher;
+
+    public Lecture() {
+    }
 
     public Lecture(LocalDate date, Course course, List<Group> groups, Audience audience, Duration duration, Teacher teacher) {
         this.date = date;
@@ -19,6 +23,14 @@ public class Lecture {
         this.audience = audience;
         this.duration = duration;
         this.teacher = teacher;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public LocalDate getDate() {
