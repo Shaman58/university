@@ -4,26 +4,24 @@ import java.time.LocalDate;
 
 public class Vacation {
 
-    private int id;
+    private int vacationId;
     private LocalDate startDate;
     private LocalDate endDate;
-    private Teacher teacher;
 
-    public Vacation(LocalDate startDate, LocalDate endDate, Teacher teacher) {
+    public Vacation(LocalDate startDate, LocalDate endDate) {
         this.startDate = startDate;
         this.endDate = endDate;
-        this.teacher = teacher;
     }
 
     public Vacation() {
     }
 
-    public int getId() {
-        return id;
+    public int getVacationId() {
+        return vacationId;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setVacationId(int vacationId) {
+        this.vacationId = vacationId;
     }
 
     public LocalDate getStartDate() {
@@ -40,13 +38,5 @@ public class Vacation {
 
     public void setEndDate(LocalDate endDate) {
         this.endDate = endDate;
-    }
-
-    public Teacher getTeacher() {
-        return teacher;
-    }
-
-    public void setTeacher(Teacher teacher) {
-        this.teacher = teacher;
     }
 }

@@ -81,13 +81,13 @@ public class TeacherManager {
         while (!inputKey.equals("q")) {
             switch (inputKey) {
                 case ("a") -> teacherDao.create(createNewTeacher());
-                case ("b") -> teacherDao.delete(selectTeacher().getId());
+                case ("b") -> teacherDao.delete(selectId());
                 case ("c") -> teacherDao.update(updateTeacher());
                 case ("d") -> printTeachers(teacherDao.getAll());
                 case ("e") -> teacherDao.addCourseTeacher(courseManager.selectCourse(), selectTeacher());
-                case ("f") -> vacationManager.createVacation(selectTeacher());
+                case ("f") -> addVacationToTheTeacher();
                 case ("g") -> vacationManager.printVacations(vacationDao.getTeacherVacations(selectTeacher()));
-                case ("h") -> vacationDao.delete(vacationManager.selectTeacherVacation(selectTeacher()).getId());
+                case ("h") -> vacationDao.delete(vacationManager.selectTeacherVacation(selectTeacher()).getVacationId());
                 case ("i") -> courseManager.printCourses(courseDao.getTeacherCourses(selectTeacher()));
                 default -> out.println("Input the right letter!");
             }
@@ -98,7 +98,7 @@ public class TeacherManager {
 
     public void printTeachers(List<Teacher> teachers) {
         teachers.forEach(p -> out.printf("%d. %s %s %s %s %s %s %s %s %s%n",
-                p.getId(),
+                p.getTeacherId(),
                 p.getFirstName(),
                 p.getLastName(),
                 p.getEmail(),
@@ -137,7 +137,7 @@ public class TeacherManager {
     private Teacher updateTeacher() {
         var id = selectId();
         var teacher = createNewTeacher();
-        teacher.setId(id);
+        teacher.setTeacherId(id);
         return teacher;
     }
 
@@ -150,5 +150,11 @@ public class TeacherManager {
     public Teacher selectTeacher() {
         printTeachers(teacherDao.getAll());
         return teacherDao.get(selectId());
+    }
+
+    private void addVacationToTheTeacher() {
+        var vacation = vacationManager.createVacation();
+        vacationDao.create(vacation);
+        vacationDao.setTeacherVacation(vacation, selectTeacher());
     }
 }

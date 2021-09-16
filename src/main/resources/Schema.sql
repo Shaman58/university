@@ -1,22 +1,34 @@
-CREATE TABLE audience
+CREATE TABLE audiences
 (
-    id          SERIAL PRIMARY KEY NOT NULL,
+    audience_id SERIAL PRIMARY KEY NOT NULL,
     room_number INT,
     capacity    INT
 );
-CREATE TABLE groups
-(
-    id   SERIAL PRIMARY KEY NOT NULL,
-    name VARCHAR(255)
-);
 CREATE TABLE courses
 (
-    id   SERIAL PRIMARY KEY NOT NULL,
-    name VARCHAR(255)
+    course_id SERIAL PRIMARY KEY NOT NULL,
+    name      VARCHAR(255)
+);
+CREATE TABLE holidays
+(
+    holiday_id SERIAL PRIMARY KEY NOT NULL,
+    name       VARCHAR(255),
+    date       DATE
+);
+CREATE TABLE groups
+(
+    group_id SERIAL PRIMARY KEY NOT NULL,
+    name     VARCHAR(255)
+);
+CREATE TABLE durations
+(
+    duration_id SERIAL PRIMARY KEY NOT NULL,
+    start_time  time,
+    end_time    time
 );
 CREATE TABLE students
 (
-    id         SERIAL PRIMARY KEY NOT NULL,
+    student_id SERIAL PRIMARY KEY NOT NULL,
     first_name VARCHAR(255),
     last_name  VARCHAR(255),
     email      VARCHAR(255),
@@ -26,23 +38,11 @@ CREATE TABLE students
     address    VARCHAR(255),
     birth_date DATE,
     group_id   INT,
-    FOREIGN KEY (group_id) REFERENCES groups (id) ON DELETE CASCADE ON UPDATE CASCADE
-);
-CREATE TABLE holidays
-(
-    id   SERIAL PRIMARY KEY NOT NULL,
-    name VARCHAR(255),
-    date DATE
-);
-CREATE TABLE durations
-(
-    id         SERIAL PRIMARY KEY NOT NULL,
-    start_time time,
-    end_time   time
+    FOREIGN KEY (group_id) REFERENCES groups (group_id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 CREATE TABLE teachers
 (
-    teacher_id                SERIAL PRIMARY KEY NOT NULL,
+    teacher_id        SERIAL PRIMARY KEY NOT NULL,
     first_name        VARCHAR(255),
     last_name         VARCHAR(255),
     email             VARCHAR(255),
@@ -53,6 +53,27 @@ CREATE TABLE teachers
     birth_date        DATE,
     scientific_degree VARCHAR(255)
 );
+CREATE TABLE vacations
+(
+    vacation_id SERIAL PRIMARY KEY NOT NULL,
+    start_date  DATE,
+    end_date    DATE,
+    teacher_id  INT,
+    FOREIGN KEY (teacher_id) REFERENCES teachers (teacher_id) ON DELETE CASCADE ON UPDATE CASCADE
+);
+CREATE TABLE lectures
+(
+    lecture_id  SERIAL PRIMARY KEY NOT NULL,
+    date        DATE,
+    course_id   INT,
+    audience_id INT,
+    duration_id INT,
+    teacher_id  INT,
+    FOREIGN KEY (course_id) REFERENCES courses (course_id) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (audience_id) REFERENCES audiences (audience_id) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (duration_id) REFERENCES durations (duration_id) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (teacher_id) REFERENCES teachers (teacher_id) ON DELETE CASCADE ON UPDATE CASCADE
+);
 CREATE TABLE courses_teachers
 (
     course_id  INT,
@@ -61,11 +82,10 @@ CREATE TABLE courses_teachers
     FOREIGN KEY (teacher_id) REFERENCES teachers (teacher_id) ON DELETE CASCADE ON UPDATE CASCADE,
     UNIQUE (course_id, teacher_id)
 );
-CREATE TABLE vacations
+CREATE TABLE groups_lectures
 (
-    id         SERIAL PRIMARY KEY NOT NULL,
-    start_date DATE,
-    end_date   DATE,
-    teacher_id INT,
-    FOREIGN KEY (teacher_id) REFERENCES teachers (teacher_id) ON DELETE CASCADE ON UPDATE CASCADE
+    group_id   INT,
+    lecture_id INT,
+    FOREIGN KEY (group_id) REFERENCES groups (group_id) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (lecture_id) REFERENCES lectures (lecture_id) ON DELETE CASCADE ON UPDATE CASCADE
 );

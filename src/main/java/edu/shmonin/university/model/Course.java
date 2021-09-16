@@ -3,7 +3,6 @@ package edu.shmonin.university.model;
 public class Course {
 
     private int courseId;
-
     private String name;
 
     public Course() {

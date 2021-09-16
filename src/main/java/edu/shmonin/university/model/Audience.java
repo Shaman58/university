@@ -2,7 +2,7 @@ package edu.shmonin.university.model;
 
 public class Audience {
 
-    private int id;
+    private int audienceId;
     private int roomNumber;
     private int capacity;
 
@@ -10,7 +10,7 @@ public class Audience {
     }
 
     public Audience(int id, int roomNumber, int capacity) {
-        this.id = id;
+        this.audienceId = id;
         this.roomNumber = roomNumber;
         this.capacity = capacity;
     }
@@ -20,12 +20,12 @@ public class Audience {
         this.capacity = capacity;
     }
 
-    public int getId() {
-        return id;
+    public int getAudienceId() {
+        return audienceId;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setAudienceId(int audienceId) {
+        this.audienceId = audienceId;
     }
 
     public int getRoomNumber() {

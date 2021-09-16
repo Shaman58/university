@@ -1,17 +1,13 @@
 package edu.shmonin.university.menu;
 
 import edu.shmonin.university.dao.LectureDao;
-import edu.shmonin.university.model.Group;
 import edu.shmonin.university.model.Lecture;
-import edu.shmonin.university.model.Student;
-import edu.shmonin.university.model.Teacher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Scanner;
-import java.util.stream.Collectors;
 
 import static java.lang.System.in;
 import static java.lang.System.out;
@@ -84,7 +80,7 @@ public class LectureManager {
 
     public void printLectures(List<Lecture> lectures) {
         lectures.forEach(p -> out.printf("%d. %s %s %s %s %s %s %s%n",
-                p.getId(),
+                p.getLectureId(),
                 p.getDate(),
                 p.getCourse().getName(),
                 p.getAudience().getRoomNumber(),
@@ -93,19 +89,6 @@ public class LectureManager {
                 p.getTeacher().getFirstName(),
                 p.getTeacher().getLastName()
         ));
-    }
-
-    private Lecture updateLecture() {
-        var id = selectId();
-        var lecture = createNewLecture();
-        lecture.setId(id);
-        return lecture;
-    }
-
-    private int selectId() {
-        var scanner = new Scanner(in);
-        out.println("Print course id:");
-        return scanner.nextInt();
     }
 
     private Lecture createNewLecture() {
@@ -120,38 +103,16 @@ public class LectureManager {
         return new Lecture(date, course, targetGroups, audience, duration, teacher);
     }
 
-    private Lecture selectLecture(List<Lecture> lectures) {
+    private Lecture updateLecture() {
+        var id = selectId();
+        var lecture = createNewLecture();
+        lecture.setLectureId(id);
+        return lecture;
+    }
+
+    private int selectId() {
         var scanner = new Scanner(in);
-        out.println("Print number:");
-        var number = scanner.nextInt();
-        while (number < 1 || number > lectures.size()) {
-            out.println("Print correct number of lecture!");
-        }
-        return lectures.get(number - 1);
-    }
-
-    private void deleteLecture(List<Lecture> lectures) {
-        var scanner = new Scanner(in);
-        out.println("Print sequence number of lecture:");
-        var number = scanner.nextInt();
-        lectures.remove(number - 1);
-    }
-
-    public List<Lecture> getLecturesForSchedule(List<Lecture> lectures, LocalDate startDate, LocalDate endDate, Teacher teacher) {
-        return lectures.
-                stream().
-                filter(p -> p.getDate().isAfter(startDate) && p.getDate().isBefore(endDate) && (p.getTeacher().equals(teacher))).
-                collect(Collectors.toList());
-    }
-
-    public List<Lecture> getLecturesForSchedule(List<Lecture> lectures, LocalDate startDate, LocalDate endDate, Student student) {
-        return lectures.
-                stream().
-                filter(p -> p.getDate().isAfter(startDate) && p.getDate().isBefore(endDate) && (studentInGroups(p.getGroups(), student))).
-                collect(Collectors.toList());
-    }
-
-    private boolean studentInGroups(List<Group> groups, Student student) {
-        return true;//groups.stream().anyMatch(p -> p.getStudents().contains(student));
+        out.println("Print course id:");
+        return scanner.nextInt();
     }
 }

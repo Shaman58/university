@@ -1,13 +1,14 @@
 package edu.shmonin.university.model;
 
 public class Student extends Human {
-    private Group group;
 
-    public Group getGroup() {
-        return group;
+    private int studentId;
+
+    public int getStudentId() {
+        return studentId;
     }
 
-    public void setGroup(Group group) {
-        this.group = group;
+    public void setStudentId(int studentId) {
+        this.studentId = studentId;
     }
 }

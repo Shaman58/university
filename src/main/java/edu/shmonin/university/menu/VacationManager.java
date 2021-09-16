@@ -25,16 +25,16 @@ public class VacationManager {
 
     public void printVacations(List<Vacation> vacations) {
         vacations
-                .forEach(p -> out.println(p.getId() + ". " + p.getStartDate() + " " + p.getEndDate()));
+                .forEach(p -> out.println(p.getVacationId() + ". " + p.getStartDate() + " " + p.getEndDate()));
     }
 
-    public void createVacation(Teacher teacher) {
+    public Vacation createVacation() {
         var scanner = new Scanner(in);
         out.println("Print start date of vacation(YYYY-MM-DD):");
         var startDate = LocalDate.parse(scanner.nextLine());
         out.println("Print end date of vacation(YYYY-MM-DD):");
         var endDate = LocalDate.parse(scanner.nextLine());
-        vacationDao.create(new Vacation(startDate, endDate, teacher));
+        return new Vacation(startDate, endDate);
     }
 
     private int selectId() {
@@ -47,6 +47,6 @@ public class VacationManager {
         var vacations = vacationDao.getTeacherVacations(teacher);
         printVacations(vacations);
         var id = selectId();
-        return vacations.stream().filter(p -> p.getId() == id).findAny().orElse(null);
+        return vacations.stream().filter(p -> p.getVacationId() == id).findAny().orElse(null);
     }
 }

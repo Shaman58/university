@@ -1,6 +1,5 @@
 package edu.shmonin.university;
 
-import edu.shmonin.university.dao.LectureDao;
 import edu.shmonin.university.menu.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -21,6 +20,7 @@ public class MenuRunner {
     private TeacherManager teacherManager;
     private LectureManager lectureManager;
     private AudienceManager audienceManager;
+    private ScheduleManager scheduleManager;
 
     @Autowired
     public void setHolidayManager(HolidayManager holidayManager) {
@@ -62,6 +62,11 @@ public class MenuRunner {
         this.audienceManager = audienceManager;
     }
 
+    @Autowired
+    public void setScheduleManager(ScheduleManager scheduleManager) {
+        this.scheduleManager = scheduleManager;
+    }
+
     public void run() {
         var scanner = new Scanner(in);
         var menuText = """
@@ -89,93 +94,11 @@ public class MenuRunner {
                 case ("f") -> lectureManager.manageLectures();
                 case ("g") -> durationManager.manageDurations();
                 case ("h") -> courseManager.manageCourses();
-                //case ("i") -> scheduleManager();
+                case ("i") -> scheduleManager.scheduleManager();
                 default -> out.println("Input the right letter!");
             }
             out.println(menuText);
             inputKey = scanner.next();
         }
     }
-
-//    private void scheduleManager() {
-//        var teacherManager = new TeacherManager();
-//        var lectureManager = new LectureManager();
-//        var studentManager = new StudentManager();
-//        var scanner = new Scanner(in);
-//        var menuText = """
-//                Select menu item:
-//                a. For teachers
-//                b. For students
-//                q. quit
-//                Input menu letter:""";
-//        out.println(menuText);
-//        var inputKey = scanner.next();
-//        while (!inputKey.equals("q")) {
-//            switch (inputKey) {
-//                case ("a") -> {
-//                    teacherManager.printTeachers(university.getTeachers());
-//                    var teacher = teacherManager.selectTeacher(university.getTeachers());
-//                    var range = getDateRange();
-//                    lectureManager.printLectures(lectureManager.getLecturesForSchedule(university.getLectures(), range.getStartDate(), range.getEndDate(), teacher));
-//                }
-//                case ("b") -> {
-//                    studentManager.printStudents(university.getStudents());
-//                    var student = studentManager.selectStudent(university.getStudents());
-//                    var range = getDateRange();
-//                    lectureManager.printLectures(lectureManager.getLecturesForSchedule(university.getLectures(), range.getStartDate(), range.getEndDate(), student));
-//                }
-//                default -> out.println("Input the right letter!");
-//            }
-//            out.println(menuText);
-//            inputKey = scanner.next();
-//        }
-//    }
-//
-//    private DateRange getDateRange() {
-//        var scanner = new Scanner(in);
-//        var menuText = """
-//                Select menu item:
-//                a. For day
-//                b. For month
-//                q. quit
-//                Input menu letter:""";
-//        out.println(menuText);
-//        var inputKey = scanner.nextLine();
-//        while (!inputKey.equals("q")) {
-//            switch (inputKey) {
-//                case ("a") -> {
-//                    out.println("Print date(YYYY-MM-DD):");
-//                    var date = LocalDate.parse(scanner.nextLine());
-//                    return new DateRange(date, date.plusDays(1));
-//                }
-//                case ("b") -> {
-//                    out.println("Print start date(YYYY-MM-DD:");
-//                    var date = LocalDate.parse(scanner.nextLine());
-//                    return new DateRange(date, date.plusMonths(1));
-//                }
-//                default -> out.println("Input the right letter!");
-//            }
-//            out.println(menuText);
-//            inputKey = scanner.next();
-//        }
-//        throw new NullPointerException();
-//    }
 }
-
-//class DateRange {
-//    private final LocalDate startDate;
-//    private final LocalDate endDate;
-//
-//    public DateRange(LocalDate startDate, LocalDate endDate) {
-//        this.startDate = startDate;
-//        this.endDate = endDate;
-//    }
-//
-//    public LocalDate getStartDate() {
-//        return startDate;
-//    }
-//
-//    public LocalDate getEndDate() {
-//        return endDate;
-//    }
-//}

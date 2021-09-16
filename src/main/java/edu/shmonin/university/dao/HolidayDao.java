@@ -11,11 +11,11 @@ import java.util.List;
 @Repository
 public class HolidayDao implements Dao<Holiday> {
 
-    private static final String GET_QUERY = "SELECT * FROM holidays WHERE id=?";
+    private static final String GET_QUERY = "SELECT * FROM holidays WHERE holiday_id=?";
     private static final String GET_ALL_QUERY = "SELECT * FROM holidays";
     private static final String CREATE_QUERY = "INSERT INTO holidays(name, date) VALUES(?,?)";
-    private static final String UPDATE_QUERY = "UPDATE holidays SET name=?, date=? WHERE id=?";
-    private static final String DELETE_QUERY = "DELETE FROM holidays WHERE id=?";
+    private static final String UPDATE_QUERY = "UPDATE holidays SET name=?, date=? WHERE holiday_id=?";
+    private static final String DELETE_QUERY = "DELETE FROM holidays WHERE holiday_id=?";
 
     private JdbcTemplate jdbcTemplate;
 
@@ -42,7 +42,7 @@ public class HolidayDao implements Dao<Holiday> {
 
     @Override
     public void update(Holiday entity) {
-        jdbcTemplate.update(UPDATE_QUERY, entity.getName(), entity.getDate(), entity.getId());
+        jdbcTemplate.update(UPDATE_QUERY, entity.getName(), entity.getDate(), entity.getHolidayId());
     }
 
     @Override

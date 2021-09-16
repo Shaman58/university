@@ -20,6 +20,7 @@ public class GroupManager {
 
     private GroupDao groupDao;
     private StudentDao studentDao;
+    private StudentManager studentManager;
 
     @Autowired
     public void setGroupDao(GroupDao groupDao) {
@@ -31,6 +32,11 @@ public class GroupManager {
         this.studentDao = studentDao;
     }
 
+    @Autowired
+    public void setStudentManager(StudentManager studentManager) {
+        this.studentManager = studentManager;
+    }
+
     public void manageGroups() {
         var scanner = new Scanner(in);
         var menuText = """
@@ -40,6 +46,7 @@ public class GroupManager {
                 b. Delete group
                 c. Update group
                 d. Print groups
+                e. Add student to the group
                 q. Close group's manager
                 Input menu letter:""";
         out.println(menuText);
@@ -50,6 +57,7 @@ public class GroupManager {
                 case ("b") -> groupDao.delete(selectId());
                 case ("c") -> groupDao.update(updateGroup());
                 case ("d") -> printGroupsWithStudents(groupDao.getAll());
+                case ("e") -> studentDao.addStudentToTheGroup(studentManager.selectStudent(), selectGroup());
                 default -> out.println("Input the right letter!");
             }
             out.println(menuText);
@@ -58,7 +66,12 @@ public class GroupManager {
     }
 
     private void printGroups(List<Group> groups) {
-        groups.forEach(p -> out.printf("%d. %s%n", p.getId(), p.getName()));
+        groups.forEach(p -> out.printf("%d. %s%n", p.getGroupId(), p.getName()));
+    }
+
+    private void printGroupsWithStudents(List<Group> groups) {
+        groups.forEach(p -> out.printf("%d. %s%n%s", p.getGroupId(),
+                p.getName(), formatGroupStudents(p)));
     }
 
     private Group createNewGroup() {
@@ -71,7 +84,7 @@ public class GroupManager {
     private Group updateGroup() {
         var id = selectId();
         var group = createNewGroup();
-        group.setId(id);
+        group.setGroupId(id);
         return group;
     }
 
@@ -86,15 +99,10 @@ public class GroupManager {
         return groupDao.get(selectId());
     }
 
-    private void printGroupsWithStudents(List<Group> groups) {
-        groups.forEach(p -> out.printf("%d. %s%n%s", p.getId(),
-                p.getName(), formatGroupStudents(p, studentDao)));
-    }
-
-    private String formatGroupStudents(Group group, StudentDao studentDao) {
+    private String formatGroupStudents(Group group) {
         var result = "";
         var serial = new AtomicInteger(1);
-        var students = studentDao.selectStudentsRelatedTOTheGroup(group);
+        var students = studentDao.selectStudentsRelatedToTheGroup(group);
         for (Student student : students) {
             result = result.concat(String.format("  %d. %s %s %s %s %s %s %s %s%n",
                     serial.getAndIncrement(),
@@ -125,11 +133,8 @@ public class GroupManager {
         var inputKey = scanner.next();
         while (!inputKey.equals("q")) {
             switch (inputKey) {
-                case ("a") -> addGroupToList(targetGroups, groupDao.getAll());
-                case ("b") -> {
-                    printGroups(targetGroups);
-                    deleteGroup(targetGroups);
-                }
+                case ("a") -> targetGroups.add(selectGroup());
+                case ("b") -> deleteGroup(targetGroups);
                 case ("c") -> printGroups(targetGroups);
                 default -> out.println("Input the right letter!");
             }
@@ -140,14 +145,8 @@ public class GroupManager {
     }
 
     private void deleteGroup(List<Group> groups) {
+        printGroups(groups);
         var id = selectId();
         groups.remove(groupDao.get(id));
-    }
-
-    private void addGroupToList(List<Group> targetGroups, List<Group> sourceGroups) {
-        var groupList = new ArrayList<>(sourceGroups);
-        groupList.removeAll(targetGroups);
-        printGroups(groupList);
-        targetGroups.add(selectGroup());
     }
 }

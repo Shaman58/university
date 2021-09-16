@@ -50,7 +50,7 @@ public class DurationManager {
 
     public void printDurations(List<Duration> durations) {
         durations
-                .forEach(p -> out.println(p.getId() + ". " + p.getStartTime() + " " + p.getEndTime()));
+                .forEach(p -> out.println(p.getDurationId() + ". " + p.getStartTime() + " " + p.getEndTime()));
     }
 
     private Duration createNewDuration() {
@@ -65,7 +65,7 @@ public class DurationManager {
     private Duration updateDuration() {
         var id = selectId();
         var duration = createNewDuration();
-        duration.setId(id);
+        duration.setDurationId(id);
         return duration;
     }
 

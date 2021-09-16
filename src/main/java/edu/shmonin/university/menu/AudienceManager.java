@@ -49,7 +49,7 @@ public class AudienceManager {
 
     public void printAudiences(List<Audience> audiences) {
         audiences
-                .forEach(p -> out.println(p.getId() + ". " + p.getRoomNumber() + " capacity " + p.getCapacity()));
+                .forEach(p -> out.println(p.getAudienceId() + ". " + p.getRoomNumber() + " capacity " + p.getCapacity()));
     }
 
 
@@ -65,7 +65,7 @@ public class AudienceManager {
     private Audience updateAudience() {
         var id = selectId();
         var audience = createNewAudience();
-        audience.setId(id);
+        audience.setAudienceId(id);
         return audience;
     }
 

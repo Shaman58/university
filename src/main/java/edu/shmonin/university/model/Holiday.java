@@ -4,7 +4,7 @@ import java.time.LocalDate;
 
 public class Holiday {
 
-    private int id;
+    private int holidayId;
     private String name;
     private LocalDate date;
 
@@ -16,12 +16,12 @@ public class Holiday {
         this.date = date;
     }
 
-    public int getId() {
-        return id;
+    public int getHolidayId() {
+        return holidayId;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setHolidayId(int holidayId) {
+        this.holidayId = holidayId;
     }
 
     public String getName() {

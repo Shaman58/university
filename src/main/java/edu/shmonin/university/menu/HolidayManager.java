@@ -50,7 +50,7 @@ public class HolidayManager {
 
     private void printHolidays(List<Holiday> holidays) {
         holidays
-                .forEach(p -> out.println(p.getId() + ". " + p.getName() + " " + p.getDate()));
+                .forEach(p -> out.println(p.getHolidayId() + ". " + p.getName() + " " + p.getDate()));
     }
 
     private Holiday createNewHoliday() {
@@ -65,7 +65,7 @@ public class HolidayManager {
     private Holiday updateHoliday() {
         var id = selectId();
         var holiday = createNewHoliday();
-        holiday.setId(id);
+        holiday.setHolidayId(id);
         return holiday;
     }
 

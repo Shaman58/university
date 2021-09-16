@@ -1,6 +1,7 @@
 package edu.shmonin.university.dao;
 
 import edu.shmonin.university.model.Course;
+import edu.shmonin.university.model.Lecture;
 import edu.shmonin.university.model.Teacher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -17,7 +18,8 @@ public class CourseDao implements Dao<Course> {
     private static final String CREATE_QUERY = "INSERT INTO courses(name) VALUES(?)";
     private static final String UPDATE_QUERY = "UPDATE courses SET name=? WHERE course_id=?";
     private static final String DELETE_QUERY = "DELETE FROM courses WHERE course_id=?";
-    private static final String GET_TEACHER_COURSES_QUERY = "SELECT * FROM courses_teachers NATURAL JOIN courses WHERE teacher_id=?";
+    private static final String GET_TEACHER_COURSES_QUERY = "SELECT * FROM courses NATURAL JOIN courses_teachers WHERE teacher_id=?";
+    private static final String GET_LECTURE_COURSE_QUERY = "SELECT * FROM courses NAtURAL JOIN lectures WHERE lecture_id=?";
 
     private JdbcTemplate jdbcTemplate;
 
@@ -53,6 +55,11 @@ public class CourseDao implements Dao<Course> {
     }
 
     public List<Course> getTeacherCourses(Teacher teacher) {
-        return jdbcTemplate.query(GET_TEACHER_COURSES_QUERY, new BeanPropertyRowMapper<>(Course.class), teacher.getId());
+        return jdbcTemplate.query(GET_TEACHER_COURSES_QUERY, new BeanPropertyRowMapper<>(Course.class), teacher.getTeacherId());
+    }
+
+    public Course getLectureCourse(Lecture lecture) {
+        return jdbcTemplate.query(GET_LECTURE_COURSE_QUERY, new BeanPropertyRowMapper<>(Course.class), lecture.getLectureId()).
+                stream().findAny().orElse(null);
     }
 }

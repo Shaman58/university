@@ -16,17 +16,11 @@ import static java.lang.System.out;
 public class StudentManager {
 
     private StudentDao studentDao;
-    private GroupManager groupManager;
     private GenderManager genderManager;
 
     @Autowired
     public void setStudentDao(StudentDao studentDao) {
         this.studentDao = studentDao;
-    }
-
-    @Autowired
-    public void setGroupManager(GroupManager groupManager) {
-        this.groupManager = groupManager;
     }
 
     @Autowired
@@ -43,7 +37,6 @@ public class StudentManager {
                 b. Delete student
                 c. Update student
                 d. Print students
-                e. Add student to the group
                 q. Close student's manager
                 Input menu letter:""";
         out.println(menuText);
@@ -54,7 +47,6 @@ public class StudentManager {
                 case ("b") -> studentDao.delete(selectId());
                 case ("c") -> studentDao.update(updateStudent());
                 case ("d") -> printStudents(studentDao.getAll());
-                case ("e") -> studentDao.addStudentToTheGroup(selectStudent(), groupManager.selectGroup());
                 default -> out.println("Input the right letter!");
             }
             out.println(menuText);
@@ -63,8 +55,8 @@ public class StudentManager {
     }
 
     public void printStudents(List<Student> students) {
-        students.forEach(p -> out.printf("%d. %s %s %s %s %s %s %s %s %s%n",
-                p.getId(),
+        students.forEach(p -> out.printf("%d. %s %s %s %s %s %s %s %s%n",
+                p.getStudentId(),
                 p.getFirstName(),
                 p.getLastName(),
                 p.getEmail(),
@@ -72,8 +64,7 @@ public class StudentManager {
                 p.getGender(),
                 p.getPhone(),
                 p.getAddress(),
-                p.getBirthDate(),
-                p.getGroup().getName()));
+                p.getBirthDate()));
     }
 
     public Student createNewStudent() {
@@ -101,7 +92,7 @@ public class StudentManager {
     private Student updateStudent() {
         var id = selectId();
         var student = createNewStudent();
-        student.setId(id);
+        student.setStudentId(id);
         return student;
     }
 

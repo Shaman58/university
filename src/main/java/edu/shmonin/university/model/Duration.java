@@ -4,7 +4,7 @@ import java.time.LocalTime;
 
 public class Duration {
 
-    private int id;
+    private int durationId;
     private LocalTime startTime;
     private LocalTime endTime;
 
@@ -16,12 +16,12 @@ public class Duration {
         this.endTime = endTime;
     }
 
-    public int getId() {
-        return id;
+    public int getDurationId() {
+        return durationId;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setDurationId(int durationId) {
+        this.durationId = durationId;
     }
 
     public LocalTime getStartTime() {

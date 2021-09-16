@@ -5,7 +5,7 @@ import java.util.List;
 
 public class Lecture {
 
-    private int id;
+    private int lectureId;
     private LocalDate date;
     private Course course;
     private List<Group> groups;
@@ -25,12 +25,12 @@ public class Lecture {
         this.teacher = teacher;
     }
 
-    public int getId() {
-        return id;
+    public int getLectureId() {
+        return lectureId;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setLectureId(int lectureId) {
+        this.lectureId = lectureId;
     }
 
     public LocalDate getDate() {

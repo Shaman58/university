@@ -1,9 +1,12 @@
 package edu.shmonin.university.model;
 
+import java.util.List;
+
 public class Group {
 
-    private int id;
+    private int groupId;
     private String name;
+    private List<Student> students;
 
     public Group() {
     }
@@ -12,12 +15,12 @@ public class Group {
         this.name = name;
     }
 
-    public int getId() {
-        return id;
+    public int getGroupId() {
+        return groupId;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setGroupId(int groupId) {
+        this.groupId = groupId;
     }
 
     public String getName() {
@@ -26,5 +29,13 @@ public class Group {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public List<Student> getStudents() {
+        return students;
+    }
+
+    public void setStudents(List<Student> students) {
+        this.students = students;
     }
 }

@@ -1,10 +1,10 @@
 package edu.shmonin.university.model;
 
 import java.time.LocalDate;
+import java.util.Objects;
 
 public abstract class Human {
 
-    private int id;
     private String firstName;
     private String lastName;
     private String email;
@@ -15,14 +15,6 @@ public abstract class Human {
     private LocalDate birthDate;
 
     protected Human() {
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public String getFirstName() {
@@ -92,20 +84,22 @@ public abstract class Human {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof Human)) return false;
 
         var human = (Human) o;
 
-        if (!firstName.equals(human.firstName)) return false;
-        if (!lastName.equals(human.lastName)) return false;
-        return birthDate.equals(human.birthDate);
+        if (!Objects.equals(firstName, human.firstName)) return false;
+        if (!Objects.equals(lastName, human.lastName)) return false;
+        if (gender != human.gender) return false;
+        return Objects.equals(birthDate, human.birthDate);
     }
 
     @Override
     public int hashCode() {
-        int result = firstName.hashCode();
-        result = 31 * result + lastName.hashCode();
-        result = 31 * result + birthDate.hashCode();
+        int result = firstName != null ? firstName.hashCode() : 0;
+        result = 31 * result + (lastName != null ? lastName.hashCode() : 0);
+        result = 31 * result + (gender != null ? gender.hashCode() : 0);
+        result = 31 * result + (birthDate != null ? birthDate.hashCode() : 0);
         return result;
     }
 }
