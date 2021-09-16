@@ -13,6 +13,7 @@
         <maven.compiler.target>15</maven.compiler.target>
         <spring.version>5.3.9</spring.version>
         <postrge.version>42.2.23</postrge.version>
+        <junit.version>5.8.0</junit.version>
     </properties>
 
     <dependencies>
@@ -33,6 +34,13 @@
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
             <version>${postrge.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
         </dependency>
 
     </dependencies>
