@@ -18,8 +18,10 @@ public class CourseDao implements Dao<Course> {
     private static final String CREATE_QUERY = "INSERT INTO courses(name) VALUES(?)";
     private static final String UPDATE_QUERY = "UPDATE courses SET name=? WHERE course_id=?";
     private static final String DELETE_QUERY = "DELETE FROM courses WHERE course_id=?";
-    private static final String GET_TEACHER_COURSES_QUERY = "SELECT * FROM courses NATURAL JOIN courses_teachers WHERE teacher_id=?";
-    private static final String GET_LECTURE_COURSE_QUERY = "SELECT * FROM courses NAtURAL JOIN lectures WHERE lecture_id=?";
+    private static final String GET_TEACHER_COURSES_QUERY =
+            "SELECT course_id, name FROM courses NATURAL JOIN courses_teachers WHERE teacher_id=?";
+    private static final String GET_LECTURE_COURSE_QUERY =
+            "SELECT course_id, name FROM courses NAtURAL JOIN lectures WHERE lecture_id=?";
 
     private JdbcTemplate jdbcTemplate;
 

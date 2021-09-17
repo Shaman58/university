@@ -17,7 +17,8 @@ public class AudienceDao implements Dao<Audience> {
     private static final String CREATE_QUERY = "INSERT INTO audiences(room_number, capacity) VALUES(?,?)";
     private static final String UPDATE_QUERY = "UPDATE audiences SET room_number=?,capacity=? WHERE audience_id=?";
     private static final String DELETE_QUERY = "DELETE FROM audiences WHERE audience_id=?";
-    private static final String GET_LECTURE_AUDIENCE = "SELECT * FROM audiences NATURAL JOIN lectures WHERE lecture_id=?";
+    private static final String GET_LECTURE_AUDIENCE =
+            "SELECT audience_id, room_number, capacity FROM audiences NATURAL JOIN lectures WHERE lecture_id=?";
 
     private JdbcTemplate jdbcTemplate;
 

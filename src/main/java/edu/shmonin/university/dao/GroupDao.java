@@ -18,7 +18,8 @@ public class GroupDao implements Dao<Group> {
     private static final String CREATE_QUERY = "INSERT INTO groups(name) VALUES(?)";
     private static final String UPDATE_QUERY = "UPDATE groups SET name=? WHERE group_id=?";
     private static final String DELETE_QUERY = "DELETE FROM groups WHERE group_id=?";
-    private static final String GET_LECTURE_GROUPS_QUERY = "SELECT * FROM groups NATURAL JOIN groups_lectures WHERE lecture_id=?";
+    private static final String GET_LECTURE_GROUPS_QUERY =
+            "SELECT group_id, name FROM groups NATURAL JOIN groups_lectures WHERE lecture_id=?";
 
     private JdbcTemplate jdbcTemplate;
     private StudentDao studentDao;

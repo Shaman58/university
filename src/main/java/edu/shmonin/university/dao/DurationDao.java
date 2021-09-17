@@ -17,7 +17,8 @@ public class DurationDao implements Dao<Duration> {
     private static final String CREATE_QUERY = "INSERT INTO durations(start_time, end_time) VALUES (?,?)";
     private static final String UPDATE_QUERY = "UPDATE durations SET start_time=?, end_time=? WHERE duration_id=?";
     private static final String DELETE_QUERY = "DELETE FROM durations WHERE duration_id=?";
-    private static final String GET_LECTURE_DURATION_QUERY = "SELECT * FROM durations NATURAL JOIN lectures WHERE lecture_id=?";
+    private static final String GET_LECTURE_DURATION_QUERY =
+            "SELECT duration_id, start_time, end_time FROM durations NATURAL JOIN lectures WHERE lecture_id=?";
 
     private JdbcTemplate jdbcTemplate;
 

@@ -20,21 +20,16 @@ public class TeacherDao implements Dao<Teacher> {
     private static final String UPDATE_QUERY = "UPDATE teachers SET first_name=?,last_name=?,email=?,country=?,gender=?,phone=?,address=?,birth_date=?, scientific_degree=? WHERE teacher_id=?";
     private static final String DELETE_QUERY = "DELETE FROM teachers WHERE teacher_id=?";
     private static final String CREATE_COURSE_TEACHER_QUERY = "INSERT INTO courses_teachers(course_id, teacher_id) VALUES (?,?)";
-    private static final String GET_LECTURE_TEACHER_QUERY = "SELECT * FROM teachers NATURAL JOIN lectures WHERE lecture_id=?";
+    private static final String GET_LECTURE_TEACHER_QUERY =
+            "SELECT teacher_id, first_name, last_name, email, country, gender, phone, address, birth_date, scientific_degree FROM teachers NATURAL JOIN lectures WHERE lecture_id=?";
 
     private JdbcTemplate jdbcTemplate;
-    private TeacherMapper teacherMapper;
     private CourseDao courseDao;
     private VacationDao vacationDao;
 
     @Autowired
     public void setJdbcTemplate(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
-    }
-
-    @Autowired
-    public void setTeacherMapper(TeacherMapper teacherMapper) {
-        this.teacherMapper = teacherMapper;
     }
 
     @Autowired
@@ -49,7 +44,7 @@ public class TeacherDao implements Dao<Teacher> {
 
     @Override
     public Teacher get(int id) {
-        return jdbcTemplate.query(GET_QUERY, teacherMapper, id).
+        return jdbcTemplate.query(GET_QUERY, new BeanPropertyRowMapper<>(Teacher.class), id).
                 stream().peek(p -> p.setCourses(courseDao.getTeacherCourses(p))).
                 peek(p -> p.setVacations(vacationDao.getTeacherVacations(p))).
                 findAny().orElse(null);
@@ -57,7 +52,7 @@ public class TeacherDao implements Dao<Teacher> {
 
     @Override
     public List<Teacher> getAll() {
-        return jdbcTemplate.query(GET_ALL_QUERY, teacherMapper).
+        return jdbcTemplate.query(GET_ALL_QUERY, new BeanPropertyRowMapper<>(Teacher.class)).
                 stream().peek(p -> p.setCourses(courseDao.getTeacherCourses(p))).
                 peek(p -> p.setVacations(vacationDao.getTeacherVacations(p))).
                 collect(Collectors.toList());
