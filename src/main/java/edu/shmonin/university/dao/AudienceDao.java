@@ -45,7 +45,7 @@ public class AudienceDao implements Dao<Audience> {
 
     @Override
     public void update(Audience entity) {
-        jdbcTemplate.update(UPDATE_QUERY, entity.getCapacity(), entity.getRoomNumber(), entity.getAudienceId());
+        jdbcTemplate.update(UPDATE_QUERY, entity.getRoomNumber(), entity.getCapacity(), entity.getAudienceId());
     }
 
     @Override
