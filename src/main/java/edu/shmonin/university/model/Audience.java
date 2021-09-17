@@ -43,4 +43,22 @@ public class Audience {
     public void setCapacity(int capacity) {
         this.capacity = capacity;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Audience)) return false;
+
+        var audience = (Audience) o;
+
+        if (roomNumber != audience.roomNumber) return false;
+        return capacity == audience.capacity;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = roomNumber;
+        result = 31 * result + capacity;
+        return result;
+    }
 }
