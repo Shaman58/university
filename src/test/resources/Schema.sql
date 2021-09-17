@@ -1,3 +1,14 @@
+DROP TABLE IF EXISTS groups_lectures;
+DROP TABLE IF EXISTS courses_teachers;
+DROP TABLE IF EXISTS lectures;
+DROP TABLE IF EXISTS vacations;
+DROP TABLE IF EXISTS teachers;
+DROP TABLE IF EXISTS students;
+DROP TABLE IF EXISTS durations;
+DROP TABLE IF EXISTS groups;
+DROP TABLE IF EXISTS holidays;
+DROP TABLE IF EXISTS courses;
+DROP TABLE IF EXISTS audiences;
 CREATE TABLE audiences
 (
     audience_id SERIAL PRIMARY KEY NOT NULL,

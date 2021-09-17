@@ -9,8 +9,7 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 
 import javax.sql.DataSource;
 
-@Configuration
-@ComponentScan("edu.shmonin.university")
+@Configuration@ComponentScan("edu.shmonin.university")
 public class SpringTestConfig {
 
     @Bean
