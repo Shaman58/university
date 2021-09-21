@@ -1,5 +1,6 @@
 package edu.shmonin.university.dao;
 
+import config.TestConfig;
 import edu.shmonin.university.model.Audience;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,12 +11,16 @@ import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@SpringJUnitConfig(SpringTestConfig.class)
+@SpringJUnitConfig(TestConfig.class)
 @Sql({"classpath:Schema.sql", "classpath:test-data.sql"})
 class AudienceDaoTest {
 
-    @Autowired
     private AudienceDao audienceDao;
+
+    @Autowired
+    public void setAudienceDao(AudienceDao audienceDao) {
+        this.audienceDao = audienceDao;
+    }
 
     @Test
     void givenId_whenGet_thenReturnAudience() {

@@ -1,4 +1,4 @@
-package edu.shmonin.university;
+package config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -13,7 +13,7 @@ import javax.sql.DataSource;
 @Configuration
 @ComponentScan("edu.shmonin.university")
 @PropertySource("classpath:db.properties")
-public class SpringConfig {
+public class ApplicationConfig {
 
     @Value("${db.driver}")
     private String dbDriverClass;
@@ -24,7 +24,8 @@ public class SpringConfig {
     @Value("${db.password}")
     private String dbPassword;
 
-    public DataSource dataSource() {
+    @Bean
+    public DataSource getDataSource() {
         var dataSource = new DriverManagerDataSource();
         dataSource.setDriverClassName(dbDriverClass);
         dataSource.setUrl(dbUrl);
@@ -35,7 +36,7 @@ public class SpringConfig {
     }
 
     @Bean
-    public JdbcTemplate jdbcTemplate() {
-        return new JdbcTemplate(dataSource());
+    public JdbcTemplate getJdbcTemplate(DataSource dataSource) {
+        return new JdbcTemplate(dataSource);
     }
 }
