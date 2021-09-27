@@ -2,7 +2,7 @@ package edu.shmonin.university.model;
 
 public class Course {
 
-    private int courseId;
+    private int id;
     private String name;
 
     public Course() {
@@ -12,12 +12,12 @@ public class Course {
         this.name = name;
     }
 
-    public int getCourseId() {
-        return courseId;
+    public int getId() {
+        return id;
     }
 
-    public void setCourseId(int courseId) {
-        this.courseId = courseId;
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getName() {

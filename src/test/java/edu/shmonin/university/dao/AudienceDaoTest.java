@@ -15,17 +15,17 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @Sql({"classpath:Schema.sql", "classpath:test-data.sql"})
 class AudienceDaoTest {
 
-    private AudienceDao audienceDao;
+    private JdbcAudienceDao jdbcAudienceDao;
 
     @Autowired
-    public void setAudienceDao(AudienceDao audienceDao) {
-        this.audienceDao = audienceDao;
+    public void setAudienceDao(JdbcAudienceDao jdbcAudienceDao) {
+        this.jdbcAudienceDao = jdbcAudienceDao;
     }
 
     @Test
     void givenId_whenGet_thenReturnAudience() {
         var expected = new Audience(1, 10);
-        var actual = audienceDao.get(1);
+        var actual = jdbcAudienceDao.get(1);
 
         assertEquals(expected, actual);
     }
@@ -36,15 +36,15 @@ class AudienceDaoTest {
         expected.add(new Audience(1, 10));
         expected.add(new Audience(2, 20));
         expected.add(new Audience(3, 30));
-        var actual = audienceDao.getAll();
+        var actual = jdbcAudienceDao.getAll();
 
         assertEquals(expected, actual);
     }
 
     @Test
     void givenId_whenDelete_thenDeleteRaw() {
-        audienceDao.delete(1);
-        var actual = audienceDao.getAll().size();
+        jdbcAudienceDao.delete(1);
+        var actual = jdbcAudienceDao.getAll().size();
         var expected = 2;
 
         assertEquals(expected, actual);
@@ -53,9 +53,9 @@ class AudienceDaoTest {
     @Test
     void givenAudience_whenUpdate_thenUpdateRaw() {
         var expected = new Audience(1, 11);
-        expected.setAudienceId(1);
-        audienceDao.update(expected);
-        var actual = audienceDao.get(1);
+        expected.setId(1);
+        jdbcAudienceDao.update(expected);
+        var actual = jdbcAudienceDao.get(1);
 
         assertEquals(expected, actual);
     }

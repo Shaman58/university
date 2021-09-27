@@ -2,14 +2,14 @@ package edu.shmonin.university;
 
 import edu.shmonin.university.menu.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Service;
 
 import java.util.Scanner;
 
 import static java.lang.System.in;
 import static java.lang.System.out;
 
-@Repository
+@Service
 public class MenuRunner {
 
     private HolidayManager holidayManager;

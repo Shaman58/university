@@ -1,6 +1,6 @@
 package edu.shmonin.university.menu;
 
-import edu.shmonin.university.dao.HolidayDao;
+import edu.shmonin.university.dao.JdbcHolidayDao;
 import edu.shmonin.university.model.Holiday;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -15,11 +15,11 @@ import static java.lang.System.out;
 @Repository
 public class HolidayManager {
 
-    private HolidayDao holidayDao;
+    private JdbcHolidayDao jdbcHolidayDao;
 
     @Autowired
-    public void setHolidayDao(HolidayDao holidayDao) {
-        this.holidayDao = holidayDao;
+    public void setHolidayDao(JdbcHolidayDao jdbcHolidayDao) {
+        this.jdbcHolidayDao = jdbcHolidayDao;
     }
 
     public void manageHolidays() {
@@ -37,10 +37,10 @@ public class HolidayManager {
         var inputKey = scanner.next();
         while (!inputKey.equals("q")) {
             switch (inputKey) {
-                case ("a") -> holidayDao.create(createNewHoliday());
-                case ("b") -> holidayDao.delete(selectId());
-                case ("c") -> holidayDao.update(updateHoliday());
-                case ("d") -> printHolidays(holidayDao.getAll());
+                case ("a") -> jdbcHolidayDao.create(createNewHoliday());
+                case ("b") -> jdbcHolidayDao.delete(selectId());
+                case ("c") -> jdbcHolidayDao.update(updateHoliday());
+                case ("d") -> printHolidays(jdbcHolidayDao.getAll());
                 default -> out.println("Input the right letter!");
             }
             out.println(menuText);
@@ -50,7 +50,7 @@ public class HolidayManager {
 
     private void printHolidays(List<Holiday> holidays) {
         holidays
-                .forEach(p -> out.println(p.getHolidayId() + ". " + p.getName() + " " + p.getDate()));
+                .forEach(p -> out.println(p.getId() + ". " + p.getName() + " " + p.getDate()));
     }
 
     private Holiday createNewHoliday() {
@@ -65,7 +65,7 @@ public class HolidayManager {
     private Holiday updateHoliday() {
         var id = selectId();
         var holiday = createNewHoliday();
-        holiday.setHolidayId(id);
+        holiday.setId(id);
         return holiday;
     }
 

@@ -1,6 +1,6 @@
 package edu.shmonin.university.menu;
 
-import edu.shmonin.university.dao.CourseDao;
+import edu.shmonin.university.dao.JdbcCourseDao;
 import edu.shmonin.university.model.Course;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -14,11 +14,11 @@ import static java.lang.System.out;
 @Repository
 public class CourseManager {
 
-    private CourseDao courseDao;
+    private JdbcCourseDao jdbcCourseDao;
 
     @Autowired
-    public void setCourseDao(CourseDao courseDao) {
-        this.courseDao = courseDao;
+    public void setCourseDao(JdbcCourseDao jdbcCourseDao) {
+        this.jdbcCourseDao = jdbcCourseDao;
     }
 
     public void manageCourses() {
@@ -36,10 +36,10 @@ public class CourseManager {
         var inputKey = scanner.next();
         while (!inputKey.equals("q")) {
             switch (inputKey) {
-                case ("a") -> courseDao.create(createNewCourse());
-                case ("b") -> courseDao.delete(selectId());
-                case ("c") -> courseDao.update(updateCourse());
-                case ("d") -> printCourses(courseDao.getAll());
+                case ("a") -> jdbcCourseDao.create(createNewCourse());
+                case ("b") -> jdbcCourseDao.delete(selectId());
+                case ("c") -> jdbcCourseDao.update(updateCourse());
+                case ("d") -> printCourses(jdbcCourseDao.getAll());
                 default -> out.println("Input the right letter!");
             }
             out.println(menuText);
@@ -48,7 +48,7 @@ public class CourseManager {
     }
 
     public void printCourses(List<Course> courses) {
-        courses.forEach(p -> out.println(p.getCourseId() + ". " + p.getName()));
+        courses.forEach(p -> out.println(p.getId() + ". " + p.getName()));
     }
 
     private Course createNewCourse() {
@@ -61,7 +61,7 @@ public class CourseManager {
     private Course updateCourse() {
         var id = selectId();
         var course = createNewCourse();
-        course.setCourseId(id);
+        course.setId(id);
         return course;
     }
 
@@ -72,7 +72,7 @@ public class CourseManager {
     }
 
     public Course selectCourse() {
-        printCourses(courseDao.getAll());
-        return courseDao.get(selectId());
+        printCourses(jdbcCourseDao.getAll());
+        return jdbcCourseDao.get(selectId());
     }
 }

@@ -1,6 +1,6 @@
 package edu.shmonin.university.menu;
 
-import edu.shmonin.university.dao.AudienceDao;
+import edu.shmonin.university.dao.JdbcAudienceDao;
 import edu.shmonin.university.model.Audience;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -14,11 +14,11 @@ import static java.lang.System.out;
 @Repository
 public class AudienceManager {
 
-    private AudienceDao audienceDao;
+    private JdbcAudienceDao jdbcAudienceDao;
 
     @Autowired
-    public void setAudienceDao(AudienceDao audienceDao) {
-        this.audienceDao = audienceDao;
+    public void setAudienceDao(JdbcAudienceDao jdbcAudienceDao) {
+        this.jdbcAudienceDao = jdbcAudienceDao;
     }
 
     public void manageAudiences() {
@@ -36,10 +36,10 @@ public class AudienceManager {
         var inputKey = scanner.next();
         while (!inputKey.equals("q")) {
             switch (inputKey) {
-                case ("a") -> audienceDao.create(createNewAudience());
-                case ("b") -> audienceDao.delete(selectId());
-                case ("c") -> audienceDao.update(updateAudience());
-                case ("d") -> printAudiences(audienceDao.getAll());
+                case ("a") -> jdbcAudienceDao.create(createNewAudience());
+                case ("b") -> jdbcAudienceDao.delete(selectId());
+                case ("c") -> jdbcAudienceDao.update(updateAudience());
+                case ("d") -> printAudiences(jdbcAudienceDao.getAll());
                 default -> out.println("Input the right letter!");
             }
             out.println(menuText);
@@ -49,7 +49,7 @@ public class AudienceManager {
 
     public void printAudiences(List<Audience> audiences) {
         audiences
-                .forEach(p -> out.println(p.getAudienceId() + ". " + p.getRoomNumber() + " capacity " + p.getCapacity()));
+                .forEach(p -> out.println(p.getId() + ". " + p.getRoomNumber() + " capacity " + p.getCapacity()));
     }
 
 
@@ -65,7 +65,7 @@ public class AudienceManager {
     private Audience updateAudience() {
         var id = selectId();
         var audience = createNewAudience();
-        audience.setAudienceId(id);
+        audience.setId(id);
         return audience;
     }
 
@@ -76,7 +76,7 @@ public class AudienceManager {
     }
 
     public Audience selectAudience() {
-        printAudiences(audienceDao.getAll());
-        return audienceDao.get(selectId());
+        printAudiences(jdbcAudienceDao.getAll());
+        return jdbcAudienceDao.get(selectId());
     }
 }

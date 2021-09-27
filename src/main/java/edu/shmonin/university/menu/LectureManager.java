@@ -1,6 +1,6 @@
 package edu.shmonin.university.menu;
 
-import edu.shmonin.university.dao.LectureDao;
+import edu.shmonin.university.dao.JdbcLectureDao;
 import edu.shmonin.university.model.Lecture;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -20,7 +20,7 @@ public class LectureManager {
     private TeacherManager teacherManager;
     private DurationManager durationManager;
     private GroupManager groupManager;
-    private LectureDao lectureDao;
+    private JdbcLectureDao jdbcLectureDao;
 
     @Autowired
     public void setCourseManager(CourseManager courseManager) {
@@ -48,8 +48,8 @@ public class LectureManager {
     }
 
     @Autowired
-    public void setLectureDao(LectureDao lectureDao) {
-        this.lectureDao = lectureDao;
+    public void setLectureDao(JdbcLectureDao jdbcLectureDao) {
+        this.jdbcLectureDao = jdbcLectureDao;
     }
 
     public void manageLectures() {
@@ -67,10 +67,10 @@ public class LectureManager {
         var inputKey = scanner.next();
         while (!inputKey.equals("q")) {
             switch (inputKey) {
-                case ("a") -> lectureDao.create(createNewLecture());
-                case ("b") -> lectureDao.delete(selectId());
-                case ("c") -> lectureDao.update(updateLecture());
-                case ("d") -> printLectures(lectureDao.getAll());
+                case ("a") -> jdbcLectureDao.create(createNewLecture());
+                case ("b") -> jdbcLectureDao.delete(selectId());
+                case ("c") -> jdbcLectureDao.update(updateLecture());
+                case ("d") -> printLectures(jdbcLectureDao.getAll());
                 default -> out.println("Input the right letter!");
             }
             out.println(menuText);
@@ -80,7 +80,7 @@ public class LectureManager {
 
     public void printLectures(List<Lecture> lectures) {
         lectures.forEach(p -> out.printf("%d. %s %s %s %s %s %s %s%n",
-                p.getLectureId(),
+                p.getId(),
                 p.getDate(),
                 p.getCourse().getName(),
                 p.getAudience().getRoomNumber(),
@@ -106,7 +106,7 @@ public class LectureManager {
     private Lecture updateLecture() {
         var id = selectId();
         var lecture = createNewLecture();
-        lecture.setLectureId(id);
+        lecture.setId(id);
         return lecture;
     }
 

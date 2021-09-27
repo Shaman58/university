@@ -1,6 +1,6 @@
 package edu.shmonin.university.menu;
 
-import edu.shmonin.university.dao.VacationDao;
+import edu.shmonin.university.dao.JdbcVacationDao;
 import edu.shmonin.university.model.Teacher;
 import edu.shmonin.university.model.Vacation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,16 +16,16 @@ import static java.lang.System.out;
 @Repository
 public class VacationManager {
 
-    private VacationDao vacationDao;
+    private JdbcVacationDao jdbcVacationDao;
 
     @Autowired
-    public void setVacationDao(VacationDao vacationDao) {
-        this.vacationDao = vacationDao;
+    public void setVacationDao(JdbcVacationDao jdbcVacationDao) {
+        this.jdbcVacationDao = jdbcVacationDao;
     }
 
     public void printVacations(List<Vacation> vacations) {
         vacations
-                .forEach(p -> out.println(p.getVacationId() + ". " + p.getStartDate() + " " + p.getEndDate()));
+                .forEach(p -> out.println(p.getId() + ". " + p.getStartDate() + " " + p.getEndDate()));
     }
 
     public Vacation createVacation() {
@@ -44,9 +44,9 @@ public class VacationManager {
     }
 
     public Vacation selectTeacherVacation(Teacher teacher) {
-        var vacations = vacationDao.getTeacherVacations(teacher);
+        var vacations = jdbcVacationDao.getTeacherVacations(teacher.getId());
         printVacations(vacations);
         var id = selectId();
-        return vacations.stream().filter(p -> p.getVacationId() == id).findAny().orElse(null);
+        return vacations.stream().filter(p -> p.getId() == id).findAny().orElse(null);
     }
 }

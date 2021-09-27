@@ -4,7 +4,7 @@ import java.time.LocalDate;
 
 public class Vacation {
 
-    private int vacationId;
+    private int id;
     private LocalDate startDate;
     private LocalDate endDate;
 
@@ -16,12 +16,12 @@ public class Vacation {
     public Vacation() {
     }
 
-    public int getVacationId() {
-        return vacationId;
+    public int getId() {
+        return id;
     }
 
-    public void setVacationId(int vacationId) {
-        this.vacationId = vacationId;
+    public void setId(int id) {
+        this.id = id;
     }
 
     public LocalDate getStartDate() {

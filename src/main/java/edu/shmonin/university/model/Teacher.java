@@ -4,18 +4,9 @@ import java.util.List;
 
 public class Teacher extends Human {
 
-    private int teacherId;
     private ScientificDegree scientificDegree;
     private List<Course> courses;
     private List<Vacation> vacations;
-
-    public int getTeacherId() {
-        return teacherId;
-    }
-
-    public void setTeacherId(int teacherId) {
-        this.teacherId = teacherId;
-    }
 
     public ScientificDegree getScientificDegree() {
         return scientificDegree;

@@ -1,6 +1,6 @@
 package edu.shmonin.university.menu;
 
-import edu.shmonin.university.dao.LectureDao;
+import edu.shmonin.university.dao.JdbcLectureDao;
 import edu.shmonin.university.model.Group;
 import edu.shmonin.university.model.Lecture;
 import edu.shmonin.university.model.Student;
@@ -19,15 +19,15 @@ import static java.lang.System.out;
 @Repository
 public class ScheduleManager {
 
-    private LectureDao lectureDao;
+    private JdbcLectureDao jdbcLectureDao;
     private TeacherManager teacherManager;
     private StudentManager studentManager;
     private LectureManager lectureManager;
 
 
     @Autowired
-    public void setLectureDao(LectureDao lectureDao) {
-        this.lectureDao = lectureDao;
+    public void setLectureDao(JdbcLectureDao jdbcLectureDao) {
+        this.jdbcLectureDao = jdbcLectureDao;
     }
 
     @Autowired
@@ -60,13 +60,13 @@ public class ScheduleManager {
                 case ("a") -> {
                     var teacher = teacherManager.selectTeacher();
                     var range = getDateRange();
-                    lectureManager.printLectures(getLecturesForSchedule(lectureDao.getAll(), range.getStartDate(),
+                    lectureManager.printLectures(getLecturesForSchedule(jdbcLectureDao.getAll(), range.getStartDate(),
                             range.getEndDate(), teacher));
                 }
                 case ("b") -> {
                     var student = studentManager.selectStudent();
                     var range = getDateRange();
-                    lectureManager.printLectures(getLecturesForSchedule(lectureDao.getAll(), range.getStartDate(),
+                    lectureManager.printLectures(getLecturesForSchedule(jdbcLectureDao.getAll(), range.getStartDate(),
                             range.getEndDate(), student));
                 }
                 default -> out.println("Input the right letter!");

@@ -4,7 +4,7 @@ import java.util.List;
 
 public class Group {
 
-    private int groupId;
+    private int id;
     private String name;
     private List<Student> students;
 
@@ -15,12 +15,12 @@ public class Group {
         this.name = name;
     }
 
-    public int getGroupId() {
-        return groupId;
+    public int getId() {
+        return id;
     }
 
-    public void setGroupId(int groupId) {
-        this.groupId = groupId;
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getName() {

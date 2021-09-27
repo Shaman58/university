@@ -1,6 +1,6 @@
 package edu.shmonin.university.menu;
 
-import edu.shmonin.university.dao.StudentDao;
+import edu.shmonin.university.dao.JdbcStudentDao;
 import edu.shmonin.university.model.Student;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -15,12 +15,12 @@ import static java.lang.System.out;
 @Repository
 public class StudentManager {
 
-    private StudentDao studentDao;
+    private JdbcStudentDao jdbcStudentDao;
     private GenderManager genderManager;
 
     @Autowired
-    public void setStudentDao(StudentDao studentDao) {
-        this.studentDao = studentDao;
+    public void setStudentDao(JdbcStudentDao jdbcStudentDao) {
+        this.jdbcStudentDao = jdbcStudentDao;
     }
 
     @Autowired
@@ -43,10 +43,10 @@ public class StudentManager {
         var inputKey = scanner.next();
         while (!inputKey.equals("q")) {
             switch (inputKey) {
-                case ("a") -> studentDao.create(createNewStudent());
-                case ("b") -> studentDao.delete(selectId());
-                case ("c") -> studentDao.update(updateStudent());
-                case ("d") -> printStudents(studentDao.getAll());
+                case ("a") -> jdbcStudentDao.create(createNewStudent());
+                case ("b") -> jdbcStudentDao.delete(selectId());
+                case ("c") -> jdbcStudentDao.update(updateStudent());
+                case ("d") -> printStudents(jdbcStudentDao.getAll());
                 default -> out.println("Input the right letter!");
             }
             out.println(menuText);
@@ -56,7 +56,7 @@ public class StudentManager {
 
     public void printStudents(List<Student> students) {
         students.forEach(p -> out.printf("%d. %s %s %s %s %s %s %s %s%n",
-                p.getStudentId(),
+                p.getId(),
                 p.getFirstName(),
                 p.getLastName(),
                 p.getEmail(),
@@ -92,7 +92,7 @@ public class StudentManager {
     private Student updateStudent() {
         var id = selectId();
         var student = createNewStudent();
-        student.setStudentId(id);
+        student.setId(id);
         return student;
     }
 
@@ -103,7 +103,7 @@ public class StudentManager {
     }
 
     public Student selectStudent() {
-        printStudents(studentDao.getAll());
-        return studentDao.get(selectId());
+        printStudents(jdbcStudentDao.getAll());
+        return jdbcStudentDao.get(selectId());
     }
 }

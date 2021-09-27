@@ -1,6 +1,6 @@
 package edu.shmonin.university.menu;
 
-import edu.shmonin.university.dao.DurationDao;
+import edu.shmonin.university.dao.JdbcDurationDao;
 import edu.shmonin.university.model.Duration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -15,11 +15,11 @@ import static java.lang.System.out;
 @Repository
 public class DurationManager {
 
-    private DurationDao durationDao;
+    private JdbcDurationDao jdbcDurationDao;
 
     @Autowired
-    public void setDurationDao(DurationDao durationDao) {
-        this.durationDao = durationDao;
+    public void setDurationDao(JdbcDurationDao jdbcDurationDao) {
+        this.jdbcDurationDao = jdbcDurationDao;
     }
 
     public void manageDurations() {
@@ -37,10 +37,10 @@ public class DurationManager {
         var inputKey = scanner.next();
         while (!inputKey.equals("q")) {
             switch (inputKey) {
-                case ("a") -> durationDao.create(createNewDuration());
-                case ("b") -> durationDao.delete(selectId());
-                case ("c") -> durationDao.update(updateDuration());
-                case ("d") -> printDurations(durationDao.getAll());
+                case ("a") -> jdbcDurationDao.create(createNewDuration());
+                case ("b") -> jdbcDurationDao.delete(selectId());
+                case ("c") -> jdbcDurationDao.update(updateDuration());
+                case ("d") -> printDurations(jdbcDurationDao.getAll());
                 default -> out.println("Input the right letter!");
             }
             out.println(menuText);
@@ -50,7 +50,7 @@ public class DurationManager {
 
     public void printDurations(List<Duration> durations) {
         durations
-                .forEach(p -> out.println(p.getDurationId() + ". " + p.getStartTime() + " " + p.getEndTime()));
+                .forEach(p -> out.println(p.getId() + ". " + p.getStartTime() + " " + p.getEndTime()));
     }
 
     private Duration createNewDuration() {
@@ -65,7 +65,7 @@ public class DurationManager {
     private Duration updateDuration() {
         var id = selectId();
         var duration = createNewDuration();
-        duration.setDurationId(id);
+        duration.setId(id);
         return duration;
     }
 
@@ -76,7 +76,7 @@ public class DurationManager {
     }
 
     public Duration selectDuration() {
-        printDurations(durationDao.getAll());
-        return durationDao.get(selectId());
+        printDurations(jdbcDurationDao.getAll());
+        return jdbcDurationDao.get(selectId());
     }
 }
