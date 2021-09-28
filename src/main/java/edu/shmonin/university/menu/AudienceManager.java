@@ -1,9 +1,8 @@
 package edu.shmonin.university.menu;
 
-import edu.shmonin.university.dao.JdbcAudienceDao;
+import edu.shmonin.university.dao.jdbc.JdbcAudienceDao;
 import edu.shmonin.university.model.Audience;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Scanner;
@@ -11,13 +10,12 @@ import java.util.Scanner;
 import static java.lang.System.in;
 import static java.lang.System.out;
 
-@Repository
+@Component
 public class AudienceManager {
 
-    private JdbcAudienceDao jdbcAudienceDao;
+    private final JdbcAudienceDao jdbcAudienceDao;
 
-    @Autowired
-    public void setAudienceDao(JdbcAudienceDao jdbcAudienceDao) {
+    public AudienceManager(JdbcAudienceDao jdbcAudienceDao) {
         this.jdbcAudienceDao = jdbcAudienceDao;
     }
 

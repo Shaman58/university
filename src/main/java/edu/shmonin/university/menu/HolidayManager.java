@@ -1,9 +1,8 @@
 package edu.shmonin.university.menu;
 
-import edu.shmonin.university.dao.JdbcHolidayDao;
+import edu.shmonin.university.dao.jdbc.JdbcHolidayDao;
 import edu.shmonin.university.model.Holiday;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -12,13 +11,12 @@ import java.util.Scanner;
 import static java.lang.System.in;
 import static java.lang.System.out;
 
-@Repository
+@Component
 public class HolidayManager {
 
-    private JdbcHolidayDao jdbcHolidayDao;
+    private final JdbcHolidayDao jdbcHolidayDao;
 
-    @Autowired
-    public void setHolidayDao(JdbcHolidayDao jdbcHolidayDao) {
+    public HolidayManager(JdbcHolidayDao jdbcHolidayDao) {
         this.jdbcHolidayDao = jdbcHolidayDao;
     }
 

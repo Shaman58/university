@@ -1,7 +1,7 @@
-package edu.shmonin.university.dao;
+package edu.shmonin.university.dao.jdbc;
 
+import edu.shmonin.university.dao.DurationDao;
 import edu.shmonin.university.model.Duration;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -20,7 +20,6 @@ public class JdbcDurationDao implements DurationDao {
     private final JdbcTemplate jdbcTemplate;
     private final BeanPropertyRowMapper<Duration> durationRowMapper;
 
-    @Autowired
     public JdbcDurationDao(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
         this.durationRowMapper = BeanPropertyRowMapper.newInstance(Duration.class);

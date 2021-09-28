@@ -1,19 +1,18 @@
-package edu.shmonin.university.dao;
+package edu.shmonin.university.dao.rowmapper;
 
+import edu.shmonin.university.dao.jdbc.JdbcStudentDao;
 import edu.shmonin.university.model.Group;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Component;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-@Repository
+@Component
 public class GroupRowMapper implements RowMapper<Group> {
 
     private final JdbcStudentDao jdbcStudentDao;
 
-    @Autowired
     public GroupRowMapper(JdbcStudentDao jdbcStudentDao) {
         this.jdbcStudentDao = jdbcStudentDao;
     }
@@ -23,7 +22,7 @@ public class GroupRowMapper implements RowMapper<Group> {
         var group = new Group();
         group.setId(resultSet.getInt("id"));
         group.setName(resultSet.getString("name"));
-        group.setStudents(jdbcStudentDao.selectStudentsRelatedToTheGroup(group.getId()));
+        group.setStudents(jdbcStudentDao.getByGroupId(group.getId()));
         return group;
     }
 }

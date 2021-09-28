@@ -1,9 +1,8 @@
 package edu.shmonin.university.menu;
 
-import edu.shmonin.university.dao.JdbcCourseDao;
+import edu.shmonin.university.dao.jdbc.JdbcCourseDao;
 import edu.shmonin.university.model.Course;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Scanner;
@@ -11,13 +10,12 @@ import java.util.Scanner;
 import static java.lang.System.in;
 import static java.lang.System.out;
 
-@Repository
+@Component
 public class CourseManager {
 
-    private JdbcCourseDao jdbcCourseDao;
+    private final JdbcCourseDao jdbcCourseDao;
 
-    @Autowired
-    public void setCourseDao(JdbcCourseDao jdbcCourseDao) {
+    public CourseManager(JdbcCourseDao jdbcCourseDao) {
         this.jdbcCourseDao = jdbcCourseDao;
     }
 

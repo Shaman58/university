@@ -1,9 +1,8 @@
 package edu.shmonin.university.menu;
 
-import edu.shmonin.university.dao.JdbcLectureDao;
+import edu.shmonin.university.dao.jdbc.JdbcLectureDao;
 import edu.shmonin.university.model.Lecture;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -12,43 +11,23 @@ import java.util.Scanner;
 import static java.lang.System.in;
 import static java.lang.System.out;
 
-@Repository
+@Component
 public class LectureManager {
 
-    private CourseManager courseManager;
-    private AudienceManager audienceManager;
-    private TeacherManager teacherManager;
-    private DurationManager durationManager;
-    private GroupManager groupManager;
-    private JdbcLectureDao jdbcLectureDao;
+    private final CourseManager courseManager;
+    private final AudienceManager audienceManager;
+    private final TeacherManager teacherManager;
+    private final DurationManager durationManager;
+    private final GroupManager groupManager;
+    private final JdbcLectureDao jdbcLectureDao;
 
-    @Autowired
-    public void setCourseManager(CourseManager courseManager) {
+    public LectureManager(CourseManager courseManager, AudienceManager audienceManager, TeacherManager teacherManager,
+                          DurationManager durationManager, GroupManager groupManager, JdbcLectureDao jdbcLectureDao) {
         this.courseManager = courseManager;
-    }
-
-    @Autowired
-    public void setAudienceManager(AudienceManager audienceManager) {
         this.audienceManager = audienceManager;
-    }
-
-    @Autowired
-    public void setTeacherManager(TeacherManager teacherManager) {
         this.teacherManager = teacherManager;
-    }
-
-    @Autowired
-    public void setDurationManager(DurationManager durationManager) {
         this.durationManager = durationManager;
-    }
-
-    @Autowired
-    public void setGroupManager(GroupManager groupManager) {
         this.groupManager = groupManager;
-    }
-
-    @Autowired
-    public void setLectureDao(JdbcLectureDao jdbcLectureDao) {
         this.jdbcLectureDao = jdbcLectureDao;
     }
 

@@ -1,11 +1,10 @@
 package edu.shmonin.university.menu;
 
-import edu.shmonin.university.dao.JdbcCourseDao;
-import edu.shmonin.university.dao.JdbcTeacherDao;
-import edu.shmonin.university.dao.JdbcVacationDao;
+import edu.shmonin.university.dao.jdbc.JdbcCourseDao;
+import edu.shmonin.university.dao.jdbc.JdbcTeacherDao;
+import edu.shmonin.university.dao.jdbc.JdbcVacationDao;
 import edu.shmonin.university.model.Teacher;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -14,49 +13,26 @@ import java.util.Scanner;
 import static java.lang.System.in;
 import static java.lang.System.out;
 
-@Repository
+@Component
 public class TeacherManager {
 
-    private JdbcTeacherDao jdbcTeacherDao;
-    private JdbcCourseDao jdbcCourseDao;
-    private JdbcVacationDao jdbcVacationDao;
-    private CourseManager courseManager;
-    private GenderManager genderManager;
-    private ScientificDegreeManager scientificDegreeManager;
-    private VacationManager vacationManager;
+    private final JdbcTeacherDao jdbcTeacherDao;
+    private final JdbcCourseDao jdbcCourseDao;
+    private final JdbcVacationDao jdbcVacationDao;
+    private final CourseManager courseManager;
+    private final GenderManager genderManager;
+    private final ScientificDegreeManager scientificDegreeManager;
+    private final VacationManager vacationManager;
 
-    @Autowired
-    public void setTeacherDao(JdbcTeacherDao jdbcTeacherDao) {
+    public TeacherManager(JdbcTeacherDao jdbcTeacherDao, JdbcCourseDao jdbcCourseDao, JdbcVacationDao jdbcVacationDao,
+                          CourseManager courseManager, GenderManager genderManager,
+                          ScientificDegreeManager scientificDegreeManager, VacationManager vacationManager) {
         this.jdbcTeacherDao = jdbcTeacherDao;
-    }
-
-    @Autowired
-    public void setCourseDao(JdbcCourseDao jdbcCourseDao) {
         this.jdbcCourseDao = jdbcCourseDao;
-    }
-
-    @Autowired
-    public void setVacationDao(JdbcVacationDao jdbcVacationDao) {
         this.jdbcVacationDao = jdbcVacationDao;
-    }
-
-    @Autowired
-    public void setCourseManager(CourseManager courseManager) {
         this.courseManager = courseManager;
-    }
-
-    @Autowired
-    public void setGenderManager(GenderManager genderManager) {
         this.genderManager = genderManager;
-    }
-
-    @Autowired
-    public void setScientificDegreeManager(ScientificDegreeManager scientificDegreeManager) {
         this.scientificDegreeManager = scientificDegreeManager;
-    }
-
-    @Autowired
-    public void setVacationManager(VacationManager vacationManager) {
         this.vacationManager = vacationManager;
     }
 
@@ -88,7 +64,7 @@ public class TeacherManager {
                 case ("f") -> addVacationToTheTeacher();
                 case ("g") -> vacationManager.printVacations(jdbcVacationDao.getTeacherVacations(selectTeacher().getId()));
                 case ("h") -> jdbcVacationDao.delete(vacationManager.selectTeacherVacation(selectTeacher()).getId());
-                case ("i") -> courseManager.printCourses(jdbcCourseDao.getTeacherCourses(selectTeacher().getId()));
+                case ("i") -> courseManager.printCourses(jdbcCourseDao.getByTeacherId(selectTeacher().getId()));
                 default -> out.println("Input the right letter!");
             }
             out.println(menuText);

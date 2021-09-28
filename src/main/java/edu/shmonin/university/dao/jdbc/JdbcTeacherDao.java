@@ -1,8 +1,9 @@
-package edu.shmonin.university.dao;
+package edu.shmonin.university.dao.jdbc;
 
+import edu.shmonin.university.dao.TeacherDao;
+import edu.shmonin.university.dao.rowmapper.TeacherRowMapper;
 import edu.shmonin.university.model.Course;
 import edu.shmonin.university.model.Teacher;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -21,7 +22,6 @@ public class JdbcTeacherDao implements TeacherDao {
     private final JdbcTemplate jdbcTemplate;
     private final TeacherRowMapper teacherRowMapper;
 
-    @Autowired
     public JdbcTeacherDao(JdbcTemplate jdbcTemplate, TeacherRowMapper teacherRowMapper) {
         this.jdbcTemplate = jdbcTemplate;
         this.teacherRowMapper = teacherRowMapper;

@@ -1,14 +1,14 @@
-package edu.shmonin.university.dao;
+package edu.shmonin.university.dao.rowmapper;
 
 import edu.shmonin.university.model.Gender;
 import edu.shmonin.university.model.Student;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Component;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-@Repository
+@Component
 public class StudentRowMapper implements RowMapper<Student> {
     
     @Override

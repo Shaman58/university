@@ -1,11 +1,11 @@
 package edu.shmonin.university.menu;
 
-import edu.shmonin.university.dao.JdbcLectureDao;
+import edu.shmonin.university.dao.jdbc.JdbcLectureDao;
 import edu.shmonin.university.model.Group;
 import edu.shmonin.university.model.Lecture;
 import edu.shmonin.university.model.Student;
 import edu.shmonin.university.model.Teacher;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
@@ -16,32 +16,20 @@ import java.util.stream.Collectors;
 import static java.lang.System.in;
 import static java.lang.System.out;
 
-@Repository
+@Component
 public class ScheduleManager {
 
-    private JdbcLectureDao jdbcLectureDao;
-    private TeacherManager teacherManager;
-    private StudentManager studentManager;
-    private LectureManager lectureManager;
+    private final JdbcLectureDao jdbcLectureDao;
+    private final TeacherManager teacherManager;
+    private final StudentManager studentManager;
+    private final LectureManager lectureManager;
 
 
-    @Autowired
-    public void setLectureDao(JdbcLectureDao jdbcLectureDao) {
+    public ScheduleManager(JdbcLectureDao jdbcLectureDao, TeacherManager teacherManager,
+                           StudentManager studentManager, LectureManager lectureManager) {
         this.jdbcLectureDao = jdbcLectureDao;
-    }
-
-    @Autowired
-    public void setTeacherManager(TeacherManager teacherManager) {
         this.teacherManager = teacherManager;
-    }
-
-    @Autowired
-    public void setStudentManager(StudentManager studentManager) {
         this.studentManager = studentManager;
-    }
-
-    @Autowired
-    public void setLectureManager(LectureManager lectureManager) {
         this.lectureManager = lectureManager;
     }
 

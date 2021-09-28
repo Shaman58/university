@@ -1,7 +1,8 @@
-package edu.shmonin.university.dao;
+package edu.shmonin.university.dao.jdbc;
 
+import edu.shmonin.university.dao.GroupDao;
+import edu.shmonin.university.dao.rowmapper.GroupRowMapper;
 import edu.shmonin.university.model.Group;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -21,7 +22,6 @@ public class JdbcGroupDao implements GroupDao {
     private final JdbcTemplate jdbcTemplate;
     private final GroupRowMapper groupRowMapper;
 
-    @Autowired
     public JdbcGroupDao(JdbcTemplate jdbcTemplate, GroupRowMapper groupRowMapper) {
         this.jdbcTemplate = jdbcTemplate;
         this.groupRowMapper = groupRowMapper;
@@ -55,7 +55,7 @@ public class JdbcGroupDao implements GroupDao {
     }
 
     @Override
-    public List<Group> getLectureGroups(int lectureId) {
+    public List<Group> getByLectureId(int lectureId) {
         return jdbcTemplate.query(GET_LECTURE_GROUPS_QUERY, groupRowMapper, lectureId);
     }
 }

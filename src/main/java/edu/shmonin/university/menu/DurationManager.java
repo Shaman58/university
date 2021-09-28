@@ -1,9 +1,8 @@
 package edu.shmonin.university.menu;
 
-import edu.shmonin.university.dao.JdbcDurationDao;
+import edu.shmonin.university.dao.jdbc.JdbcDurationDao;
 import edu.shmonin.university.model.Duration;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Component;
 
 import java.time.LocalTime;
 import java.util.List;
@@ -12,13 +11,12 @@ import java.util.Scanner;
 import static java.lang.System.in;
 import static java.lang.System.out;
 
-@Repository
+@Component
 public class DurationManager {
 
-    private JdbcDurationDao jdbcDurationDao;
+    private final JdbcDurationDao jdbcDurationDao;
 
-    @Autowired
-    public void setDurationDao(JdbcDurationDao jdbcDurationDao) {
+    public DurationManager(JdbcDurationDao jdbcDurationDao) {
         this.jdbcDurationDao = jdbcDurationDao;
     }
 

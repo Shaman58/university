@@ -1,7 +1,7 @@
-package edu.shmonin.university.dao;
+package edu.shmonin.university.dao.jdbc;
 
+import edu.shmonin.university.dao.HolidayDao;
 import edu.shmonin.university.model.Holiday;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -20,7 +20,6 @@ public class JdbcHolidayDao implements HolidayDao {
     private final JdbcTemplate jdbcTemplate;
     private final BeanPropertyRowMapper<Holiday> holidayRowMapper;
 
-    @Autowired
     public JdbcHolidayDao(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
         this.holidayRowMapper = BeanPropertyRowMapper.newInstance(Holiday.class);

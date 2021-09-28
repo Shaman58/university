@@ -1,22 +1,22 @@
-package edu.shmonin.university.dao;
+package edu.shmonin.university.dao.rowmapper;
 
+import edu.shmonin.university.dao.jdbc.JdbcCourseDao;
+import edu.shmonin.university.dao.jdbc.JdbcVacationDao;
 import edu.shmonin.university.model.Gender;
 import edu.shmonin.university.model.ScientificDegree;
 import edu.shmonin.university.model.Teacher;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Component;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-@Repository
+@Component
 public class TeacherRowMapper implements RowMapper<Teacher> {
 
     private final JdbcCourseDao jdbcCourseDao;
     private final JdbcVacationDao jdbcVacationDao;
 
-    @Autowired
     public TeacherRowMapper(JdbcCourseDao jdbcCourseDao, JdbcVacationDao jdbcVacationDao) {
         this.jdbcCourseDao = jdbcCourseDao;
         this.jdbcVacationDao = jdbcVacationDao;
@@ -35,7 +35,7 @@ public class TeacherRowMapper implements RowMapper<Teacher> {
         teacher.setAddress(resultSet.getString("address"));
         teacher.setBirthDate(resultSet.getDate("birth_date").toLocalDate());
         teacher.setScientificDegree(ScientificDegree.valueOf(resultSet.getString("scientific_degree")));
-        teacher.setCourses(jdbcCourseDao.getTeacherCourses(teacher.getId()));
+        teacher.setCourses(jdbcCourseDao.getByTeacherId(teacher.getId()));
         teacher.setVacations(jdbcVacationDao.getTeacherVacations(teacher.getId()));
         return teacher;
     }

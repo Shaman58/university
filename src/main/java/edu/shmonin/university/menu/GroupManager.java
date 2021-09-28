@@ -1,11 +1,10 @@
 package edu.shmonin.university.menu;
 
-import edu.shmonin.university.dao.JdbcGroupDao;
-import edu.shmonin.university.dao.JdbcStudentDao;
+import edu.shmonin.university.dao.jdbc.JdbcGroupDao;
+import edu.shmonin.university.dao.jdbc.JdbcStudentDao;
 import edu.shmonin.university.model.Group;
 import edu.shmonin.university.model.Student;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,25 +14,16 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static java.lang.System.in;
 import static java.lang.System.out;
 
-@Repository
+@Component
 public class GroupManager {
 
-    private JdbcGroupDao jdbcGroupDao;
-    private JdbcStudentDao jdbcStudentDao;
-    private StudentManager studentManager;
+    private final JdbcGroupDao jdbcGroupDao;
+    private final JdbcStudentDao jdbcStudentDao;
+    private final StudentManager studentManager;
 
-    @Autowired
-    public void setGroupDao(JdbcGroupDao jdbcGroupDao) {
+    public GroupManager(JdbcGroupDao jdbcGroupDao, JdbcStudentDao jdbcStudentDao, StudentManager studentManager) {
         this.jdbcGroupDao = jdbcGroupDao;
-    }
-
-    @Autowired
-    public void setStudentDao(JdbcStudentDao jdbcStudentDao) {
         this.jdbcStudentDao = jdbcStudentDao;
-    }
-
-    @Autowired
-    public void setStudentManager(StudentManager studentManager) {
         this.studentManager = studentManager;
     }
 
@@ -102,7 +92,7 @@ public class GroupManager {
     private String formatGroupStudents(Group group) {
         var result = "";
         var serial = new AtomicInteger(1);
-        var students = jdbcStudentDao.selectStudentsRelatedToTheGroup(group.getId());
+        var students = jdbcStudentDao.getByGroupId(group.getId());
         for (Student student : students) {
             result = result.concat(String.format("  %d. %s %s %s %s %s %s %s %s%n",
                     serial.getAndIncrement(),

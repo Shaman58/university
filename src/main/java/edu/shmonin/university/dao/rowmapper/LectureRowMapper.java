@@ -1,14 +1,15 @@
-package edu.shmonin.university.dao;
+package edu.shmonin.university.dao.rowmapper;
 
+import edu.shmonin.university.dao.jdbc.*;
 import edu.shmonin.university.model.Lecture;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Component;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-@Repository
+@Component
 public class LectureRowMapper implements RowMapper<Lecture> {
 
     private final JdbcCourseDao jdbcCourseDao;
@@ -17,7 +18,6 @@ public class LectureRowMapper implements RowMapper<Lecture> {
     private final JdbcDurationDao jdbcDurationDao;
     private final JdbcTeacherDao jdbcTeacherDao;
 
-    @Autowired
     public LectureRowMapper(JdbcCourseDao jdbcCourseDao, JdbcGroupDao jdbcGroupDao,
                             JdbcAudienceDao jdbcAudienceDao, JdbcDurationDao jdbcDurationDao,
                             JdbcTeacherDao jdbcTeacherDao) {
@@ -34,7 +34,7 @@ public class LectureRowMapper implements RowMapper<Lecture> {
         lecture.setId(resultSet.getInt("id"));
         lecture.setDate(resultSet.getDate("date").toLocalDate());
         lecture.setCourse(jdbcCourseDao.get(resultSet.getInt("course_id")));
-        lecture.setGroups(jdbcGroupDao.getLectureGroups(lecture.getId()));
+        lecture.setGroups(jdbcGroupDao.getByLectureId(lecture.getId()));
         lecture.setAudience(jdbcAudienceDao.get(resultSet.getInt("audience_id")));
         lecture.setDuration(jdbcDurationDao.get(resultSet.getInt("duration_id")));
         lecture.setTeacher(jdbcTeacherDao.get(resultSet.getInt("teacher_id")));

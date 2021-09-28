@@ -1,7 +1,7 @@
-package edu.shmonin.university.dao;
+package edu.shmonin.university.dao.jdbc;
 
+import edu.shmonin.university.dao.CourseDao;
 import edu.shmonin.university.model.Course;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -22,7 +22,6 @@ public class JdbcCourseDao implements CourseDao {
     private final JdbcTemplate jdbcTemplate;
     private final BeanPropertyRowMapper<Course> courseRowMapper;
 
-    @Autowired
     public JdbcCourseDao(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
         this.courseRowMapper = BeanPropertyRowMapper.newInstance(Course.class);
@@ -56,7 +55,7 @@ public class JdbcCourseDao implements CourseDao {
     }
 
     @Override
-    public List<Course> getTeacherCourses(int teacherId) {
+    public List<Course> getByTeacherId(int teacherId) {
         return jdbcTemplate.query(GET_TEACHER_COURSES_QUERY, courseRowMapper, teacherId);
     }
 }

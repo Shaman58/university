@@ -1,10 +1,9 @@
 package edu.shmonin.university.menu;
 
-import edu.shmonin.university.dao.JdbcVacationDao;
+import edu.shmonin.university.dao.jdbc.JdbcVacationDao;
 import edu.shmonin.university.model.Teacher;
 import edu.shmonin.university.model.Vacation;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -13,13 +12,12 @@ import java.util.Scanner;
 import static java.lang.System.in;
 import static java.lang.System.out;
 
-@Repository
+@Component
 public class VacationManager {
 
-    private JdbcVacationDao jdbcVacationDao;
+    private final JdbcVacationDao jdbcVacationDao;
 
-    @Autowired
-    public void setVacationDao(JdbcVacationDao jdbcVacationDao) {
+    public VacationManager(JdbcVacationDao jdbcVacationDao) {
         this.jdbcVacationDao = jdbcVacationDao;
     }
 

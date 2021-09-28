@@ -1,9 +1,8 @@
 package edu.shmonin.university.menu;
 
-import edu.shmonin.university.dao.JdbcStudentDao;
+import edu.shmonin.university.dao.jdbc.JdbcStudentDao;
 import edu.shmonin.university.model.Student;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -12,19 +11,14 @@ import java.util.Scanner;
 import static java.lang.System.in;
 import static java.lang.System.out;
 
-@Repository
+@Component
 public class StudentManager {
 
-    private JdbcStudentDao jdbcStudentDao;
-    private GenderManager genderManager;
+    private final JdbcStudentDao jdbcStudentDao;
+    private final GenderManager genderManager;
 
-    @Autowired
-    public void setStudentDao(JdbcStudentDao jdbcStudentDao) {
+    public StudentManager(JdbcStudentDao jdbcStudentDao, GenderManager genderManager) {
         this.jdbcStudentDao = jdbcStudentDao;
-    }
-
-    @Autowired
-    public void setGenderManager(GenderManager genderManager) {
         this.genderManager = genderManager;
     }
 

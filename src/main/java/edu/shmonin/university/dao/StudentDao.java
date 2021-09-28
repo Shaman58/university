@@ -9,5 +9,5 @@ public interface StudentDao extends Dao<Student> {
 
     void addStudentToTheGroup(Student student, Group group);
 
-    List<Student> selectStudentsRelatedToTheGroup(int id);
+    List<Student> getByGroupId(int groupId);
 }

@@ -1,5 +1,7 @@
-package edu.shmonin.university.dao;
+package edu.shmonin.university.dao.jdbc;
 
+import edu.shmonin.university.dao.LectureDao;
+import edu.shmonin.university.dao.rowmapper.LectureRowMapper;
 import edu.shmonin.university.model.Lecture;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;

@@ -1,6 +1,7 @@
 package edu.shmonin.university.dao;
 
 import config.TestConfig;
+import edu.shmonin.university.dao.jdbc.JdbcAudienceDao;
 import edu.shmonin.university.model.Audience;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

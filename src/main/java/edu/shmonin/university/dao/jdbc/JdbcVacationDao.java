@@ -1,8 +1,8 @@
-package edu.shmonin.university.dao;
+package edu.shmonin.university.dao.jdbc;
 
+import edu.shmonin.university.dao.VacationDao;
 import edu.shmonin.university.model.Teacher;
 import edu.shmonin.university.model.Vacation;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -26,7 +26,6 @@ public class JdbcVacationDao implements VacationDao {
     private final JdbcTemplate jdbcTemplate;
     private final BeanPropertyRowMapper<Vacation> vacationRowMapper;
 
-    @Autowired
     public JdbcVacationDao(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
         this.vacationRowMapper = BeanPropertyRowMapper.newInstance(Vacation.class);
