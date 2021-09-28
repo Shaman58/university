@@ -8,7 +8,7 @@ public interface Dao<T> {
 
     List<T> getAll();
 
-    T create(T entity);
+    void create(T entity);
 
     void update(T entity);
 

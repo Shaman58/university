@@ -38,12 +38,11 @@ public class JdbcLectureDao implements LectureDao {
     }
 
     @Override
-    public Lecture create(Lecture lecture) {
+    public void create(Lecture lecture) {
         var id = jdbcTemplate.queryForObject(CREATE_QUERY, Integer.class, lecture.getDate(), lecture.getCourse().getId(), lecture.getAudience().getId(),
                 lecture.getDuration().getId(), lecture.getTeacher().getId());
         lecture.getGroups().forEach(p -> jdbcTemplate.update(ADD_GROUP_LECTURE, p.getId(), id));
         lecture.setId(id);
-        return lecture;
     }
 
     @Override

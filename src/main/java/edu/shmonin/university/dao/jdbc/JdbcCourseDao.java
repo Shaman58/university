@@ -38,10 +38,9 @@ public class JdbcCourseDao implements CourseDao {
     }
 
     @Override
-    public Course create(Course course) {
+    public void create(Course course) {
         var id = jdbcTemplate.queryForObject(CREATE_QUERY, Integer.class, course.getName());
         course.setId(id);
-        return course;
     }
 
     @Override

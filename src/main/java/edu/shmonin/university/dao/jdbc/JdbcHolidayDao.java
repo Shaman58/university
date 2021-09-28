@@ -36,10 +36,9 @@ public class JdbcHolidayDao implements HolidayDao {
     }
 
     @Override
-    public Holiday create(Holiday holiday) {
+    public void create(Holiday holiday) {
         var id = jdbcTemplate.queryForObject(CREATE_QUERY, Integer.class, holiday.getName(), holiday.getDate());
         holiday.setId(id);
-        return holiday;
     }
 
     @Override

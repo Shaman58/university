@@ -39,12 +39,11 @@ public class JdbcStudentDao implements StudentDao {
     }
 
     @Override
-    public Student create(Student student) {
+    public void create(Student student) {
         var id = jdbcTemplate.queryForObject(CREATE_QUERY, Integer.class, student.getFirstName(), student.getLastName(), student.getEmail(),
                 student.getCountry(), student.getGender().toString(), student.getPhone(), student.getAddress(),
                 student.getBirthDate());
         student.setId(id);
-        return student;
     }
 
     @Override

@@ -42,10 +42,9 @@ public class JdbcVacationDao implements VacationDao {
     }
 
     @Override
-    public Vacation create(Vacation vacation) {
+    public void create(Vacation vacation) {
         var id = jdbcTemplate.queryForObject(CREATE_QUERY, Integer.class, vacation.getStartDate(), vacation.getEndDate());
         vacation.setId(id);
-        return vacation;
     }
 
     @Override

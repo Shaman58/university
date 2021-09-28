@@ -38,12 +38,11 @@ public class JdbcTeacherDao implements TeacherDao {
     }
 
     @Override
-    public Teacher create(Teacher teacher) {
+    public void create(Teacher teacher) {
         var id = jdbcTemplate.queryForObject(CREATE_QUERY, Integer.class, teacher.getFirstName(), teacher.getLastName(), teacher.getEmail(),
                 teacher.getCountry(), teacher.getGender().toString(), teacher.getPhone(), teacher.getAddress(),
                 teacher.getBirthDate(), teacher.getScientificDegree().toString());
         teacher.setId(id);
-        return teacher;
     }
 
     @Override

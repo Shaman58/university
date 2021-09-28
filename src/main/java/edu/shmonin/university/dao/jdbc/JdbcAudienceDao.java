@@ -36,10 +36,10 @@ public class JdbcAudienceDao implements AudienceDao {
     }
 
     @Override
-    public Audience create(Audience audience) {
-        var id = jdbcTemplate.queryForObject(CREATE_QUERY, Integer.class, audience.getRoomNumber(), audience.getCapacity());
+    public void create(Audience audience) {
+        var id = jdbcTemplate.queryForObject(CREATE_QUERY, Integer.class, audience.getRoomNumber(),
+                audience.getCapacity());
         audience.setId(id);
-        return audience;
     }
 
     @Override

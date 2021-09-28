@@ -36,10 +36,9 @@ public class JdbcDurationDao implements DurationDao {
     }
 
     @Override
-    public Duration create(Duration duration) {
+    public void create(Duration duration) {
         var id = jdbcTemplate.queryForObject(CREATE_QUERY,Integer.class, duration.getStartTime(), duration.getEndTime());
         duration.setId(id);
-        return duration;
     }
 
     @Override

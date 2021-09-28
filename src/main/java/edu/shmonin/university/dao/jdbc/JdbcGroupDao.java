@@ -38,10 +38,9 @@ public class JdbcGroupDao implements GroupDao {
     }
 
     @Override
-    public Group create(Group group) {
+    public void create(Group group) {
         var id = jdbcTemplate.queryForObject(CREATE_QUERY, Integer.class, group.getName());
         group.setId(id);
-        return group;
     }
 
     @Override
