@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
 
 @Component
 public class TeacherRowMapper implements RowMapper<Teacher> {
@@ -33,7 +34,7 @@ public class TeacherRowMapper implements RowMapper<Teacher> {
         teacher.setGender(Gender.valueOf(resultSet.getString("gender")));
         teacher.setPhone(resultSet.getString("phone"));
         teacher.setAddress(resultSet.getString("address"));
-        teacher.setBirthDate(resultSet.getDate("birth_date").toLocalDate());
+        teacher.setBirthDate(resultSet.getObject("birth_date", LocalDate.class));
         teacher.setScientificDegree(ScientificDegree.valueOf(resultSet.getString("scientific_degree")));
         teacher.setCourses(jdbcCourseDao.getByTeacherId(teacher.getId()));
         teacher.setVacations(jdbcVacationDao.getTeacherVacations(teacher.getId()));

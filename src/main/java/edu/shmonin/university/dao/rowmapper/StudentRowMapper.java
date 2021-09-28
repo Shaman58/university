@@ -7,10 +7,11 @@ import org.springframework.stereotype.Component;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
 
 @Component
 public class StudentRowMapper implements RowMapper<Student> {
-    
+
     @Override
     public Student mapRow(ResultSet resultSet, int i) throws SQLException {
         var student = new Student();
@@ -22,7 +23,7 @@ public class StudentRowMapper implements RowMapper<Student> {
         student.setGender(Gender.valueOf(resultSet.getString("gender")));
         student.setPhone(resultSet.getString("phone"));
         student.setAddress(resultSet.getString("address"));
-        student.setBirthDate(resultSet.getDate("birth_date").toLocalDate());
+        student.setBirthDate(resultSet.getObject("birth_date", LocalDate.class));
         return student;
     }
 }
