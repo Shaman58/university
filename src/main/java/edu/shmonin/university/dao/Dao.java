@@ -1,5 +1,6 @@
 package edu.shmonin.university.dao;
 
+import java.sql.SQLException;
 import java.util.List;
 
 public interface Dao<T> {
@@ -8,7 +9,7 @@ public interface Dao<T> {
 
     List<T> getAll();
 
-    void create(T entity);
+    void create(T entity) throws SQLException;
 
     void update(T entity);
 

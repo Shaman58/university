@@ -5,8 +5,10 @@ import edu.shmonin.university.dao.jdbc.JdbcAudienceDao;
 import edu.shmonin.university.model.Audience;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
+import org.springframework.test.jdbc.JdbcTestUtils;
 
 import java.util.ArrayList;
 
@@ -16,12 +18,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @Sql({"classpath:Schema.sql", "classpath:test-data.sql"})
 class AudienceDaoTest {
 
+    @Autowired
     private JdbcAudienceDao jdbcAudienceDao;
 
     @Autowired
-    public void setAudienceDao(JdbcAudienceDao jdbcAudienceDao) {
-        this.jdbcAudienceDao = jdbcAudienceDao;
-    }
+    private JdbcTemplate jdbcTemplate;
 
     @Test
     void givenId_whenGet_thenReturnAudience() {
@@ -45,7 +46,7 @@ class AudienceDaoTest {
     @Test
     void givenId_whenDelete_thenDeleteRaw() {
         jdbcAudienceDao.delete(1);
-        var actual = jdbcAudienceDao.getAll().size();
+        var actual = JdbcTestUtils.countRowsInTable(jdbcTemplate, "audiences");
         var expected = 2;
 
         assertEquals(expected, actual);
@@ -53,10 +54,21 @@ class AudienceDaoTest {
 
     @Test
     void givenAudience_whenUpdate_thenUpdateRaw() {
-        var expected = new Audience(1, 11);
-        expected.setId(1);
-        jdbcAudienceDao.update(expected);
-        var actual = jdbcAudienceDao.get(1);
+        var audience = new Audience(1, 11);
+        audience.setId(1);
+        jdbcAudienceDao.update(audience);
+        var actual = JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "audiences", "room_number=1 and capacity=11");
+        var expected = 1;
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void givenAudience_whenCreate_thenOneMoreRow() {
+        var audience = new Audience(4, 40);
+        jdbcAudienceDao.create(audience);
+        var actual = JdbcTestUtils.countRowsInTable(jdbcTemplate, "audiences");
+        var expected = 4;
 
         assertEquals(expected, actual);
     }

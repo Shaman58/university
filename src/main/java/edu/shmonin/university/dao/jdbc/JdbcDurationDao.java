@@ -4,16 +4,19 @@ import edu.shmonin.university.dao.DurationDao;
 import edu.shmonin.university.model.Duration;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Repository;
 
+import java.sql.Statement;
 import java.util.List;
+import java.util.Objects;
 
 @Repository
 public class JdbcDurationDao implements DurationDao {
 
     private static final String GET_QUERY = "SELECT * FROM durations WHERE id=?";
     private static final String GET_ALL_QUERY = "SELECT * FROM durations";
-    private static final String CREATE_QUERY = "INSERT INTO durations(start_time, end_time) VALUES (?,?) RETURNING id";
+    private static final String CREATE_QUERY = "INSERT INTO durations(start_time, end_time) VALUES (?,?)";
     private static final String UPDATE_QUERY = "UPDATE durations SET start_time=?, end_time=? WHERE id=?";
     private static final String DELETE_QUERY = "DELETE FROM durations WHERE id=?";
 
@@ -37,8 +40,14 @@ public class JdbcDurationDao implements DurationDao {
 
     @Override
     public void create(Duration duration) {
-        var id = jdbcTemplate.queryForObject(CREATE_QUERY,Integer.class, duration.getStartTime(), duration.getEndTime());
-        duration.setId(id);
+        var keyHolder = new GeneratedKeyHolder();
+        jdbcTemplate.update(connection -> {
+            var preparedStatement = connection.prepareStatement(CREATE_QUERY, Statement.RETURN_GENERATED_KEYS);
+            preparedStatement.setObject(1, duration.getStartTime());
+            preparedStatement.setObject(2, duration.getEndTime());
+            return preparedStatement;
+        }, keyHolder);
+        duration.setId(Objects.requireNonNull(keyHolder.getKey()).intValue());
     }
 
     @Override

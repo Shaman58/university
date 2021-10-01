@@ -4,16 +4,19 @@ import edu.shmonin.university.dao.CourseDao;
 import edu.shmonin.university.model.Course;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Repository;
 
+import java.sql.Statement;
 import java.util.List;
+import java.util.Objects;
 
 @Repository
 public class JdbcCourseDao implements CourseDao {
 
     private static final String GET_QUERY = "SELECT * FROM courses WHERE id=?";
     private static final String GET_ALL_QUERY = "SELECT * FROM courses";
-    private static final String CREATE_QUERY = "INSERT INTO courses(name) VALUES(?) RETURNING id";
+    private static final String CREATE_QUERY = "INSERT INTO courses(name) VALUES(?)";
     private static final String UPDATE_QUERY = "UPDATE courses SET name=? WHERE id=?";
     private static final String DELETE_QUERY = "DELETE FROM courses WHERE id=?";
     private static final String GET_TEACHER_COURSES_QUERY =
@@ -39,8 +42,13 @@ public class JdbcCourseDao implements CourseDao {
 
     @Override
     public void create(Course course) {
-        var id = jdbcTemplate.queryForObject(CREATE_QUERY, Integer.class, course.getName());
-        course.setId(id);
+        var keyHolder = new GeneratedKeyHolder();
+        jdbcTemplate.update(connection -> {
+            var preparedStatement = connection.prepareStatement(CREATE_QUERY, Statement.RETURN_GENERATED_KEYS);
+            preparedStatement.setString(1, course.getName());
+            return preparedStatement;
+        }, keyHolder);
+        course.setId(Objects.requireNonNull(keyHolder.getKey()).intValue());
     }
 
     @Override

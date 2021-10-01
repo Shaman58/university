@@ -5,9 +5,12 @@ import edu.shmonin.university.model.Teacher;
 import edu.shmonin.university.model.Vacation;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Repository;
 
+import java.sql.Statement;
 import java.util.List;
+import java.util.Objects;
 
 @Repository
 public class JdbcVacationDao implements VacationDao {
@@ -16,7 +19,7 @@ public class JdbcVacationDao implements VacationDao {
             "SELECT id,start_date,end_date FROM vacations WHERE id=?";
     private static final String GET_ALL_QUERY =
             "SELECT id,start_date,end_date FROM vacations";
-    private static final String CREATE_QUERY = "INSERT INTO vacations(start_date, end_date) VALUES (?,?) RETURNING id";
+    private static final String CREATE_QUERY = "INSERT INTO vacations(start_date, end_date) VALUES (?,?)";
     private static final String UPDATE_QUERY = "UPDATE vacations SET start_date=?, end_date=? WHERE id=?";
     private static final String DELETE_QUERY = "DELETE FROM vacations WHERE id=?";
     private static final String GET_TEACHER_VACATIONS_QUERY =
@@ -43,8 +46,14 @@ public class JdbcVacationDao implements VacationDao {
 
     @Override
     public void create(Vacation vacation) {
-        var id = jdbcTemplate.queryForObject(CREATE_QUERY, Integer.class, vacation.getStartDate(), vacation.getEndDate());
-        vacation.setId(id);
+        var keyHolder = new GeneratedKeyHolder();
+        jdbcTemplate.update(connection -> {
+            var preparedStatement = connection.prepareStatement(CREATE_QUERY, Statement.RETURN_GENERATED_KEYS);
+            preparedStatement.setObject(1, vacation.getStartDate());
+            preparedStatement.setObject(2, vacation.getEndDate());
+            return preparedStatement;
+        }, keyHolder);
+        vacation.setId(Objects.requireNonNull(keyHolder.getKey()).intValue());
     }
 
     @Override
