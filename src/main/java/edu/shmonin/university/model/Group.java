@@ -1,6 +1,7 @@
 package edu.shmonin.university.model;
 
 import java.util.List;
+import java.util.Objects;
 
 public class Group {
 
@@ -37,5 +38,20 @@ public class Group {
 
     public void setStudents(List<Student> students) {
         this.students = students;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Group)) return false;
+
+        var group = (Group) o;
+
+        return Objects.equals(name, group.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return name != null ? name.hashCode() : 0;
     }
 }

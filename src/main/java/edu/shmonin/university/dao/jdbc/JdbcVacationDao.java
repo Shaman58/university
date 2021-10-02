@@ -24,7 +24,7 @@ public class JdbcVacationDao implements VacationDao {
     private static final String DELETE_QUERY = "DELETE FROM vacations WHERE id=?";
     private static final String GET_TEACHER_VACATIONS_QUERY =
             "SELECT id,start_date,end_date FROM vacations WHERE teacher_id=?";
-    private static final String SET_VACATION_TEACHER_QUERY = "UPDATE vacations SET teacher_id=? WHERE start_date=? AND end_date=?";
+    private static final String SET_VACATION_TEACHER_QUERY = "UPDATE vacations SET teacher_id=? WHERE id=?";
 
     private final JdbcTemplate jdbcTemplate;
     private final BeanPropertyRowMapper<Vacation> vacationRowMapper;
@@ -66,12 +66,13 @@ public class JdbcVacationDao implements VacationDao {
         jdbcTemplate.update(DELETE_QUERY, id);
     }
 
+    @Override
     public List<Vacation> getTeacherVacations(int teacherId) {
         return jdbcTemplate.query(GET_TEACHER_VACATIONS_QUERY, vacationRowMapper, teacherId);
     }
 
     @Override
     public void setTeacherVacation(Vacation vacation, Teacher teacher) {
-        jdbcTemplate.update(SET_VACATION_TEACHER_QUERY, teacher.getId(), vacation.getStartDate(), vacation.getEndDate());
+        jdbcTemplate.update(SET_VACATION_TEACHER_QUERY, teacher.getId(), vacation.getId());
     }
 }

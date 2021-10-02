@@ -1,6 +1,7 @@
 package edu.shmonin.university.model;
 
 import java.time.LocalDate;
+import java.util.Objects;
 
 public class Vacation {
 
@@ -38,5 +39,23 @@ public class Vacation {
 
     public void setEndDate(LocalDate endDate) {
         this.endDate = endDate;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Vacation)) return false;
+
+        var vacation = (Vacation) o;
+
+        if (!Objects.equals(startDate, vacation.startDate)) return false;
+        return Objects.equals(endDate, vacation.endDate);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = startDate != null ? startDate.hashCode() : 0;
+        result = 31 * result + (endDate != null ? endDate.hashCode() : 0);
+        return result;
     }
 }

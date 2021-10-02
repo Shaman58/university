@@ -1,7 +1,6 @@
-package edu.shmonin.university.dao;
+package edu.shmonin.university.dao.jdbc;
 
 import config.TestConfig;
-import edu.shmonin.university.dao.jdbc.JdbcAudienceDao;
 import edu.shmonin.university.model.Audience;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringJUnitConfig(TestConfig.class)
 @Sql({"classpath:Schema.sql", "classpath:test-data.sql"})
-class AudienceDaoTest {
+class JdbcAudienceDaoTest {
 
     @Autowired
     private JdbcAudienceDao jdbcAudienceDao;
@@ -44,10 +43,11 @@ class AudienceDaoTest {
     }
 
     @Test
-    void givenId_whenDelete_thenDeleteRaw() {
-        jdbcAudienceDao.delete(1);
+    void givenAudience_whenCreate_thenOneMoreRow() {
+        var audience = new Audience(4, 40);
+        jdbcAudienceDao.create(audience);
         var actual = JdbcTestUtils.countRowsInTable(jdbcTemplate, "audiences");
-        var expected = 2;
+        var expected = 4;
 
         assertEquals(expected, actual);
     }
@@ -64,11 +64,10 @@ class AudienceDaoTest {
     }
 
     @Test
-    void givenAudience_whenCreate_thenOneMoreRow() {
-        var audience = new Audience(4, 40);
-        jdbcAudienceDao.create(audience);
+    void givenId_whenDelete_thenDeleteRaw() {
+        jdbcAudienceDao.delete(1);
         var actual = JdbcTestUtils.countRowsInTable(jdbcTemplate, "audiences");
-        var expected = 4;
+        var expected = 2;
 
         assertEquals(expected, actual);
     }

@@ -1,6 +1,7 @@
 package edu.shmonin.university.model;
 
 import java.time.LocalTime;
+import java.util.Objects;
 
 public class Duration {
 
@@ -38,5 +39,23 @@ public class Duration {
 
     public void setEndTime(LocalTime endTime) {
         this.endTime = endTime;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Duration)) return false;
+
+        var duration = (Duration) o;
+
+        if (!Objects.equals(startTime, duration.startTime)) return false;
+        return Objects.equals(endTime, duration.endTime);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = startTime != null ? startTime.hashCode() : 0;
+        result = 31 * result + (endTime != null ? endTime.hashCode() : 0);
+        return result;
     }
 }
