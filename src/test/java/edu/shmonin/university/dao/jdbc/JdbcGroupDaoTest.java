@@ -10,6 +10,7 @@ import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.test.jdbc.JdbcTestUtils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -73,6 +74,14 @@ class JdbcGroupDaoTest {
     }
 
     @Test
-    void getByLectureId() {
+    void givenLectureId_whenGetByLectureId_thenReturnGroups() {
+        var group1 = new Group("group-1");
+        group1.setId(1);
+        var group2 = new Group("group-2");
+        group1.setId(2);
+        var expected = Arrays.asList(group1, group2);
+        var actual = jdbcGroupDao.getByLectureId(1);
+
+        assertEquals(expected, actual);
     }
 }

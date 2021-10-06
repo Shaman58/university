@@ -29,11 +29,11 @@ VALUES ('holiday-2', '2021-01-02');
 INSERT INTO holidays(name, date)
 VALUES ('holiday-3', '2021-01-03');
 INSERT INTO teachers(first_name, last_name, email, country, gender, phone, address, birth_date, scientific_degree)
-VALUES ('name-1', 'surname-1', 'email-1', 'country-1', 'male', 'phone-1', 'address-1', '1980-01-01', 'doctor');
+VALUES ('name-1', 'surname-1', 'email-1', 'country-1', 'MALE', 'phone-1', 'address-1', '1980-01-01', 'DOCTOR');
 INSERT INTO teachers(first_name, last_name, email, country, gender, phone, address, birth_date, scientific_degree)
-VALUES ('name-2', 'surname-2', 'email-2', 'country-2', 'male', 'phone-2', 'address-2', '1980-01-02', 'doctor');
+VALUES ('name-2', 'surname-2', 'email-2', 'country-2', 'MALE', 'phone-2', 'address-2', '1980-01-02', 'DOCTOR');
 INSERT INTO teachers(first_name, last_name, email, country, gender, phone, address, birth_date, scientific_degree)
-VALUES ('name-3', 'surname-3', 'email-3', 'country-3', 'female', 'phone-3', 'address-3', '1980-01-03', 'bachelor');
+VALUES ('name-3', 'surname-3', 'email-3', 'country-3', 'FEMALE', 'phone-3', 'address-3', '1980-01-03', 'BACHELOR');
 INSERT INTO vacations(start_date, end_date, teacher_id)
 VALUES ('2021-01-01', '2021-02-01', 1);
 INSERT INTO vacations(start_date, end_date, teacher_id)
@@ -49,4 +49,28 @@ VALUES (1, 2);
 INSERT INTO courses_teachers(course_id, teacher_id)
 VALUES (3, 2);
 INSERT INTO courses_teachers(course_id, teacher_id)
+VALUES (3, 3);
+INSERT INTO students(first_name, last_name, email, country, gender, phone, address, birth_date, group_id)
+VALUES ('name-1', 'surname-1', 'email-1', 'country-1', 'MALE', 'phone-1', 'address-1', '2000-01-01', 1);
+INSERT INTO students(first_name, last_name, email, country, gender, phone, address, birth_date, group_id)
+VALUES ('name-2', 'surname-2', 'email-2', 'country-2', 'MALE', 'phone-2', 'address-2', '2000-01-02', 1);
+INSERT INTO students(first_name, last_name, email, country, gender, phone, address, birth_date, group_id)
+VALUES ('name-3', 'surname-3', 'email-3', 'country-3', 'FEMALE', 'phone-3', 'address-3', '2000-01-03', 2);
+INSERT INTO lectures(date, course_id, audience_id, duration_id, teacher_id)
+VALUES ('2021-01-01', 1, 1, 1, 1);
+INSERT INTO lectures(date, course_id, audience_id, duration_id, teacher_id)
+VALUES ('2021-01-02', 1, 1, 1, 1);
+INSERT INTO lectures(date, course_id, audience_id, duration_id, teacher_id)
+VALUES ('2021-01-01', 1, 2, 2, 1);
+INSERT INTO groups_lectures(group_id, lecture_id)
+VALUES (1, 1);
+INSERT INTO groups_lectures(group_id, lecture_id)
+VALUES (2, 1);
+INSERT INTO groups_lectures(group_id, lecture_id)
+VALUES (1, 2);
+INSERT INTO groups_lectures(group_id, lecture_id)
+VALUES (2, 2);
+INSERT INTO groups_lectures(group_id, lecture_id)
+VALUES (3, 2);
+INSERT INTO groups_lectures(group_id, lecture_id)
 VALUES (3, 3);

@@ -2,6 +2,7 @@ package edu.shmonin.university.model;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 
 public class Lecture {
 
@@ -79,5 +80,31 @@ public class Lecture {
 
     public void setTeacher(Teacher teacher) {
         this.teacher = teacher;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Lecture)) return false;
+
+        var lecture = (Lecture) o;
+
+        if (!Objects.equals(date, lecture.date)) return false;
+        if (!Objects.equals(course, lecture.course)) return false;
+        if (!Objects.equals(groups, lecture.groups)) return false;
+        if (!Objects.equals(audience, lecture.audience)) return false;
+        if (!Objects.equals(duration, lecture.duration)) return false;
+        return Objects.equals(teacher, lecture.teacher);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = date != null ? date.hashCode() : 0;
+        result = 31 * result + (course != null ? course.hashCode() : 0);
+        result = 31 * result + (groups != null ? groups.hashCode() : 0);
+        result = 31 * result + (audience != null ? audience.hashCode() : 0);
+        result = 31 * result + (duration != null ? duration.hashCode() : 0);
+        result = 31 * result + (teacher != null ? teacher.hashCode() : 0);
+        return result;
     }
 }
