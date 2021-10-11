@@ -36,6 +36,7 @@ class JdbcStudentDaoTest {
         expected.setPhone("phone-1");
         expected.setAddress("address-1");
         expected.setBirthDate(LocalDate.of(2000, 1, 1));
+
         var actual = jdbcStudentDao.get(1);
 
         assertEquals(expected, actual);
@@ -71,6 +72,7 @@ class JdbcStudentDaoTest {
         student3.setAddress("address-3");
         student3.setBirthDate(LocalDate.of(2000, 1, 3));
         var expected = Arrays.asList(student1, student2, student3);
+
         var actual = jdbcStudentDao.getAll();
 
         assertEquals(expected, actual);
@@ -78,6 +80,7 @@ class JdbcStudentDaoTest {
 
     @Test
     void givenStudent_whenCreate_thenOneMoreRow() {
+        var expected = JdbcTestUtils.countRowsInTable(jdbcTemplate, "students") + 1;
         var student = new Student();
         student.setFirstName("name-1");
         student.setLastName("surname-1");
@@ -87,9 +90,10 @@ class JdbcStudentDaoTest {
         student.setPhone("phone-1");
         student.setAddress("address-1");
         student.setBirthDate(LocalDate.of(1980, 1, 1));
+
         jdbcStudentDao.create(student);
+
         var actual = JdbcTestUtils.countRowsInTable(jdbcTemplate, "students");
-        var expected = 4;
 
         assertEquals(expected, actual);
     }
@@ -106,7 +110,9 @@ class JdbcStudentDaoTest {
         student.setPhone("phone-4");
         student.setAddress("address-4");
         student.setBirthDate(LocalDate.of(2000, 1, 4));
+
         jdbcStudentDao.update(student);
+
         var actual = JdbcTestUtils.countRowsInTableWhere(jdbcTemplate,
                 "students", "first_name='name-4' and last_name='surname-4' and email='email-4' and country='country-4' and gender='MALE' and phone='phone-4' and address='address-4' and birth_date='2000-01-04'");
         var expected = 1;
@@ -116,9 +122,11 @@ class JdbcStudentDaoTest {
 
     @Test
     void givenId_whenDelete_thenDeleteRaw() {
+        var expected = JdbcTestUtils.countRowsInTable(jdbcTemplate, "students") - 1;
+
         jdbcStudentDao.delete(1);
+
         var actual = JdbcTestUtils.countRowsInTable(jdbcTemplate, "students");
-        var expected = 2;
 
         assertEquals(expected, actual);
     }

@@ -1,5 +1,6 @@
-package edu.shmonin.university.dao.rowmapper;
+package edu.shmonin.university.dao.jdbc.rowmapper;
 
+import edu.shmonin.university.dao.jdbc.JdbcGroupDao;
 import edu.shmonin.university.model.Gender;
 import edu.shmonin.university.model.Student;
 import org.springframework.jdbc.core.RowMapper;
@@ -11,6 +12,12 @@ import java.time.LocalDate;
 
 @Component
 public class StudentRowMapper implements RowMapper<Student> {
+
+    private final JdbcGroupDao jdbcGroupDao;
+
+    public StudentRowMapper(JdbcGroupDao jdbcGroupDao) {
+        this.jdbcGroupDao = jdbcGroupDao;
+    }
 
     @Override
     public Student mapRow(ResultSet resultSet, int i) throws SQLException {
@@ -24,6 +31,7 @@ public class StudentRowMapper implements RowMapper<Student> {
         student.setPhone(resultSet.getString("phone"));
         student.setAddress(resultSet.getString("address"));
         student.setBirthDate(resultSet.getObject("birth_date", LocalDate.class));
+        student.setGroup(jdbcGroupDao.get(resultSet.getInt("group_id")));
         return student;
     }
 }

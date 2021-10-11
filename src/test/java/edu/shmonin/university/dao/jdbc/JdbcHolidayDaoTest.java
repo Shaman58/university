@@ -27,6 +27,7 @@ class JdbcHolidayDaoTest {
     @Test
     void givenId_whenGet_thenReturnHoliday() {
         var expected = new Holiday("holiday-1", LocalDate.of(2021, 1, 1));
+
         var actual = jdbcHolidayDao.get(1);
 
         assertEquals(expected, actual);
@@ -38,6 +39,7 @@ class JdbcHolidayDaoTest {
         expected.add(new Holiday("holiday-1", LocalDate.of(2021, 1, 1)));
         expected.add(new Holiday("holiday-2", LocalDate.of(2021, 1, 2)));
         expected.add(new Holiday("holiday-3", LocalDate.of(2021, 1, 3)));
+
         var actual = jdbcHolidayDao.getAll();
 
         assertEquals(expected, actual);
@@ -46,9 +48,11 @@ class JdbcHolidayDaoTest {
     @Test
     void givenHoliday_whenCreate_thenOneMoreRow() {
         var holiday = new Holiday("holiday-4", LocalDate.of(2021, 1, 4));
+        var expected = JdbcTestUtils.countRowsInTable(jdbcTemplate, "holidays") + 1;
+
         jdbcHolidayDao.create(holiday);
+
         var actual = JdbcTestUtils.countRowsInTable(jdbcTemplate, "holidays");
-        var expected = 4;
 
         assertEquals(expected, actual);
     }
@@ -57,7 +61,9 @@ class JdbcHolidayDaoTest {
     void givenHoliday_whenUpdate_thenUpdateRaw() {
         var holiday = new Holiday("holiday-4", LocalDate.of(2021, 1, 4));
         holiday.setId(1);
+
         jdbcHolidayDao.update(holiday);
+
         var actual = JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "holidays", "name='holiday-4' and date='2021-01-04'");
         var expected = 1;
 
@@ -66,9 +72,11 @@ class JdbcHolidayDaoTest {
 
     @Test
     void givenId_whenDelete_thenDeleteRaw() {
+        var expected = JdbcTestUtils.countRowsInTable(jdbcTemplate, "holidays") - 1;
+
         jdbcHolidayDao.delete(1);
+
         var actual = JdbcTestUtils.countRowsInTable(jdbcTemplate, "holidays");
-        var expected = 2;
 
         assertEquals(expected, actual);
     }

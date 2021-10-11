@@ -28,6 +28,7 @@ class JdbcDurationDaoTest {
     @Test
     void givenId_whenGet_thenReturnDuration() {
         var expected = new Duration(LocalTime.of(9, 0), LocalTime.of(10, 0));
+
         var actual = jdbcDurationDao.get(1);
 
         assertEquals(expected, actual);
@@ -39,6 +40,7 @@ class JdbcDurationDaoTest {
         expected.add(new Duration(LocalTime.of(9, 0), LocalTime.of(10, 0)));
         expected.add(new Duration(LocalTime.of(11, 0), LocalTime.of(12, 0)));
         expected.add(new Duration(LocalTime.of(13, 0), LocalTime.of(14, 0)));
+
         var actual = jdbcDurationDao.getAll();
 
         assertEquals(expected, actual);
@@ -47,9 +49,11 @@ class JdbcDurationDaoTest {
     @Test
     void givenDuration_whenCreate_thenOneMoreRow() {
         var duration = new Duration(LocalTime.of(15, 0), LocalTime.of(16, 0));
+        var expected = JdbcTestUtils.countRowsInTable(jdbcTemplate, "durations") + 1;
+
         jdbcDurationDao.create(duration);
+
         var actual = JdbcTestUtils.countRowsInTable(jdbcTemplate, "durations");
-        var expected = 4;
 
         assertEquals(expected, actual);
     }
@@ -58,7 +62,9 @@ class JdbcDurationDaoTest {
     void givenDuration_whenUpdate_thenUpdateRaw() {
         var duration = new Duration(LocalTime.of(15, 0), LocalTime.of(16, 0));
         duration.setId(1);
+
         jdbcDurationDao.update(duration);
+
         var actual = JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "durations", "start_time='15:00:00' and end_time='16:00:00'");
         var expected = 1;
 
@@ -67,9 +73,11 @@ class JdbcDurationDaoTest {
 
     @Test
     void givenId_whenDelete_thenDeleteRaw() {
+        var expected = JdbcTestUtils.countRowsInTable(jdbcTemplate, "durations") - 1;
+
         jdbcDurationDao.delete(1);
+
         var actual = JdbcTestUtils.countRowsInTable(jdbcTemplate, "durations");
-        var expected = 2;
 
         assertEquals(expected, actual);
     }

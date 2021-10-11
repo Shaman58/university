@@ -26,6 +26,7 @@ class JdbcAudienceDaoTest {
     @Test
     void givenId_whenGet_thenReturnAudience() {
         var expected = new Audience(1, 10);
+
         var actual = jdbcAudienceDao.get(1);
 
         assertEquals(expected, actual);
@@ -37,6 +38,7 @@ class JdbcAudienceDaoTest {
         expected.add(new Audience(1, 10));
         expected.add(new Audience(2, 20));
         expected.add(new Audience(3, 30));
+
         var actual = jdbcAudienceDao.getAll();
 
         assertEquals(expected, actual);
@@ -45,9 +47,11 @@ class JdbcAudienceDaoTest {
     @Test
     void givenAudience_whenCreate_thenOneMoreRow() {
         var audience = new Audience(4, 40);
+        var expected = JdbcTestUtils.countRowsInTable(jdbcTemplate, "audiences") + 1;
+
         jdbcAudienceDao.create(audience);
+
         var actual = JdbcTestUtils.countRowsInTable(jdbcTemplate, "audiences");
-        var expected = 4;
 
         assertEquals(expected, actual);
     }
@@ -56,7 +60,9 @@ class JdbcAudienceDaoTest {
     void givenAudience_whenUpdate_thenUpdateRaw() {
         var audience = new Audience(1, 11);
         audience.setId(1);
+
         jdbcAudienceDao.update(audience);
+
         var actual = JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "audiences", "room_number=1 and capacity=11");
         var expected = 1;
 
@@ -65,9 +71,11 @@ class JdbcAudienceDaoTest {
 
     @Test
     void givenId_whenDelete_thenDeleteRaw() {
+        var expected = JdbcTestUtils.countRowsInTable(jdbcTemplate, "audiences") - 1;
+
         jdbcAudienceDao.delete(1);
+
         var actual = JdbcTestUtils.countRowsInTable(jdbcTemplate, "audiences");
-        var expected = 2;
 
         assertEquals(expected, actual);
     }

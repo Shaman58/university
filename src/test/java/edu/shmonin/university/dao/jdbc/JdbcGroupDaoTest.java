@@ -27,6 +27,7 @@ class JdbcGroupDaoTest {
     @Test
     void givenId_whenGet_thenReturnGroup() {
         var expected = new Group("group-1");
+
         var actual = jdbcGroupDao.get(1);
 
         assertEquals(expected, actual);
@@ -38,6 +39,7 @@ class JdbcGroupDaoTest {
         expected.add(new Group("group-1"));
         expected.add(new Group("group-2"));
         expected.add(new Group("group-3"));
+
         var actual = jdbcGroupDao.getAll();
 
         assertEquals(expected, actual);
@@ -46,9 +48,11 @@ class JdbcGroupDaoTest {
     @Test
     void givenGroup_whenCreate_thenOneMoreRow() {
         var group = new Group("group-4");
+        var expected = JdbcTestUtils.countRowsInTable(jdbcTemplate, "groups") + 1;
+
         jdbcGroupDao.create(group);
+
         var actual = JdbcTestUtils.countRowsInTable(jdbcTemplate, "groups");
-        var expected = 4;
 
         assertEquals(expected, actual);
     }
@@ -57,7 +61,9 @@ class JdbcGroupDaoTest {
     void givenGroup_whenUpdate_thenUpdateRaw() {
         var group = new Group("group-4");
         group.setId(1);
+
         jdbcGroupDao.update(group);
+
         var actual = JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "groups", "name='group-4'");
         var expected = 1;
 
@@ -66,9 +72,11 @@ class JdbcGroupDaoTest {
 
     @Test
     void givenId_whenDelete_thenDeleteRaw() {
+        var expected = JdbcTestUtils.countRowsInTable(jdbcTemplate, "groups") - 1;
+
         jdbcGroupDao.delete(1);
+
         var actual = JdbcTestUtils.countRowsInTable(jdbcTemplate, "groups");
-        var expected = 2;
 
         assertEquals(expected, actual);
     }
@@ -80,6 +88,7 @@ class JdbcGroupDaoTest {
         var group2 = new Group("group-2");
         group1.setId(2);
         var expected = Arrays.asList(group1, group2);
+
         var actual = jdbcGroupDao.getByLectureId(1);
 
         assertEquals(expected, actual);

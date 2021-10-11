@@ -17,7 +17,7 @@ public class ApplicationConfig {
 
     @Value("${db.driver}")
     private String dbDriverClass;
-    @Value("${db.sourceName}")
+    @Value("${db.url}")
     private String dbUrl;
     @Value("${db.user}")
     private String dbUser;

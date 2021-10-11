@@ -1,7 +1,7 @@
 package edu.shmonin.university.dao.jdbc;
 
 import edu.shmonin.university.dao.LectureDao;
-import edu.shmonin.university.dao.rowmapper.LectureRowMapper;
+import edu.shmonin.university.dao.jdbc.rowmapper.LectureRowMapper;
 import edu.shmonin.university.model.Lecture;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -47,6 +47,7 @@ public class JdbcLectureDao implements LectureDao {
             var preparedStatement = connection.prepareStatement(CREATE_QUERY, Statement.RETURN_GENERATED_KEYS);
             preparedStatement.setObject(1, lecture.getDate());
             preparedStatement.setInt(2, lecture.getCourse().getId());
+
             preparedStatement.setInt(3, lecture.getAudience().getId());
             preparedStatement.setInt(4, lecture.getDuration().getId());
             preparedStatement.setInt(5, lecture.getTeacher().getId());

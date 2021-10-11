@@ -1,7 +1,7 @@
 package edu.shmonin.university.dao.jdbc;
 
 import edu.shmonin.university.dao.GroupDao;
-import edu.shmonin.university.dao.rowmapper.GroupRowMapper;
+import edu.shmonin.university.dao.jdbc.rowmapper.GroupRowMapper;
 import edu.shmonin.university.model.Group;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;

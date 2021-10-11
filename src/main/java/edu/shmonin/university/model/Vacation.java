@@ -8,6 +8,7 @@ public class Vacation {
     private int id;
     private LocalDate startDate;
     private LocalDate endDate;
+    private Teacher teacher;
 
     public Vacation(LocalDate startDate, LocalDate endDate) {
         this.startDate = startDate;
@@ -39,6 +40,14 @@ public class Vacation {
 
     public void setEndDate(LocalDate endDate) {
         this.endDate = endDate;
+    }
+
+    public Teacher getTeacher() {
+        return teacher;
+    }
+
+    public void setTeacher(Teacher teacher) {
+        this.teacher = teacher;
     }
 
     @Override

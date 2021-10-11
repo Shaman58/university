@@ -6,7 +6,6 @@ import edu.shmonin.university.model.Lecture;
 import edu.shmonin.university.model.Student;
 import edu.shmonin.university.model.Teacher;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.util.List;

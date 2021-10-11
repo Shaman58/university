@@ -1,4 +1,4 @@
-package edu.shmonin.university.dao.rowmapper;
+package edu.shmonin.university.dao.jdbc.rowmapper;
 
 import edu.shmonin.university.dao.jdbc.JdbcCourseDao;
 import edu.shmonin.university.dao.jdbc.JdbcVacationDao;
@@ -37,7 +37,7 @@ public class TeacherRowMapper implements RowMapper<Teacher> {
         teacher.setBirthDate(resultSet.getObject("birth_date", LocalDate.class));
         teacher.setScientificDegree(ScientificDegree.valueOf(resultSet.getString("scientific_degree")));
         teacher.setCourses(jdbcCourseDao.getByTeacherId(teacher.getId()));
-        teacher.setVacations(jdbcVacationDao.getTeacherVacations(teacher.getId()));
+        teacher.setVacations(jdbcVacationDao.getByTeacherId(teacher.getId()));
         return teacher;
     }
 }

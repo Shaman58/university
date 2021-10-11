@@ -60,9 +60,9 @@ public class TeacherManager {
                 case ("b") -> jdbcTeacherDao.delete(selectId());
                 case ("c") -> jdbcTeacherDao.update(updateTeacher());
                 case ("d") -> printTeachers(jdbcTeacherDao.getAll());
-                case ("e") -> jdbcTeacherDao.addTeacherCourse(courseManager.selectCourse(), selectTeacher());
+                case ("e") -> jdbcTeacherDao.update(addCourseToTheTeacher());
                 case ("f") -> addVacationToTheTeacher();
-                case ("g") -> vacationManager.printVacations(jdbcVacationDao.getTeacherVacations(selectTeacher().getId()));
+                case ("g") -> vacationManager.printVacations(jdbcVacationDao.getByTeacherId(selectTeacher().getId()));
                 case ("h") -> jdbcVacationDao.delete(vacationManager.selectTeacherVacation(selectTeacher()).getId());
                 case ("i") -> courseManager.printCourses(jdbcCourseDao.getByTeacherId(selectTeacher().getId()));
                 default -> out.println("Input the right letter!");
@@ -130,7 +130,14 @@ public class TeacherManager {
 
     private void addVacationToTheTeacher() {
         var vacation = vacationManager.createVacation();
+        var teacher = selectTeacher();
+        vacation.setTeacher(teacher);
         jdbcVacationDao.create(vacation);
-        jdbcVacationDao.setTeacherVacation(vacation, selectTeacher());
+    }
+
+    private Teacher addCourseToTheTeacher() {
+        var teacher = selectTeacher();
+        teacher.getCourses().add(courseManager.selectCourse());
+        return teacher;
     }
 }

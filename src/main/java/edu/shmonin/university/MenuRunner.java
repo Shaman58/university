@@ -1,7 +1,6 @@
 package edu.shmonin.university;
 
 import edu.shmonin.university.menu.*;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Scanner;
@@ -12,58 +11,27 @@ import static java.lang.System.out;
 @Service
 public class MenuRunner {
 
-    private HolidayManager holidayManager;
-    private CourseManager courseManager;
-    private StudentManager studentManager;
-    private GroupManager groupManager;
-    private DurationManager durationManager;
-    private TeacherManager teacherManager;
-    private LectureManager lectureManager;
-    private AudienceManager audienceManager;
-    private ScheduleManager scheduleManager;
+    private final HolidayManager holidayManager;
+    private final CourseManager courseManager;
+    private final StudentManager studentManager;
+    private final GroupManager groupManager;
+    private final DurationManager durationManager;
+    private final TeacherManager teacherManager;
+    private final LectureManager lectureManager;
+    private final AudienceManager audienceManager;
+    private final ScheduleManager scheduleManager;
 
-    @Autowired
-    public void setHolidayManager(HolidayManager holidayManager) {
+    public MenuRunner(HolidayManager holidayManager, CourseManager courseManager, StudentManager studentManager,
+                      GroupManager groupManager, DurationManager durationManager, TeacherManager teacherManager,
+                      LectureManager lectureManager, AudienceManager audienceManager, ScheduleManager scheduleManager) {
         this.holidayManager = holidayManager;
-    }
-
-    @Autowired
-    public void setCourseManager(CourseManager courseManager) {
         this.courseManager = courseManager;
-    }
-
-    @Autowired
-    public void setStudentManager(StudentManager studentManager) {
         this.studentManager = studentManager;
-    }
-
-    @Autowired
-    public void setGroupManager(GroupManager groupManager) {
         this.groupManager = groupManager;
-    }
-
-    @Autowired
-    public void setDurationManager(DurationManager durationManager) {
         this.durationManager = durationManager;
-    }
-
-    @Autowired
-    public void setTeacherManager(TeacherManager teacherManager) {
         this.teacherManager = teacherManager;
-    }
-
-    @Autowired
-    public void setLectureManager(LectureManager lectureManager) {
         this.lectureManager = lectureManager;
-    }
-
-    @Autowired
-    public void setAudienceManager(AudienceManager audienceManager) {
         this.audienceManager = audienceManager;
-    }
-
-    @Autowired
-    public void setScheduleManager(ScheduleManager scheduleManager) {
         this.scheduleManager = scheduleManager;
     }
 

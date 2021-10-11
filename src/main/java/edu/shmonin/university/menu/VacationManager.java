@@ -42,7 +42,7 @@ public class VacationManager {
     }
 
     public Vacation selectTeacherVacation(Teacher teacher) {
-        var vacations = jdbcVacationDao.getTeacherVacations(teacher.getId());
+        var vacations = jdbcVacationDao.getByTeacherId(teacher.getId());
         printVacations(vacations);
         var id = selectId();
         return vacations.stream().filter(p -> p.getId() == id).findAny().orElse(null);

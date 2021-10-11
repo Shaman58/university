@@ -40,6 +40,7 @@ class JdbcTeacherDaoTest {
         expected.setCourses(Arrays.asList(new Course("course-1"), new Course("course-2")));
         expected.setVacations(Arrays.asList(new Vacation(LocalDate.of(2021, 1, 1), LocalDate.of(2021, 2, 1)),
                 new Vacation(LocalDate.of(2021, 3, 1), LocalDate.of(2021, 4, 1))));
+
         var actual = jdbcTeacherDao.get(1);
 
         assertEquals(expected, actual);
@@ -84,6 +85,7 @@ class JdbcTeacherDaoTest {
         teacher3.setCourses(Collections.singletonList(new Course("course-3")));
         teacher1.setVacations(Collections.singletonList(new Vacation(LocalDate.of(2021, 5, 1), LocalDate.of(2021, 6, 1))));
         var expected = Arrays.asList(teacher1, teacher2, teacher3);
+
         var actual = jdbcTeacherDao.getAll();
 
         assertEquals(expected, actual);
@@ -91,22 +93,26 @@ class JdbcTeacherDaoTest {
 
     @Test
     void givenTeacher_whenCreate_thenOneMoreRow() {
+        var expected = JdbcTestUtils.countRowsInTable(jdbcTemplate, "teachers") + 1;
         var teacher = new Teacher();
-        teacher.setFirstName("name-1");
-        teacher.setLastName("surname-1");
-        teacher.setEmail("email-1");
-        teacher.setCountry("country-1");
+        teacher.setFirstName("name-4");
+        teacher.setLastName("surname-4");
+        teacher.setEmail("email-4");
+        teacher.setCountry("country-4");
         teacher.setGender(Gender.MALE);
-        teacher.setPhone("phone-1");
-        teacher.setAddress("address-1");
+        teacher.setPhone("phone-4");
+        teacher.setAddress("address-4");
         teacher.setBirthDate(LocalDate.of(1980, 1, 1));
         teacher.setScientificDegree(ScientificDegree.DOCTOR);
-        teacher.setCourses(Arrays.asList(new Course("course-1"), new Course("course-2")));
-        teacher.setVacations(Arrays.asList(new Vacation(LocalDate.of(2021, 1, 1), LocalDate.of(2021, 2, 1)),
-                new Vacation(LocalDate.of(2021, 3, 1), LocalDate.of(2021, 4, 1))));
+        var course1 = new Course("course-1");
+        var course2 = new Course("course-2");
+        course1.setId(1);
+        course2.setId(2);
+        teacher.setCourses(Arrays.asList(course1, course2));
+
         jdbcTeacherDao.create(teacher);
+
         var actual = JdbcTestUtils.countRowsInTable(jdbcTemplate, "teachers");
-        var expected = 4;
 
         assertEquals(expected, actual);
     }
@@ -124,7 +130,9 @@ class JdbcTeacherDaoTest {
         teacher.setAddress("address-4");
         teacher.setBirthDate(LocalDate.of(1980, 1, 4));
         teacher.setScientificDegree(ScientificDegree.DOCTOR);
+
         jdbcTeacherDao.update(teacher);
+
         var actual = JdbcTestUtils.countRowsInTableWhere(jdbcTemplate,
                 "teachers", "first_name='name-4' and last_name='surname-4' and email='email-4' and country='country-4' and gender='MALE' and phone='phone-4' and address='address-4' and birth_date='1980-01-04' and scientific_degree='DOCTOR'");
         var expected = 1;
@@ -134,9 +142,11 @@ class JdbcTeacherDaoTest {
 
     @Test
     void givenId_whenDelete_thenDeleteRaw() {
+        var expected = JdbcTestUtils.countRowsInTable(jdbcTemplate, "teachers") - 1;
+
         jdbcTeacherDao.delete(1);
+
         var actual = JdbcTestUtils.countRowsInTable(jdbcTemplate, "teachers");
-        var expected = 2;
 
         assertEquals(expected, actual);
     }

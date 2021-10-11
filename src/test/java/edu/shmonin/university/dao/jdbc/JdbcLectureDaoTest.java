@@ -47,6 +47,7 @@ class JdbcLectureDaoTest {
                 new Audience(1, 10),
                 new Duration(LocalTime.of(9, 0, 0), LocalTime.of(10, 0, 0)),
                 teacher1);
+
         var actual = jdbcLectureDao.get(1);
 
         assertEquals(expected, actual);
@@ -86,6 +87,7 @@ class JdbcLectureDaoTest {
                 new Duration(LocalTime.of(11, 0, 0), LocalTime.of(12, 0, 0)),
                 teacher1);
         var expected = Arrays.asList(lecture1, lecture2, lecture3);
+
         var actual = jdbcLectureDao.getAll();
 
         assertEquals(expected, actual);
@@ -93,6 +95,7 @@ class JdbcLectureDaoTest {
 
     @Test
     void givenLecture_whenCreate_thenOneMoreRow() {
+        var expected = JdbcTestUtils.countRowsInTable(jdbcTemplate, "lectures") + 1;
         var teacher = new Teacher();
         teacher.setId(1);
         teacher.setFirstName("name-1");
@@ -124,9 +127,10 @@ class JdbcLectureDaoTest {
         duration.setId(1);
         var lecture = new Lecture(LocalDate.of(2021, 1, 1),
                 course1, Arrays.asList(group1, group2), audience, duration, teacher);
+
         jdbcLectureDao.create(lecture);
+
         var actual = JdbcTestUtils.countRowsInTable(jdbcTemplate, "lectures");
-        var expected = 4;
 
         assertEquals(expected, actual);
     }
@@ -163,7 +167,9 @@ class JdbcLectureDaoTest {
         var lecture = new Lecture(LocalDate.of(2021, 1, 1),
                 course, Arrays.asList(group1, group2), audience, duration, teacher);
         lecture.setId(1);
+
         jdbcLectureDao.update(lecture);
+
         var actual = JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "lectures", "date='2021-01-01' and course_id=1 and audience_id=1 and duration_id=1 and teacher_id=1");
         var expected = 1;
 
@@ -172,9 +178,11 @@ class JdbcLectureDaoTest {
 
     @Test
     void givenId_whenDelete_thenDeleteRaw() {
+        var expected = JdbcTestUtils.countRowsInTable(jdbcTemplate, "lectures") - 1;
+
         jdbcLectureDao.delete(1);
+
         var actual = JdbcTestUtils.countRowsInTable(jdbcTemplate, "lectures");
-        var expected = 2;
 
         assertEquals(expected, actual);
     }

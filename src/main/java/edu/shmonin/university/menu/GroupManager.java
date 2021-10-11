@@ -47,7 +47,7 @@ public class GroupManager {
                 case ("b") -> jdbcGroupDao.delete(selectId());
                 case ("c") -> jdbcGroupDao.update(updateGroup());
                 case ("d") -> printGroupsWithStudents(jdbcGroupDao.getAll());
-                case ("e") -> jdbcStudentDao.addStudentToTheGroup(studentManager.selectStudent(), selectGroup());
+                case ("e") -> addStudentToTheGroup();
                 default -> out.println("Input the right letter!");
             }
             out.println(menuText);
@@ -138,5 +138,11 @@ public class GroupManager {
         printGroups(groups);
         var id = selectId();
         groups.remove(jdbcGroupDao.get(id));
+    }
+
+    private void addStudentToTheGroup() {
+        var student = studentManager.selectStudent();
+        student.setGroup(selectGroup());
+        jdbcStudentDao.update(student);
     }
 }

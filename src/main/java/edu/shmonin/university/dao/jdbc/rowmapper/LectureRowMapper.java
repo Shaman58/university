@@ -1,13 +1,13 @@
-package edu.shmonin.university.dao.rowmapper;
+package edu.shmonin.university.dao.jdbc.rowmapper;
 
 import edu.shmonin.university.dao.jdbc.*;
 import edu.shmonin.university.model.Lecture;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
 
 @Component
 public class LectureRowMapper implements RowMapper<Lecture> {
@@ -32,7 +32,7 @@ public class LectureRowMapper implements RowMapper<Lecture> {
     public Lecture mapRow(ResultSet resultSet, int i) throws SQLException {
         var lecture = new Lecture();
         lecture.setId(resultSet.getInt("id"));
-        lecture.setDate(resultSet.getDate("date").toLocalDate());
+        lecture.setDate(resultSet.getObject("date", LocalDate.class));
         lecture.setCourse(jdbcCourseDao.get(resultSet.getInt("course_id")));
         lecture.setGroups(jdbcGroupDao.getByLectureId(lecture.getId()));
         lecture.setAudience(jdbcAudienceDao.get(resultSet.getInt("audience_id")));

@@ -1,7 +1,6 @@
 package edu.shmonin.university.dao.jdbc;
 
 import edu.shmonin.university.dao.VacationDao;
-import edu.shmonin.university.model.Teacher;
 import edu.shmonin.university.model.Vacation;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -19,12 +18,11 @@ public class JdbcVacationDao implements VacationDao {
             "SELECT id,start_date,end_date FROM vacations WHERE id=?";
     private static final String GET_ALL_QUERY =
             "SELECT id,start_date,end_date FROM vacations";
-    private static final String CREATE_QUERY = "INSERT INTO vacations(start_date, end_date) VALUES (?,?)";
-    private static final String UPDATE_QUERY = "UPDATE vacations SET start_date=?, end_date=? WHERE id=?";
+    private static final String CREATE_QUERY = "INSERT INTO vacations(start_date, end_date, teacher_id) VALUES (?,?,?)";
+    private static final String UPDATE_QUERY = "UPDATE vacations SET start_date=?, end_date=?, teacher_id=? WHERE id=?";
     private static final String DELETE_QUERY = "DELETE FROM vacations WHERE id=?";
     private static final String GET_TEACHER_VACATIONS_QUERY =
             "SELECT id,start_date,end_date FROM vacations WHERE teacher_id=?";
-    private static final String SET_VACATION_TEACHER_QUERY = "UPDATE vacations SET teacher_id=? WHERE id=?";
 
     private final JdbcTemplate jdbcTemplate;
     private final BeanPropertyRowMapper<Vacation> vacationRowMapper;
@@ -51,6 +49,7 @@ public class JdbcVacationDao implements VacationDao {
             var preparedStatement = connection.prepareStatement(CREATE_QUERY, Statement.RETURN_GENERATED_KEYS);
             preparedStatement.setObject(1, vacation.getStartDate());
             preparedStatement.setObject(2, vacation.getEndDate());
+            preparedStatement.setObject(3, vacation.getTeacher() == null ? null : vacation.getTeacher().getId());
             return preparedStatement;
         }, keyHolder);
         vacation.setId(Objects.requireNonNull(keyHolder.getKey()).intValue());
@@ -58,7 +57,7 @@ public class JdbcVacationDao implements VacationDao {
 
     @Override
     public void update(Vacation vacation) {
-        jdbcTemplate.update(UPDATE_QUERY, vacation.getStartDate(), vacation.getEndDate(), vacation.getId());
+        jdbcTemplate.update(UPDATE_QUERY, vacation.getStartDate(), vacation.getEndDate(), vacation.getTeacher() == null ? null : vacation.getTeacher().getId(), vacation.getId());
     }
 
     @Override
@@ -67,12 +66,7 @@ public class JdbcVacationDao implements VacationDao {
     }
 
     @Override
-    public List<Vacation> getTeacherVacations(int teacherId) {
+    public List<Vacation> getByTeacherId(int teacherId) {
         return jdbcTemplate.query(GET_TEACHER_VACATIONS_QUERY, vacationRowMapper, teacherId);
-    }
-
-    @Override
-    public void setTeacherVacation(Vacation vacation, Teacher teacher) {
-        jdbcTemplate.update(SET_VACATION_TEACHER_QUERY, teacher.getId(), vacation.getId());
     }
 }
