@@ -49,7 +49,7 @@ public class StudentManager {
     }
 
     public void printStudents(List<Student> students) {
-        students.forEach(p -> out.printf("%d. %s %s %s %s %s %s %s %s%n",
+        students.forEach(p -> out.printf("%d. %s %s %s %s %s %s %s %s %s%n",
                 p.getId(),
                 p.getFirstName(),
                 p.getLastName(),
@@ -58,7 +58,8 @@ public class StudentManager {
                 p.getGender(),
                 p.getPhone(),
                 p.getAddress(),
-                p.getBirthDate()));
+                p.getBirthDate(),
+                p.getGroup().getName()));
     }
 
     public Student createNewStudent() {

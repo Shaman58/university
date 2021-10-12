@@ -3,6 +3,8 @@ package edu.shmonin.university.dao.jdbc;
 import edu.shmonin.university.dao.StudentDao;
 import edu.shmonin.university.dao.jdbc.rowmapper.StudentRowMapper;
 import edu.shmonin.university.model.Student;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Repository;
@@ -22,10 +24,16 @@ public class JdbcStudentDao implements StudentDao {
     private static final String GET_GROUP_STUDENTS = "SELECT * FROM students WHERE group_id=?";
 
     private final JdbcTemplate jdbcTemplate;
-    private final StudentRowMapper studentRowMapper;
+    private StudentRowMapper studentRowMapper;
+    private final BeanPropertyRowMapper<Student> rowMapper;
 
-    public JdbcStudentDao(JdbcTemplate jdbcTemplate, StudentRowMapper studentRowMapper) {
+    public JdbcStudentDao(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
+        this.rowMapper = BeanPropertyRowMapper.newInstance(Student.class);
+    }
+
+    @Autowired
+    public void setStudentRowMapper(StudentRowMapper studentRowMapper) {
         this.studentRowMapper = studentRowMapper;
     }
 
@@ -72,6 +80,6 @@ public class JdbcStudentDao implements StudentDao {
 
     @Override
     public List<Student> getByGroupId(int groupId) {
-        return jdbcTemplate.query(GET_GROUP_STUDENTS, studentRowMapper, groupId);
+        return jdbcTemplate.query(GET_GROUP_STUDENTS, rowMapper, groupId);
     }
 }

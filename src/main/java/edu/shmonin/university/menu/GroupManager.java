@@ -94,7 +94,7 @@ public class GroupManager {
         var serial = new AtomicInteger(1);
         var students = jdbcStudentDao.getByGroupId(group.getId());
         for (Student student : students) {
-            result = result.concat(String.format("  %d. %s %s %s %s %s %s %s %s%n",
+            result = result.concat(String.format("  %d. %s %s %s %s %s %s %s %s %s%n",
                     serial.getAndIncrement(),
                     student.getFirstName(),
                     student.getLastName(),
@@ -103,7 +103,8 @@ public class GroupManager {
                     student.getGender(),
                     student.getPhone(),
                     student.getAddress(),
-                    student.getBirthDate()));
+                    student.getBirthDate(),
+                    group.getName()));
         }
         return result;
     }
