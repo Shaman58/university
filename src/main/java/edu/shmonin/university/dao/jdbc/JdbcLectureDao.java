@@ -9,7 +9,6 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Statement;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -63,15 +62,13 @@ public class JdbcLectureDao implements LectureDao {
     @Transactional
     @Override
     public void update(Lecture updatedLecture) {
-        var lecture = get(updatedLecture.getId());
-        var groupsToDelete = new java.util.ArrayList<>(List.copyOf(lecture.getGroups()));
-        groupsToDelete.removeAll(updatedLecture.getGroups());
-        var groupsToAdd = new ArrayList<>(List.copyOf(updatedLecture.getGroups()));
-        groupsToAdd.removeAll(lecture.getGroups());
+        var groups = get(updatedLecture.getId()).getGroups();
         jdbcTemplate.update(UPDATE_QUERY, updatedLecture.getDate(), updatedLecture.getCourse().getId(), updatedLecture.getAudience().getId(),
                 updatedLecture.getDuration().getId(), updatedLecture.getTeacher().getId(), updatedLecture.getId());
-        groupsToDelete.forEach(p -> jdbcTemplate.update(DELETE_LECTURE_GROUP, p.getId(), updatedLecture.getId()));
-        groupsToAdd.forEach(p -> jdbcTemplate.update(ADD_LECTURE_GROUP, p.getId(), updatedLecture.getId()));
+        groups.stream().filter(p -> !updatedLecture.getGroups().contains(p))
+                .forEach(p -> jdbcTemplate.update(DELETE_LECTURE_GROUP, p.getId(), updatedLecture.getId()));
+        updatedLecture.getGroups().stream().filter(p -> !groups.contains(p))
+                .forEach(p -> jdbcTemplate.update(ADD_LECTURE_GROUP, p.getId(), updatedLecture.getId()));
     }
 
     @Override

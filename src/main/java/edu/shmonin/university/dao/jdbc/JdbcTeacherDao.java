@@ -9,7 +9,6 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Statement;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -68,16 +67,14 @@ public class JdbcTeacherDao implements TeacherDao {
     @Transactional
     @Override
     public void update(Teacher updatedTeacher) {
-        var teacher = get(updatedTeacher.getId());
-        var coursesToDelete = new java.util.ArrayList<>(List.copyOf(teacher.getCourses()));
-        coursesToDelete.removeAll(updatedTeacher.getCourses());
-        var coursesToAdd = new ArrayList<>(List.copyOf(updatedTeacher.getCourses()));
-        coursesToAdd.removeAll(teacher.getCourses());
+        var courses = get(updatedTeacher.getId()).getCourses();
         jdbcTemplate.update(UPDATE_QUERY, updatedTeacher.getFirstName(), updatedTeacher.getLastName(), updatedTeacher.getEmail(),
                 updatedTeacher.getCountry(), updatedTeacher.getGender().toString(), updatedTeacher.getPhone(), updatedTeacher.getAddress(),
                 updatedTeacher.getBirthDate(), updatedTeacher.getScientificDegree().toString(), updatedTeacher.getId());
-        coursesToDelete.forEach(course -> jdbcTemplate.update(DELETE_TEACHER_COURSE_QUERY, course.getId(), updatedTeacher.getId()));
-        coursesToAdd.forEach(course -> jdbcTemplate.update(CREATE_TEACHER_COURSE_QUERY, course.getId(), updatedTeacher.getId()));
+        courses.stream().filter(p -> !updatedTeacher.getCourses().contains(p))
+                .forEach(course -> jdbcTemplate.update(DELETE_TEACHER_COURSE_QUERY, course.getId(), updatedTeacher.getId()));
+        updatedTeacher.getCourses().stream().filter(p -> !courses.contains(p))
+                .forEach(course -> jdbcTemplate.update(CREATE_TEACHER_COURSE_QUERY, course.getId(), updatedTeacher.getId()));
     }
 
     @Override
