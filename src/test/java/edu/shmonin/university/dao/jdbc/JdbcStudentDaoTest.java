@@ -6,17 +6,17 @@ import edu.shmonin.university.model.Student;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.test.jdbc.JdbcTestUtils;
 
 import java.time.LocalDate;
-import java.util.Arrays;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringJUnitConfig(TestConfig.class)
-@Sql({"classpath:Schema.sql", "classpath:test-data.sql"})
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 class JdbcStudentDaoTest {
 
     @Autowired
@@ -71,7 +71,7 @@ class JdbcStudentDaoTest {
         student3.setPhone("phone-3");
         student3.setAddress("address-3");
         student3.setBirthDate(LocalDate.of(2000, 1, 3));
-        var expected = Arrays.asList(student1, student2, student3);
+        var expected = List.of(student1, student2, student3);
 
         var actual = jdbcStudentDao.getAll();
 

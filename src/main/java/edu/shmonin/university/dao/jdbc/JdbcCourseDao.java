@@ -20,7 +20,7 @@ public class JdbcCourseDao implements CourseDao {
     private static final String UPDATE_QUERY = "UPDATE courses SET name=? WHERE id=?";
     private static final String DELETE_QUERY = "DELETE FROM courses WHERE id=?";
     private static final String GET_TEACHER_COURSES_QUERY =
-            "SELECT id, name FROM courses INNER JOIN courses_teachers ON courses.id = courses_teachers.course_id WHERE teacher_id=?";
+            "SELECT id, name FROM courses INNER JOIN teacher_courses ON courses.id = teacher_courses.course_id WHERE teacher_id=?";
 
     private final JdbcTemplate jdbcTemplate;
     private final BeanPropertyRowMapper<Course> courseRowMapper;

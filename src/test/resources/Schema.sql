@@ -1,5 +1,5 @@
-DROP TABLE IF EXISTS groups_lectures;
-DROP TABLE IF EXISTS courses_teachers;
+DROP TABLE IF EXISTS lecture_groups;
+DROP TABLE IF EXISTS teacher_courses;
 DROP TABLE IF EXISTS lectures;
 DROP TABLE IF EXISTS vacations;
 DROP TABLE IF EXISTS teachers;
@@ -86,7 +86,7 @@ CREATE TABLE lectures
     FOREIGN KEY (duration_id) REFERENCES durations (id) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (teacher_id) REFERENCES teachers (id) ON DELETE CASCADE ON UPDATE CASCADE
 );
-CREATE TABLE courses_teachers
+CREATE TABLE teacher_courses
 (
     course_id  INT,
     teacher_id INT,
@@ -94,7 +94,7 @@ CREATE TABLE courses_teachers
     FOREIGN KEY (teacher_id) REFERENCES teachers (id) ON DELETE CASCADE ON UPDATE CASCADE,
     UNIQUE (course_id, teacher_id)
 );
-CREATE TABLE groups_lectures
+CREATE TABLE lecture_groups
 (
     group_id   INT,
     lecture_id INT,

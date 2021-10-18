@@ -6,8 +6,10 @@ import edu.shmonin.university.model.Lecture;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -19,8 +21,8 @@ public class JdbcLectureDao implements LectureDao {
     private static final String CREATE_QUERY = "INSERT INTO lectures(date, course_id, audience_id, duration_id, teacher_id) VALUES(?,?,?,?,?)";
     private static final String UPDATE_QUERY = "UPDATE lectures SET date=?, course_id=?, audience_id=?, duration_id=?, teacher_id=? WHERE id=?";
     private static final String DELETE_QUERY = "DELETE FROM lectures WHERE id=?";
-    private static final String ADD_GROUP_LECTURE = "INSERT INTO groups_lectures(group_id, lecture_id) VALUES (?,?)";
-    private static final String DELETE_GROUP_LECTURE = "DELETE FROM groups_lectures WHERE lecture_id=?";
+    private static final String ADD_LECTURE_GROUP = "INSERT INTO lecture_groups(group_id, lecture_id) VALUES (?,?)";
+    private static final String DELETE_LECTURE_GROUP = "DELETE FROM lecture_groups WHERE group_id=? AND lecture_id=?";
 
     private final JdbcTemplate jdbcTemplate;
     private final LectureRowMapper lectureRowMapper;
@@ -40,6 +42,7 @@ public class JdbcLectureDao implements LectureDao {
         return jdbcTemplate.query(GET_ALL_QUERY, lectureRowMapper);
     }
 
+    @Transactional
     @Override
     public void create(Lecture lecture) {
         var keyHolder = new GeneratedKeyHolder();
@@ -54,15 +57,21 @@ public class JdbcLectureDao implements LectureDao {
             return preparedStatement;
         }, keyHolder);
         lecture.setId(Objects.requireNonNull(keyHolder.getKey()).intValue());
-        lecture.getGroups().forEach(p -> jdbcTemplate.update(ADD_GROUP_LECTURE, p.getId(), lecture.getId()));
+        lecture.getGroups().forEach(p -> jdbcTemplate.update(ADD_LECTURE_GROUP, p.getId(), lecture.getId()));
     }
 
+    @Transactional
     @Override
-    public void update(Lecture lecture) {
-        jdbcTemplate.update(UPDATE_QUERY, lecture.getDate(), lecture.getCourse().getId(), lecture.getAudience().getId(),
-                lecture.getDuration().getId(), lecture.getTeacher().getId(), lecture.getId());
-        jdbcTemplate.update(DELETE_GROUP_LECTURE, lecture.getId());
-        lecture.getGroups().forEach(p -> jdbcTemplate.update(ADD_GROUP_LECTURE, p.getId(), lecture.getId()));
+    public void update(Lecture updatedLecture) {
+        var lecture = get(updatedLecture.getId());
+        var groupsToDelete = new java.util.ArrayList<>(List.copyOf(lecture.getGroups()));
+        groupsToDelete.removeAll(updatedLecture.getGroups());
+        var groupsToAdd = new ArrayList<>(List.copyOf(updatedLecture.getGroups()));
+        groupsToAdd.removeAll(lecture.getGroups());
+        jdbcTemplate.update(UPDATE_QUERY, updatedLecture.getDate(), updatedLecture.getCourse().getId(), updatedLecture.getAudience().getId(),
+                updatedLecture.getDuration().getId(), updatedLecture.getTeacher().getId(), updatedLecture.getId());
+        groupsToDelete.forEach(p -> jdbcTemplate.update(DELETE_LECTURE_GROUP, p.getId(), updatedLecture.getId()));
+        groupsToAdd.forEach(p -> jdbcTemplate.update(ADD_LECTURE_GROUP, p.getId(), updatedLecture.getId()));
     }
 
     @Override

@@ -40,15 +40,15 @@ INSERT INTO vacations(start_date, end_date, teacher_id)
 VALUES ('2021-03-01', '2021-04-01', 1);
 INSERT INTO vacations(start_date, end_date, teacher_id)
 VALUES ('2021-05-01', '2021-06-01', 3);
-INSERT INTO courses_teachers(course_id, teacher_id)
+INSERT INTO teacher_courses(course_id, teacher_id)
 VALUES (1, 1);
-INSERT INTO courses_teachers(course_id, teacher_id)
+INSERT INTO teacher_courses(course_id, teacher_id)
 VALUES (2, 1);
-INSERT INTO courses_teachers(course_id, teacher_id)
+INSERT INTO teacher_courses(course_id, teacher_id)
 VALUES (1, 2);
-INSERT INTO courses_teachers(course_id, teacher_id)
+INSERT INTO teacher_courses(course_id, teacher_id)
 VALUES (3, 2);
-INSERT INTO courses_teachers(course_id, teacher_id)
+INSERT INTO teacher_courses(course_id, teacher_id)
 VALUES (3, 3);
 INSERT INTO students(first_name, last_name, email, country, gender, phone, address, birth_date, group_id)
 VALUES ('name-1', 'surname-1', 'email-1', 'country-1', 'MALE', 'phone-1', 'address-1', '2000-01-01', 1);
@@ -62,15 +62,15 @@ INSERT INTO lectures(date, course_id, audience_id, duration_id, teacher_id)
 VALUES ('2021-01-02', 1, 1, 1, 1);
 INSERT INTO lectures(date, course_id, audience_id, duration_id, teacher_id)
 VALUES ('2021-01-01', 1, 2, 2, 1);
-INSERT INTO groups_lectures(group_id, lecture_id)
+INSERT INTO lecture_groups(group_id, lecture_id)
 VALUES (1, 1);
-INSERT INTO groups_lectures(group_id, lecture_id)
+INSERT INTO lecture_groups(group_id, lecture_id)
 VALUES (2, 1);
-INSERT INTO groups_lectures(group_id, lecture_id)
+INSERT INTO lecture_groups(group_id, lecture_id)
 VALUES (1, 2);
-INSERT INTO groups_lectures(group_id, lecture_id)
+INSERT INTO lecture_groups(group_id, lecture_id)
 VALUES (2, 2);
-INSERT INTO groups_lectures(group_id, lecture_id)
+INSERT INTO lecture_groups(group_id, lecture_id)
 VALUES (3, 2);
-INSERT INTO groups_lectures(group_id, lecture_id)
+INSERT INTO lecture_groups(group_id, lecture_id)
 VALUES (3, 3);

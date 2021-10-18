@@ -5,18 +5,19 @@ import edu.shmonin.university.model.*;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.test.jdbc.JdbcTestUtils;
 
 import java.time.LocalDate;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringJUnitConfig(TestConfig.class)
-@Sql({"classpath:Schema.sql", "classpath:test-data.sql"})
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 class JdbcTeacherDaoTest {
 
     @Autowired
@@ -37,8 +38,8 @@ class JdbcTeacherDaoTest {
         expected.setAddress("address-1");
         expected.setBirthDate(LocalDate.of(1980, 1, 1));
         expected.setScientificDegree(ScientificDegree.DOCTOR);
-        expected.setCourses(Arrays.asList(new Course("course-1"), new Course("course-2")));
-        expected.setVacations(Arrays.asList(new Vacation(LocalDate.of(2021, 1, 1), LocalDate.of(2021, 2, 1)),
+        expected.setCourses(List.of(new Course("course-1"), new Course("course-2")));
+        expected.setVacations(List.of(new Vacation(LocalDate.of(2021, 1, 1), LocalDate.of(2021, 2, 1)),
                 new Vacation(LocalDate.of(2021, 3, 1), LocalDate.of(2021, 4, 1))));
 
         var actual = jdbcTeacherDao.get(1);
@@ -58,8 +59,8 @@ class JdbcTeacherDaoTest {
         teacher1.setAddress("address-1");
         teacher1.setBirthDate(LocalDate.of(1980, 1, 1));
         teacher1.setScientificDegree(ScientificDegree.DOCTOR);
-        teacher1.setCourses(Arrays.asList(new Course("course-1"), new Course("course-2")));
-        teacher1.setVacations(Arrays.asList(new Vacation(LocalDate.of(2021, 1, 1), LocalDate.of(2021, 2, 1)),
+        teacher1.setCourses(List.of(new Course("course-1"), new Course("course-2")));
+        teacher1.setVacations(List.of(new Vacation(LocalDate.of(2021, 1, 1), LocalDate.of(2021, 2, 1)),
                 new Vacation(LocalDate.of(2021, 3, 1), LocalDate.of(2021, 4, 1))));
         var teacher2 = new Teacher();
         teacher2.setFirstName("name-2");
@@ -71,7 +72,7 @@ class JdbcTeacherDaoTest {
         teacher2.setAddress("address-2");
         teacher2.setBirthDate(LocalDate.of(1980, 1, 2));
         teacher2.setScientificDegree(ScientificDegree.DOCTOR);
-        teacher2.setCourses(Arrays.asList(new Course("course-1"), new Course("course-3")));
+        teacher2.setCourses(List.of(new Course("course-1"), new Course("course-3")));
         var teacher3 = new Teacher();
         teacher3.setFirstName("name-3");
         teacher3.setLastName("surname-3");
@@ -84,7 +85,7 @@ class JdbcTeacherDaoTest {
         teacher3.setScientificDegree(ScientificDegree.BACHELOR);
         teacher3.setCourses(Collections.singletonList(new Course("course-3")));
         teacher1.setVacations(Collections.singletonList(new Vacation(LocalDate.of(2021, 5, 1), LocalDate.of(2021, 6, 1))));
-        var expected = Arrays.asList(teacher1, teacher2, teacher3);
+        var expected = List.of(teacher1, teacher2, teacher3);
 
         var actual = jdbcTeacherDao.getAll();
 
@@ -108,7 +109,7 @@ class JdbcTeacherDaoTest {
         var course2 = new Course("course-2");
         course1.setId(1);
         course2.setId(2);
-        teacher.setCourses(Arrays.asList(course1, course2));
+        teacher.setCourses(List.of(course1, course2));
 
         jdbcTeacherDao.create(teacher);
 
@@ -130,6 +131,7 @@ class JdbcTeacherDaoTest {
         teacher.setAddress("address-4");
         teacher.setBirthDate(LocalDate.of(1980, 1, 4));
         teacher.setScientificDegree(ScientificDegree.DOCTOR);
+        teacher.setCourses(new ArrayList<>());
 
         jdbcTeacherDao.update(teacher);
 

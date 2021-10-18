@@ -1,22 +1,21 @@
 package edu.shmonin.university.dao.jdbc;
 
 import config.TestConfig;
-import edu.shmonin.university.model.Audience;
 import edu.shmonin.university.model.Duration;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.test.jdbc.JdbcTestUtils;
 
 import java.time.LocalTime;
 import java.util.ArrayList;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringJUnitConfig(TestConfig.class)
-@Sql({"classpath:Schema.sql", "classpath:test-data.sql"})
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 class JdbcDurationDaoTest {
 
     @Autowired

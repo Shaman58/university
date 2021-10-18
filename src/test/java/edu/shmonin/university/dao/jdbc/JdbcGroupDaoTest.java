@@ -5,17 +5,17 @@ import edu.shmonin.university.model.Group;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.test.jdbc.JdbcTestUtils;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringJUnitConfig(TestConfig.class)
-@Sql({"classpath:Schema.sql", "classpath:test-data.sql"})
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 class JdbcGroupDaoTest {
 
     @Autowired
@@ -60,7 +60,7 @@ class JdbcGroupDaoTest {
     @Test
     void givenGroup_whenUpdate_thenUpdateRaw() {
         var group = new Group("group-4");
-        group.setId(1);
+        group.setId(2);
 
         jdbcGroupDao.update(group);
 
@@ -87,7 +87,7 @@ class JdbcGroupDaoTest {
         group1.setId(1);
         var group2 = new Group("group-2");
         group1.setId(2);
-        var expected = Arrays.asList(group1, group2);
+        var expected = List.of(group1, group2);
 
         var actual = jdbcGroupDao.getByLectureId(1);
 
