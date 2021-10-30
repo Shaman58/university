@@ -1,9 +1,9 @@
 package edu.shmonin.university.menu;
 
-import edu.shmonin.university.dao.jdbc.JdbcGroupDao;
-import edu.shmonin.university.dao.jdbc.JdbcStudentDao;
 import edu.shmonin.university.model.Group;
 import edu.shmonin.university.model.Student;
+import edu.shmonin.university.service.GroupService;
+import edu.shmonin.university.service.StudentService;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -17,13 +17,13 @@ import static java.lang.System.out;
 @Component
 public class GroupManager {
 
-    private final JdbcGroupDao jdbcGroupDao;
-    private final JdbcStudentDao jdbcStudentDao;
+    private final GroupService groupService;
+    private final StudentService studentService;
     private final StudentManager studentManager;
 
-    public GroupManager(JdbcGroupDao jdbcGroupDao, JdbcStudentDao jdbcStudentDao, StudentManager studentManager) {
-        this.jdbcGroupDao = jdbcGroupDao;
-        this.jdbcStudentDao = jdbcStudentDao;
+    public GroupManager(GroupService groupService, StudentService studentService, StudentManager studentManager) {
+        this.groupService = groupService;
+        this.studentService = studentService;
         this.studentManager = studentManager;
     }
 
@@ -43,10 +43,10 @@ public class GroupManager {
         var inputKey = scanner.next();
         while (!inputKey.equals("q")) {
             switch (inputKey) {
-                case ("a") -> jdbcGroupDao.create(createNewGroup());
-                case ("b") -> jdbcGroupDao.delete(selectId());
-                case ("c") -> jdbcGroupDao.update(updateGroup());
-                case ("d") -> printGroupsWithStudents(jdbcGroupDao.getAll());
+                case ("a") -> groupService.create(createNewGroup());
+                case ("b") -> groupService.delete(selectId());
+                case ("c") -> groupService.update(updateGroup());
+                case ("d") -> printGroupsWithStudents(groupService.getAll());
                 case ("e") -> addStudentToTheGroup();
                 default -> out.println("Input the right letter!");
             }
@@ -85,14 +85,14 @@ public class GroupManager {
     }
 
     public Group selectGroup() {
-        printGroups(jdbcGroupDao.getAll());
-        return jdbcGroupDao.get(selectId());
+        printGroups(groupService.getAll());
+        return groupService.get(selectId());
     }
 
     private String formatGroupStudents(Group group) {
         var result = "";
         var serial = new AtomicInteger(1);
-        var students = jdbcStudentDao.getByGroupId(group.getId());
+        var students = studentService.getByGroupId(group.getId());
         for (Student student : students) {
             result = result.concat(String.format("  %d. %s %s %s %s %s %s %s %s %s%n",
                     serial.getAndIncrement(),
@@ -138,12 +138,12 @@ public class GroupManager {
     private void deleteGroup(List<Group> groups) {
         printGroups(groups);
         var id = selectId();
-        groups.remove(jdbcGroupDao.get(id));
+        groups.remove(groupService.get(id));
     }
 
     private void addStudentToTheGroup() {
         var student = studentManager.selectStudent();
         student.setGroup(selectGroup());
-        jdbcStudentDao.update(student);
+        studentService.update(student);
     }
 }

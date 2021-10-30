@@ -12,7 +12,7 @@ import javax.sql.DataSource;
 
 @Configuration
 @ComponentScan("edu.shmonin.university")
-@PropertySource("classpath:db.properties")
+@PropertySource({"classpath:db.properties", "classpath:university.properties"})
 public class ApplicationConfig {
 
     @Value("${db.driver}")

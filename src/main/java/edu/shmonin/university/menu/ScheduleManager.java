@@ -1,10 +1,10 @@
 package edu.shmonin.university.menu;
 
-import edu.shmonin.university.dao.jdbc.JdbcLectureDao;
 import edu.shmonin.university.model.Group;
 import edu.shmonin.university.model.Lecture;
 import edu.shmonin.university.model.Student;
 import edu.shmonin.university.model.Teacher;
+import edu.shmonin.university.service.LectureService;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
@@ -18,15 +18,15 @@ import static java.lang.System.out;
 @Component
 public class ScheduleManager {
 
-    private final JdbcLectureDao jdbcLectureDao;
+    private final LectureService lectureService;
     private final TeacherManager teacherManager;
     private final StudentManager studentManager;
     private final LectureManager lectureManager;
 
 
-    public ScheduleManager(JdbcLectureDao jdbcLectureDao, TeacherManager teacherManager,
+    public ScheduleManager(LectureService lectureService, TeacherManager teacherManager,
                            StudentManager studentManager, LectureManager lectureManager) {
-        this.jdbcLectureDao = jdbcLectureDao;
+        this.lectureService = lectureService;
         this.teacherManager = teacherManager;
         this.studentManager = studentManager;
         this.lectureManager = lectureManager;
@@ -47,13 +47,13 @@ public class ScheduleManager {
                 case ("a") -> {
                     var teacher = teacherManager.selectTeacher();
                     var range = getDateRange();
-                    lectureManager.printLectures(getLecturesForSchedule(jdbcLectureDao.getAll(), range.getStartDate(),
+                    lectureManager.printLectures(getLecturesForSchedule(lectureService.getAll(), range.getStartDate(),
                             range.getEndDate(), teacher));
                 }
                 case ("b") -> {
                     var student = studentManager.selectStudent();
                     var range = getDateRange();
-                    lectureManager.printLectures(getLecturesForSchedule(jdbcLectureDao.getAll(), range.getStartDate(),
+                    lectureManager.printLectures(getLecturesForSchedule(lectureService.getAll(), range.getStartDate(),
                             range.getEndDate(), student));
                 }
                 default -> out.println("Input the right letter!");

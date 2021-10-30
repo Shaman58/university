@@ -22,6 +22,7 @@ public class JdbcTeacherDao implements TeacherDao {
     private static final String DELETE_TEACHER_COURSE_QUERY = "DELETE FROM teacher_courses WHERE course_id=? AND teacher_id=?";
     private static final String DELETE_QUERY = "DELETE FROM teachers WHERE id=?";
     private static final String CREATE_TEACHER_COURSE_QUERY = "INSERT INTO teacher_courses(course_id, teacher_id) VALUES (?,?)";
+    private static final String GET_BY_COURSE = "SELECT id, first_name, last_name, email, country, gender, phone, address, birth_date, scientific_degree FROM teachers INNER JOIN teacher_courses ON teachers.id = teacher_courses.teacher_id WHERE course_id=?";
 
     private final JdbcTemplate jdbcTemplate;
     private final TeacherRowMapper teacherRowMapper;
@@ -80,5 +81,10 @@ public class JdbcTeacherDao implements TeacherDao {
     @Override
     public void delete(int id) {
         jdbcTemplate.update(DELETE_QUERY, id);
+    }
+
+    @Override
+    public List<Teacher> getByCourseId(int teacherId) {
+        return jdbcTemplate.query(GET_BY_COURSE, teacherRowMapper, teacherId);
     }
 }

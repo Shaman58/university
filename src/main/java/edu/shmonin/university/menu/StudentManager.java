@@ -1,7 +1,7 @@
 package edu.shmonin.university.menu;
 
-import edu.shmonin.university.dao.jdbc.JdbcStudentDao;
 import edu.shmonin.university.model.Student;
+import edu.shmonin.university.service.StudentService;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
@@ -14,11 +14,11 @@ import static java.lang.System.out;
 @Component
 public class StudentManager {
 
-    private final JdbcStudentDao jdbcStudentDao;
+    private final StudentService studentService;
     private final GenderManager genderManager;
 
-    public StudentManager(JdbcStudentDao jdbcStudentDao, GenderManager genderManager) {
-        this.jdbcStudentDao = jdbcStudentDao;
+    public StudentManager(StudentService studentService, GenderManager genderManager) {
+        this.studentService = studentService;
         this.genderManager = genderManager;
     }
 
@@ -37,10 +37,10 @@ public class StudentManager {
         var inputKey = scanner.next();
         while (!inputKey.equals("q")) {
             switch (inputKey) {
-                case ("a") -> jdbcStudentDao.create(createNewStudent());
-                case ("b") -> jdbcStudentDao.delete(selectId());
-                case ("c") -> jdbcStudentDao.update(updateStudent());
-                case ("d") -> printStudents(jdbcStudentDao.getAll());
+                case ("a") -> studentService.create(createNewStudent());
+                case ("b") -> studentService.delete(selectId());
+                case ("c") -> studentService.update(updateStudent());
+                case ("d") -> printStudents(studentService.getAll());
                 default -> out.println("Input the right letter!");
             }
             out.println(menuText);
@@ -98,7 +98,7 @@ public class StudentManager {
     }
 
     public Student selectStudent() {
-        printStudents(jdbcStudentDao.getAll());
-        return jdbcStudentDao.get(selectId());
+        printStudents(studentService.getAll());
+        return studentService.get(selectId());
     }
 }

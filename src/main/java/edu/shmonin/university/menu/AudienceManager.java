@@ -1,7 +1,7 @@
 package edu.shmonin.university.menu;
 
-import edu.shmonin.university.dao.jdbc.JdbcAudienceDao;
 import edu.shmonin.university.model.Audience;
+import edu.shmonin.university.service.AudienceService;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -13,10 +13,10 @@ import static java.lang.System.out;
 @Component
 public class AudienceManager {
 
-    private final JdbcAudienceDao jdbcAudienceDao;
+    private final AudienceService audienceService;
 
-    public AudienceManager(JdbcAudienceDao jdbcAudienceDao) {
-        this.jdbcAudienceDao = jdbcAudienceDao;
+    public AudienceManager(AudienceService audienceService) {
+        this.audienceService = audienceService;
     }
 
     public void manageAudiences() {
@@ -34,10 +34,10 @@ public class AudienceManager {
         var inputKey = scanner.next();
         while (!inputKey.equals("q")) {
             switch (inputKey) {
-                case ("a") -> jdbcAudienceDao.create(createNewAudience());
-                case ("b") -> jdbcAudienceDao.delete(selectId());
-                case ("c") -> jdbcAudienceDao.update(updateAudience());
-                case ("d") -> printAudiences(jdbcAudienceDao.getAll());
+                case ("a") -> audienceService.create(createNewAudience());
+                case ("b") -> audienceService.delete(selectId());
+                case ("c") -> audienceService.update(updateAudience());
+                case ("d") -> printAudiences(audienceService.getAll());
                 default -> out.println("Input the right letter!");
             }
             out.println(menuText);
@@ -74,7 +74,7 @@ public class AudienceManager {
     }
 
     public Audience selectAudience() {
-        printAudiences(jdbcAudienceDao.getAll());
-        return jdbcAudienceDao.get(selectId());
+        printAudiences(audienceService.getAll());
+        return audienceService.get(selectId());
     }
 }

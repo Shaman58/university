@@ -1,7 +1,7 @@
 package edu.shmonin.university.menu;
 
-import edu.shmonin.university.dao.jdbc.JdbcLectureDao;
 import edu.shmonin.university.model.Lecture;
+import edu.shmonin.university.service.LectureService;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
@@ -19,16 +19,16 @@ public class LectureManager {
     private final TeacherManager teacherManager;
     private final DurationManager durationManager;
     private final GroupManager groupManager;
-    private final JdbcLectureDao jdbcLectureDao;
+    private final LectureService lectureService;
 
     public LectureManager(CourseManager courseManager, AudienceManager audienceManager, TeacherManager teacherManager,
-                          DurationManager durationManager, GroupManager groupManager, JdbcLectureDao jdbcLectureDao) {
+                          DurationManager durationManager, GroupManager groupManager, LectureService lectureService) {
         this.courseManager = courseManager;
         this.audienceManager = audienceManager;
         this.teacherManager = teacherManager;
         this.durationManager = durationManager;
         this.groupManager = groupManager;
-        this.jdbcLectureDao = jdbcLectureDao;
+        this.lectureService = lectureService;
     }
 
     public void manageLectures() {
@@ -46,10 +46,10 @@ public class LectureManager {
         var inputKey = scanner.next();
         while (!inputKey.equals("q")) {
             switch (inputKey) {
-                case ("a") -> jdbcLectureDao.create(createNewLecture());
-                case ("b") -> jdbcLectureDao.delete(selectId());
-                case ("c") -> jdbcLectureDao.update(updateLecture());
-                case ("d") -> printLectures(jdbcLectureDao.getAll());
+                case ("a") -> lectureService.create(createNewLecture());
+                case ("b") -> lectureService.delete(selectId());
+                case ("c") -> lectureService.update(updateLecture());
+                case ("d") -> printLectures(lectureService.getAll());
                 default -> out.println("Input the right letter!");
             }
             out.println(menuText);

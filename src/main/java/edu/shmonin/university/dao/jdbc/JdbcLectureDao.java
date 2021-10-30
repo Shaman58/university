@@ -22,6 +22,11 @@ public class JdbcLectureDao implements LectureDao {
     private static final String DELETE_QUERY = "DELETE FROM lectures WHERE id=?";
     private static final String ADD_LECTURE_GROUP = "INSERT INTO lecture_groups(group_id, lecture_id) VALUES (?,?)";
     private static final String DELETE_LECTURE_GROUP = "DELETE FROM lecture_groups WHERE group_id=? AND lecture_id=?";
+    private static final String GET_ALL_BY_AUDIENCE = "SELECT * FROM lectures WHERE audience_id=?";
+    private static final String GET_ALL_BY_COURSE = "SELECT * FROM lectures WHERE course_id=?";
+    private static final String GET_ALL_BY_DURATION = "SELECT * FROM lectures WHERE duration_id=?";
+    private static final String GET_ALL_BY_GROUP = "SELECT id,date,course_id,audience_id,duration_id,teacher_id FROM lectures INNER JOIN lecture_groups ON lectures.id = lecture_groups.lecture_id WHERE group_id=?";
+    private static final String GET_ALL_BY_TEACHER = "SELECT * FROM lectures WHERE teacher_id=?";
 
     private final JdbcTemplate jdbcTemplate;
     private final LectureRowMapper lectureRowMapper;
@@ -74,5 +79,30 @@ public class JdbcLectureDao implements LectureDao {
     @Override
     public void delete(int id) {
         jdbcTemplate.update(DELETE_QUERY, id);
+    }
+
+    @Override
+    public List<Lecture> getByAudienceId(int audienceId) {
+        return jdbcTemplate.query(GET_ALL_BY_AUDIENCE, lectureRowMapper, audienceId);
+    }
+
+    @Override
+    public List<Lecture> getByCourseId(int courseId) {
+        return jdbcTemplate.query(GET_ALL_BY_COURSE, lectureRowMapper, courseId);
+    }
+
+    @Override
+    public List<Lecture> getByDurationId(int durationId) {
+        return jdbcTemplate.query(GET_ALL_BY_DURATION, lectureRowMapper, durationId);
+    }
+
+    @Override
+    public List<Lecture> getByGroupId(int groupId) {
+        return jdbcTemplate.query(GET_ALL_BY_GROUP, lectureRowMapper, groupId);
+    }
+
+    @Override
+    public List<Lecture> getByTeacherId(int teacherId) {
+        return jdbcTemplate.query(GET_ALL_BY_TEACHER, lectureRowMapper, teacherId);
     }
 }

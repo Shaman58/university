@@ -1,45 +1,64 @@
 package edu.shmonin.university.service;
 
+import edu.shmonin.university.dao.AudienceDao;
+import edu.shmonin.university.dao.LectureDao;
 import edu.shmonin.university.dao.jdbc.JdbcAudienceDao;
 import edu.shmonin.university.model.Audience;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
 
-@Service
-@PropertySource("classpath:university.properties")
-public class AudienceService {
+import java.util.List;
 
-    @Value("${university.audiences.max}")
-    private int audiencesMax;
+@Service
+public class AudienceService implements EntityService<Audience> {
+
+    @Value("${university.audiences.max.room.number}")
+    private int audiencesMaxRoomNumber;
 
     @Value("${university.audience.capacity.max}")
-    private int audienceCapacity;
+    private int audienceMaxCapacity;
 
-    private final JdbcAudienceDao jdbcAudienceDao;
+    private final AudienceDao jdbcAudienceDao;
+    private final LectureDao jdbcLectureDao;
 
-    public AudienceService(JdbcAudienceDao jdbcAudienceDao) {
+    public AudienceService(JdbcAudienceDao jdbcAudienceDao, LectureDao jdbcLectureDao) {
         this.jdbcAudienceDao = jdbcAudienceDao;
+        this.jdbcLectureDao = jdbcLectureDao;
     }
 
-    public void createAudience(Audience audience) {
-        if (checkAudience(audience)) {
+    @Override
+    public Audience get(int audienceId) {
+        return jdbcAudienceDao.get(audienceId);
+    }
+
+    @Override
+    public List<Audience> getAll() {
+        return jdbcAudienceDao.getAll();
+    }
+
+    @Override
+    public void create(Audience audience) {
+        if (validateAudience(audience)) {
             jdbcAudienceDao.create(audience);
         }
     }
 
-    public void updateAudience(Audience audience) {
-        if (checkAudience(audience)) {
+    @Override
+    public void update(Audience audience) {
+        if (validateAudience(audience)) {
             jdbcAudienceDao.update(audience);
         }
     }
 
-    private boolean checkAudience(Audience audience) throws ServiceException {
-        if (audience.getRoomNumber() > 0 || audience.getRoomNumber() < audiencesMax ||
-            audience.getCapacity() > 0 || audience.getCapacity() <= audienceCapacity) {
-            return true;
-        } else {
-            throw new ServiceException("Out of bound room number or capacity");
+    @Override
+    public void delete(int audienceId) {
+        if (jdbcLectureDao.getByAudienceId(audienceId).isEmpty()) {
+            jdbcAudienceDao.delete(audienceId);
         }
+    }
+
+    private boolean validateAudience(Audience audience) {
+        return audience.getRoomNumber() > 0 && audience.getRoomNumber() <= audiencesMaxRoomNumber &&
+               audience.getCapacity() > 0 && audience.getCapacity() <= audienceMaxCapacity;
     }
 }

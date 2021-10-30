@@ -1,7 +1,7 @@
 package edu.shmonin.university.menu;
 
-import edu.shmonin.university.dao.jdbc.JdbcDurationDao;
 import edu.shmonin.university.model.Duration;
+import edu.shmonin.university.service.DurationService;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalTime;
@@ -14,10 +14,10 @@ import static java.lang.System.out;
 @Component
 public class DurationManager {
 
-    private final JdbcDurationDao jdbcDurationDao;
+    private final DurationService durationService;
 
-    public DurationManager(JdbcDurationDao jdbcDurationDao) {
-        this.jdbcDurationDao = jdbcDurationDao;
+    public DurationManager(DurationService durationService) {
+        this.durationService = durationService;
     }
 
     public void manageDurations() {
@@ -35,10 +35,10 @@ public class DurationManager {
         var inputKey = scanner.next();
         while (!inputKey.equals("q")) {
             switch (inputKey) {
-                case ("a") -> jdbcDurationDao.create(createNewDuration());
-                case ("b") -> jdbcDurationDao.delete(selectId());
-                case ("c") -> jdbcDurationDao.update(updateDuration());
-                case ("d") -> printDurations(jdbcDurationDao.getAll());
+                case ("a") -> durationService.create(createNewDuration());
+                case ("b") -> durationService.delete(selectId());
+                case ("c") -> durationService.update(updateDuration());
+                case ("d") -> printDurations(durationService.getAll());
                 default -> out.println("Input the right letter!");
             }
             out.println(menuText);
@@ -74,7 +74,7 @@ public class DurationManager {
     }
 
     public Duration selectDuration() {
-        printDurations(jdbcDurationDao.getAll());
-        return jdbcDurationDao.get(selectId());
+        printDurations(durationService.getAll());
+        return durationService.get(selectId());
     }
 }

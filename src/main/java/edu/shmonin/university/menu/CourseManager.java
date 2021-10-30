@@ -1,7 +1,7 @@
 package edu.shmonin.university.menu;
 
-import edu.shmonin.university.dao.jdbc.JdbcCourseDao;
 import edu.shmonin.university.model.Course;
+import edu.shmonin.university.service.CourseService;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -13,10 +13,10 @@ import static java.lang.System.out;
 @Component
 public class CourseManager {
 
-    private final JdbcCourseDao jdbcCourseDao;
+    private final CourseService courseService;
 
-    public CourseManager(JdbcCourseDao jdbcCourseDao) {
-        this.jdbcCourseDao = jdbcCourseDao;
+    public CourseManager(CourseService courseService) {
+        this.courseService = courseService;
     }
 
     public void manageCourses() {
@@ -34,10 +34,10 @@ public class CourseManager {
         var inputKey = scanner.next();
         while (!inputKey.equals("q")) {
             switch (inputKey) {
-                case ("a") -> jdbcCourseDao.create(createNewCourse());
-                case ("b") -> jdbcCourseDao.delete(selectId());
-                case ("c") -> jdbcCourseDao.update(updateCourse());
-                case ("d") -> printCourses(jdbcCourseDao.getAll());
+                case ("a") -> courseService.create(createNewCourse());
+                case ("b") -> courseService.delete(selectId());
+                case ("c") -> courseService.update(updateCourse());
+                case ("d") -> printCourses(courseService.getAll());
                 default -> out.println("Input the right letter!");
             }
             out.println(menuText);
@@ -70,7 +70,7 @@ public class CourseManager {
     }
 
     public Course selectCourse() {
-        printCourses(jdbcCourseDao.getAll());
-        return jdbcCourseDao.get(selectId());
+        printCourses(courseService.getAll());
+        return courseService.get(selectId());
     }
 }

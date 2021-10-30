@@ -1,7 +1,7 @@
 package edu.shmonin.university.menu;
 
-import edu.shmonin.university.dao.jdbc.JdbcHolidayDao;
 import edu.shmonin.university.model.Holiday;
+import edu.shmonin.university.service.HolidayService;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
@@ -14,10 +14,10 @@ import static java.lang.System.out;
 @Component
 public class HolidayManager {
 
-    private final JdbcHolidayDao jdbcHolidayDao;
+    private final HolidayService holidayService;
 
-    public HolidayManager(JdbcHolidayDao jdbcHolidayDao) {
-        this.jdbcHolidayDao = jdbcHolidayDao;
+    public HolidayManager(HolidayService holidayService) {
+        this.holidayService = holidayService;
     }
 
     public void manageHolidays() {
@@ -35,10 +35,10 @@ public class HolidayManager {
         var inputKey = scanner.next();
         while (!inputKey.equals("q")) {
             switch (inputKey) {
-                case ("a") -> jdbcHolidayDao.create(createNewHoliday());
-                case ("b") -> jdbcHolidayDao.delete(selectId());
-                case ("c") -> jdbcHolidayDao.update(updateHoliday());
-                case ("d") -> printHolidays(jdbcHolidayDao.getAll());
+                case ("a") -> holidayService.create(createNewHoliday());
+                case ("b") -> holidayService.delete(selectId());
+                case ("c") -> holidayService.update(updateHoliday());
+                case ("d") -> printHolidays(holidayService.getAll());
                 default -> out.println("Input the right letter!");
             }
             out.println(menuText);

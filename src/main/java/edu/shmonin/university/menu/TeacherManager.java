@@ -1,9 +1,9 @@
 package edu.shmonin.university.menu;
 
-import edu.shmonin.university.dao.jdbc.JdbcCourseDao;
-import edu.shmonin.university.dao.jdbc.JdbcTeacherDao;
-import edu.shmonin.university.dao.jdbc.JdbcVacationDao;
 import edu.shmonin.university.model.Teacher;
+import edu.shmonin.university.service.CourseService;
+import edu.shmonin.university.service.TeacherService;
+import edu.shmonin.university.service.VacationService;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
@@ -16,20 +16,20 @@ import static java.lang.System.out;
 @Component
 public class TeacherManager {
 
-    private final JdbcTeacherDao jdbcTeacherDao;
-    private final JdbcCourseDao jdbcCourseDao;
-    private final JdbcVacationDao jdbcVacationDao;
+    private final TeacherService teacherService;
+    private final CourseService courseService;
+    private final VacationService vacationService;
     private final CourseManager courseManager;
     private final GenderManager genderManager;
     private final ScientificDegreeManager scientificDegreeManager;
     private final VacationManager vacationManager;
 
-    public TeacherManager(JdbcTeacherDao jdbcTeacherDao, JdbcCourseDao jdbcCourseDao, JdbcVacationDao jdbcVacationDao,
+    public TeacherManager(TeacherService teacherService, CourseService courseService, VacationService vacationService,
                           CourseManager courseManager, GenderManager genderManager,
                           ScientificDegreeManager scientificDegreeManager, VacationManager vacationManager) {
-        this.jdbcTeacherDao = jdbcTeacherDao;
-        this.jdbcCourseDao = jdbcCourseDao;
-        this.jdbcVacationDao = jdbcVacationDao;
+        this.teacherService = teacherService;
+        this.courseService = courseService;
+        this.vacationService = vacationService;
         this.courseManager = courseManager;
         this.genderManager = genderManager;
         this.scientificDegreeManager = scientificDegreeManager;
@@ -56,15 +56,15 @@ public class TeacherManager {
         var inputKey = scanner.next();
         while (!inputKey.equals("q")) {
             switch (inputKey) {
-                case ("a") -> jdbcTeacherDao.create(createNewTeacher());
-                case ("b") -> jdbcTeacherDao.delete(selectId());
-                case ("c") -> jdbcTeacherDao.update(updateTeacher());
-                case ("d") -> printTeachers(jdbcTeacherDao.getAll());
-                case ("e") -> jdbcTeacherDao.update(addCourseToTheTeacher());
+                case ("a") -> teacherService.create(createNewTeacher());
+                case ("b") -> teacherService.delete(selectId());
+                case ("c") -> teacherService.update(updateTeacher());
+                case ("d") -> printTeachers(teacherService.getAll());
+                case ("e") -> teacherService.update(addCourseToTheTeacher());
                 case ("f") -> addVacationToTheTeacher();
-                case ("g") -> vacationManager.printVacations(jdbcVacationDao.getByTeacherId(selectTeacher().getId()));
-                case ("h") -> jdbcVacationDao.delete(vacationManager.selectTeacherVacation(selectTeacher()).getId());
-                case ("i") -> courseManager.printCourses(jdbcCourseDao.getByTeacherId(selectTeacher().getId()));
+                case ("g") -> vacationManager.printVacations(vacationService.getByTeacherId(selectTeacher().getId()));
+                case ("h") -> vacationService.delete(vacationManager.selectTeacherVacation(selectTeacher()).getId());
+                case ("i") -> courseManager.printCourses(courseService.getByTeacherId(selectTeacher().getId()));
                 default -> out.println("Input the right letter!");
             }
             out.println(menuText);
@@ -124,15 +124,15 @@ public class TeacherManager {
     }
 
     public Teacher selectTeacher() {
-        printTeachers(jdbcTeacherDao.getAll());
-        return jdbcTeacherDao.get(selectId());
+        printTeachers(teacherService.getAll());
+        return teacherService.get(selectId());
     }
 
     private void addVacationToTheTeacher() {
         var vacation = vacationManager.createVacation();
         var teacher = selectTeacher();
         vacation.setTeacher(teacher);
-        jdbcVacationDao.create(vacation);
+        vacationService.create(vacation);
     }
 
     private Teacher addCourseToTheTeacher() {
