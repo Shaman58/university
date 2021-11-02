@@ -48,7 +48,7 @@ public class JdbcCourseDao implements CourseDao {
             preparedStatement.setString(1, course.getName());
             return preparedStatement;
         }, keyHolder);
-        course.setId(Objects.requireNonNull(keyHolder.getKey()).intValue());
+        course.setId((Integer) Objects.requireNonNull(keyHolder.getKeys().get("id")));
     }
 
     @Override

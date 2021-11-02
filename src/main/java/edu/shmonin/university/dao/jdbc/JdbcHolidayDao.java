@@ -47,7 +47,7 @@ public class JdbcHolidayDao implements HolidayDao {
             preparedStatement.setObject(2, holiday.getDate());
             return preparedStatement;
         }, keyHolder);
-        holiday.setId(Objects.requireNonNull(keyHolder.getKey()).intValue());
+        holiday.setId((Integer) Objects.requireNonNull(keyHolder.getKeys().get("id")));
     }
 
     @Override

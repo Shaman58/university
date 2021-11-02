@@ -63,7 +63,7 @@ public class JdbcStudentDao implements StudentDao {
             preparedStatement.setObject(9, student.getGroup() == null ? null : student.getGroup().getId());
             return preparedStatement;
         }, keyHolder);
-        student.setId(Objects.requireNonNull(keyHolder.getKey()).intValue());
+        student.setId((Integer) Objects.requireNonNull(keyHolder.getKeys().get("id")));
     }
 
     @Override

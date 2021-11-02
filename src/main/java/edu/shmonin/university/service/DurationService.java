@@ -41,6 +41,7 @@ public class DurationService implements EntityService<Duration> {
             jdbcDurationDao.update(duration);
         }
     }
+
     @Override
     public void delete(int durationId) {
         if (jdbcLectureDao.getByDurationId(durationId).isEmpty()) {

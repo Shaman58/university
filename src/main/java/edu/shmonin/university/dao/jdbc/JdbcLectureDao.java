@@ -60,7 +60,7 @@ public class JdbcLectureDao implements LectureDao {
             preparedStatement.setInt(5, lecture.getTeacher().getId());
             return preparedStatement;
         }, keyHolder);
-        lecture.setId(Objects.requireNonNull(keyHolder.getKey()).intValue());
+        lecture.setId((Integer) Objects.requireNonNull(keyHolder.getKeys().get("id")));
         lecture.getGroups().forEach(p -> jdbcTemplate.update(ADD_LECTURE_GROUP, p.getId(), lecture.getId()));
     }
 

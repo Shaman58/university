@@ -3,6 +3,7 @@ package edu.shmonin.university.dao.jdbc;
 import edu.shmonin.university.dao.GroupDao;
 import edu.shmonin.university.dao.jdbc.rowmapper.GroupRowMapper;
 import edu.shmonin.university.model.Group;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Repository;
@@ -23,10 +24,14 @@ public class JdbcGroupDao implements GroupDao {
             "SELECT id,name FROM groups INNER JOIN lecture_groups ON groups.id = lecture_groups.group_id WHERE lecture_id =?";
 
     private final JdbcTemplate jdbcTemplate;
-    private final GroupRowMapper groupRowMapper;
+    private GroupRowMapper groupRowMapper;
 
-    public JdbcGroupDao(JdbcTemplate jdbcTemplate, GroupRowMapper groupRowMapper) {
+    public JdbcGroupDao(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
+    }
+
+    @Autowired
+    public void setGroupRowMapper(GroupRowMapper groupRowMapper) {
         this.groupRowMapper = groupRowMapper;
     }
 
@@ -48,7 +53,7 @@ public class JdbcGroupDao implements GroupDao {
             preparedStatement.setString(1, group.getName());
             return preparedStatement;
         }, keyHolder);
-        group.setId(Objects.requireNonNull(keyHolder.getKey()).intValue());
+        group.setId((Integer) Objects.requireNonNull(keyHolder.getKeys().get("id")));
     }
 
     @Override

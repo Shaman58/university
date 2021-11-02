@@ -15,6 +15,7 @@
         <postrge.version>42.2.23</postrge.version>
         <junit.version>5.8.0</junit.version>
         <h2.version>1.4.200</h2.version>
+        <mockito.version>4.0.0</mockito.version>
     </properties>
 
     <dependencies>
@@ -44,7 +45,6 @@
             <scope>test</scope>
         </dependency>
 
-
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
@@ -58,11 +58,12 @@
             <version>${h2.version}</version>
             <scope>test</scope>
         </dependency>
+
         <dependency>
-            <groupId>org.jetbrains</groupId>
-            <artifactId>annotations</artifactId>
-            <version>RELEASE</version>
-            <scope>compile</scope>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-junit-jupiter</artifactId>
+            <version>${mockito.version}</version>
+            <scope>test</scope>
         </dependency>
 
     </dependencies>

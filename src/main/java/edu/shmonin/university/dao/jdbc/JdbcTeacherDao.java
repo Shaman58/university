@@ -59,7 +59,7 @@ public class JdbcTeacherDao implements TeacherDao {
             preparedStatement.setString(9, teacher.getScientificDegree().toString());
             return preparedStatement;
         }, keyHolder);
-        teacher.setId(Objects.requireNonNull(keyHolder.getKey()).intValue());
+        teacher.setId((Integer) Objects.requireNonNull(keyHolder.getKeys().get("id")));
         if (teacher.getCourses() != null) {
             teacher.getCourses().forEach(course -> jdbcTemplate.update(CREATE_TEACHER_COURSE_QUERY, course.getId(), teacher.getId()));
         }

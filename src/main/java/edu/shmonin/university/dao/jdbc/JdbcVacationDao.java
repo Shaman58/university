@@ -52,7 +52,7 @@ public class JdbcVacationDao implements VacationDao {
             preparedStatement.setObject(3, vacation.getTeacher() == null ? null : vacation.getTeacher().getId());
             return preparedStatement;
         }, keyHolder);
-        vacation.setId(Objects.requireNonNull(keyHolder.getKey()).intValue());
+        vacation.setId((Integer) Objects.requireNonNull(keyHolder.getKeys().get("id")));
     }
 
     @Override

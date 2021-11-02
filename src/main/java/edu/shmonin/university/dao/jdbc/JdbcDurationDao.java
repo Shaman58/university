@@ -47,7 +47,7 @@ public class JdbcDurationDao implements DurationDao {
             preparedStatement.setObject(2, duration.getEndTime());
             return preparedStatement;
         }, keyHolder);
-        duration.setId(Objects.requireNonNull(keyHolder.getKey()).intValue());
+        duration.setId((Integer) Objects.requireNonNull(keyHolder.getKeys().get("id")));
     }
 
     @Override

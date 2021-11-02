@@ -47,7 +47,7 @@ public class JdbcAudienceDao implements AudienceDao {
             preparedStatement.setInt(2, audience.getCapacity());
             return preparedStatement;
         }, keyHolder);
-        audience.setId(Objects.requireNonNull(keyHolder.getKey()).intValue());
+        audience.setId((Integer) Objects.requireNonNull(keyHolder.getKeys().get("id")));
     }
 
     @Override

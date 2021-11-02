@@ -2,7 +2,6 @@ package edu.shmonin.university.service;
 
 import edu.shmonin.university.dao.AudienceDao;
 import edu.shmonin.university.dao.LectureDao;
-import edu.shmonin.university.dao.jdbc.JdbcAudienceDao;
 import edu.shmonin.university.model.Audience;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -21,7 +20,7 @@ public class AudienceService implements EntityService<Audience> {
     private final AudienceDao jdbcAudienceDao;
     private final LectureDao jdbcLectureDao;
 
-    public AudienceService(JdbcAudienceDao jdbcAudienceDao, LectureDao jdbcLectureDao) {
+    public AudienceService(AudienceDao jdbcAudienceDao, LectureDao jdbcLectureDao) {
         this.jdbcAudienceDao = jdbcAudienceDao;
         this.jdbcLectureDao = jdbcLectureDao;
     }
