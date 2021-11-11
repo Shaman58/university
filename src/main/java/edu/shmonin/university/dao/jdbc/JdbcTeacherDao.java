@@ -84,7 +84,7 @@ public class JdbcTeacherDao implements TeacherDao {
     }
 
     @Override
-    public List<Teacher> getByCourseId(int teacherId) {
-        return jdbcTemplate.query(GET_BY_COURSE, teacherRowMapper, teacherId);
+    public List<Teacher> getByCourseId(int courseId) {
+        return jdbcTemplate.query(GET_BY_COURSE, teacherRowMapper, courseId);
     }
 }

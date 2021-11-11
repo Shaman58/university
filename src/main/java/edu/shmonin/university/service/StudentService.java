@@ -15,6 +15,9 @@ public class StudentService implements EntityService<Student> {
     @Value("${university.student.min.age}")
     private int minAge;
 
+    @Value("${university.group.capacity.max}")
+    private int maxCapacity;
+
     private final StudentDao jdbcStudentDao;
 
     public StudentService(StudentDao jdbcStudentDao) {
@@ -55,6 +58,7 @@ public class StudentService implements EntityService<Student> {
     }
 
     private boolean validateStudent(Student student) {
-        return Period.between(LocalDate.now(), student.getBirthDate()).getYears() >= minAge;
+        return Period.between(student.getBirthDate(), LocalDate.now()).getYears() >= minAge &&
+               jdbcStudentDao.getByGroupId(student.getGroup().getId()).size() < maxCapacity;
     }
 }

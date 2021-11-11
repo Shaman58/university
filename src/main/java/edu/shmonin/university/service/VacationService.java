@@ -36,7 +36,7 @@ public class VacationService implements EntityService<Vacation> {
     @Override
     public void update(Vacation vacation) {
         if (validateVacation(vacation)) {
-            jdbcVacationDao.create(vacation);
+            jdbcVacationDao.update(vacation);
         }
     }
 

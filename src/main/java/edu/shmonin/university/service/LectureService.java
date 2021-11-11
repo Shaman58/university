@@ -6,6 +6,7 @@ import edu.shmonin.university.model.Lecture;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -52,12 +53,13 @@ public class LectureService implements EntityService<Lecture> {
     }
 
     private boolean validateLecture(Lecture lecture) {
-        return validateAudienceBusyness(lecture) &&
+        return lecture.getDate().isAfter(LocalDate.now()) &&
+               validateAudienceBusyness(lecture) &&
                validateHolidaysForLecture(lecture) &&
                validateVacationsForLecture(lecture) &&
                validateTeacherBusyness(lecture) &&
                validateTeacherCourses(lecture) &&
-               validateMaxCourses(lecture);
+               validateMaxGroups(lecture);
     }
 
     private boolean validateVacationsForLecture(Lecture lecture) {
@@ -72,7 +74,7 @@ public class LectureService implements EntityService<Lecture> {
         return lecture.getTeacher().getCourses().stream().anyMatch(lecture.getCourse()::equals);
     }
 
-    private boolean validateMaxCourses(Lecture lecture) {
+    private boolean validateMaxGroups(Lecture lecture) {
         return lecture.getGroups().size() <= maxGroups;
     }
 

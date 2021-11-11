@@ -1,37 +1,43 @@
 package edu.shmonin.university.service;
 
-import config.TestConfig;
 import edu.shmonin.university.dao.AudienceDao;
 import edu.shmonin.university.dao.LectureDao;
 import edu.shmonin.university.model.Audience;
+import edu.shmonin.university.model.Lecture;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.util.ReflectionTestUtils.setField;
 
-@SpringJUnitConfig(TestConfig.class)
 @ExtendWith(MockitoExtension.class)
 class AudienceServiceTest {
 
     @Mock
-    private AudienceDao jdbcAudienceDao;
+    private AudienceDao audienceDao;
     @Mock
-    private LectureDao jdbcLectureDao;
+    private LectureDao lectureDao;
+
     @InjectMocks
     private AudienceService audienceService;
+
+    @BeforeEach
+    void setUp() {
+        setField(audienceService, "audiencesMaxRoomNumber", 300);
+        setField(audienceService, "audienceMaxCapacity", 60);
+    }
 
     @Test
     void givenId_whenGet_thenReturnedAudience() {
         var expected = new Audience(1, 30);
-
-        Mockito.when(jdbcAudienceDao.get(1)).thenReturn(expected);
+        when(audienceDao.get(1)).thenReturn(expected);
 
         var actual = audienceService.get(1);
 
@@ -43,8 +49,7 @@ class AudienceServiceTest {
         var expected = new ArrayList<Audience>();
         expected.add(new Audience(1, 30));
         expected.add(new Audience(2, 60));
-
-        Mockito.when(jdbcAudienceDao.getAll()).thenReturn(expected);
+        when(audienceDao.getAll()).thenReturn(expected);
 
         var actual = audienceService.getAll();
 
@@ -53,38 +58,53 @@ class AudienceServiceTest {
 
     @Test
     void givenValidAudience_whenCreate_thenStartedDaoCreate() {
-        audienceService.create(new Audience(1, 60));
+        var audience = new Audience(1, 60);
 
-        Mockito.verify(jdbcAudienceDao).create(Mockito.any());
+        audienceService.create(audience);
+
+        verify(audienceDao).create(audience);
     }
 
     @Test
-    void givenInvalidAudience_whenCreate_thenStartedDaoCreate() {
+    void givenInvalidAudience_whenCreate_thenNotStartedDaoCreate() {
         audienceService.create(new Audience(1, 91));
 
-        Mockito.verify(jdbcAudienceDao, Mockito.never()).create(Mockito.any());
+        verify(audienceDao, never()).create(any());
     }
 
     @Test
     void givenValidAudience_whenUpdate_thenStartedDaoUpdate() {
-        audienceService.update(new Audience(1, 60));
+        var audience = new Audience(1, 60);
 
-        Mockito.verify(jdbcAudienceDao).update(Mockito.any());
+        audienceService.update(audience);
+
+        verify(audienceDao).update(audience);
     }
 
     @Test
-    void givenInvalidAudience_whenUpdate_thenStartedDaoUpdate() {
+    void givenInvalidAudience_whenUpdate_thenNotStartedDaoUpdate() {
         audienceService.update(new Audience(1, 91));
 
-        Mockito.verify(jdbcAudienceDao, Mockito.never()).update(Mockito.any());
+        verify(audienceDao, never()).update(any());
     }
 
     @Test
-    void givenId_whenDelete_thenStartedDaoDelete() {
-        Mockito.when(jdbcLectureDao.getByAudienceId(1)).thenReturn(new ArrayList<>());
+    void givenIdAndEmptyListLectures_whenDelete_thenStartedDaoDelete() {
+        when(lectureDao.getByAudienceId(1)).thenReturn(new ArrayList<>());
 
         audienceService.delete(1);
 
-        Mockito.verify(jdbcAudienceDao).delete(Mockito.any());
+        verify(audienceDao).delete(1);
+    }
+
+    @Test
+    void givenIdAndNotEmptyListLectures_whenDelete_thenNotStartedDaoDelete() {
+        var lectures = new ArrayList<Lecture>();
+        lectures.add(new Lecture());
+        when(lectureDao.getByAudienceId(1)).thenReturn(lectures);
+
+        audienceService.delete(1);
+
+        verify(audienceDao, never()).delete(1);
     }
 }
