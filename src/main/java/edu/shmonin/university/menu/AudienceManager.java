@@ -2,6 +2,8 @@ package edu.shmonin.university.menu;
 
 import edu.shmonin.university.model.Audience;
 import edu.shmonin.university.service.AudienceService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -14,6 +16,7 @@ import static java.lang.System.out;
 public class AudienceManager {
 
     private final AudienceService audienceService;
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     public AudienceManager(AudienceService audienceService) {
         this.audienceService = audienceService;
@@ -34,10 +37,39 @@ public class AudienceManager {
         var inputKey = scanner.next();
         while (!inputKey.equals("q")) {
             switch (inputKey) {
-                case ("a") -> audienceService.create(createNewAudience());
-                case ("b") -> audienceService.delete(selectId());
-                case ("c") -> audienceService.update(updateAudience());
-                case ("d") -> printAudiences(audienceService.getAll());
+                case ("a") -> {
+                    try {
+                        audienceService.create(createNewAudience());
+                        logger.info("The audience has been created");
+                    } catch (Exception e) {
+                        logger.error(e.getMessage());
+                    }
+                }
+                case ("b") -> {
+                    try {
+                        audienceService.delete(selectId());
+                        logger.info("The audience has been deleted");
+                    } catch (Exception e) {
+                        logger.error(e.getMessage());
+                    }
+                }
+                case ("c") -> {
+                    try {
+                        audienceService.update(updateAudience());
+                        logger.info("The audience has been updated");
+                    } catch (Exception e) {
+                        logger.error(e.getMessage());
+                    }
+                }
+                case ("d") -> {
+                    try {
+                        var audiences = audienceService.getAll();
+                        logger.info("The audiences were been got");
+                        printAudiences(audiences);
+                    } catch (Exception e) {
+                        logger.error(e.getMessage());
+                    }
+                }
                 default -> out.println("Input the right letter!");
             }
             out.println(menuText);
