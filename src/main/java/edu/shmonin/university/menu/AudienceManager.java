@@ -16,8 +16,9 @@ import static java.lang.System.out;
 @Component
 public class AudienceManager {
 
-    private final AudienceService audienceService;
     private static final Logger LOGGER = LoggerFactory.getLogger(AudienceManager.class);
+
+    private final AudienceService audienceService;
 
     public AudienceManager(AudienceService audienceService) {
         this.audienceService = audienceService;
