@@ -61,4 +61,9 @@ public class Audience {
         result = 31 * result + capacity;
         return result;
     }
+
+    @Override
+    public String toString() {
+        return "id=" + id + ", roomNumber=" + roomNumber + ", capacity=" + capacity;
+    }
 }

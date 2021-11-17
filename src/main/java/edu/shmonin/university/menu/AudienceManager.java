@@ -1,5 +1,6 @@
 package edu.shmonin.university.menu;
 
+import edu.shmonin.university.exception.EntityException;
 import edu.shmonin.university.model.Audience;
 import edu.shmonin.university.service.AudienceService;
 import org.slf4j.Logger;
@@ -16,7 +17,7 @@ import static java.lang.System.out;
 public class AudienceManager {
 
     private final AudienceService audienceService;
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private static final Logger LOGGER = LoggerFactory.getLogger(AudienceManager.class);
 
     public AudienceManager(AudienceService audienceService) {
         this.audienceService = audienceService;
@@ -40,36 +41,28 @@ public class AudienceManager {
                 case ("a") -> {
                     try {
                         audienceService.create(createNewAudience());
-                        logger.info("The audience has been created");
-                    } catch (Exception e) {
-                        logger.error(e.getMessage());
+                        LOGGER.debug("The audience has been created");
+                    } catch (EntityException e) {
+                        LOGGER.error(e.getMessage());
                     }
                 }
                 case ("b") -> {
                     try {
                         audienceService.delete(selectId());
-                        logger.info("The audience has been deleted");
-                    } catch (Exception e) {
-                        logger.error(e.getMessage());
+                        LOGGER.debug("The audience has been deleted");
+                    } catch (EntityException e) {
+                        LOGGER.error(e.getMessage());
                     }
                 }
                 case ("c") -> {
                     try {
                         audienceService.update(updateAudience());
-                        logger.info("The audience has been updated");
-                    } catch (Exception e) {
-                        logger.error(e.getMessage());
+                        LOGGER.debug("The audience has been updated");
+                    } catch (EntityException e) {
+                        LOGGER.error(e.getMessage());
                     }
                 }
-                case ("d") -> {
-                    try {
-                        var audiences = audienceService.getAll();
-                        logger.info("The audiences were been got");
-                        printAudiences(audiences);
-                    } catch (Exception e) {
-                        logger.error(e.getMessage());
-                    }
-                }
+                case ("d") -> printAudiences(audienceService.getAll());
                 default -> out.println("Input the right letter!");
             }
             out.println(menuText);

@@ -1,4 +1,4 @@
-package edu.shmonin.university.service;
+package edu.shmonin.university.exception;
 
 public class EntityException extends RuntimeException {
     public EntityException(String message) {
