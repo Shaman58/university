@@ -2,7 +2,8 @@ package edu.shmonin.university.service;
 
 import edu.shmonin.university.dao.AudienceDao;
 import edu.shmonin.university.dao.LectureDao;
-import edu.shmonin.university.exception.EntityException;
+import edu.shmonin.university.exception.AudienceDeleteException;
+import edu.shmonin.university.exception.ValidationException;
 import edu.shmonin.university.model.Audience;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,7 +16,7 @@ import java.util.List;
 @Service
 public class AudienceService implements EntityService<Audience> {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AudienceService.class);
+    private static final Logger LOG = LoggerFactory.getLogger(AudienceService.class);
 
     @Value("${university.audiences.max.room.number}")
     private int audiencesMaxRoomNumber;
@@ -33,47 +34,52 @@ public class AudienceService implements EntityService<Audience> {
 
     @Override
     public Audience get(int audienceId) {
-        var audience = jdbcAudienceDao.get(audienceId);
-        LOGGER.debug("The audience has been got");
-        return audience;
+        LOG.debug("The audience with id {} has been got", audienceId);
+        return jdbcAudienceDao.get(audienceId);
     }
 
     @Override
     public List<Audience> getAll() {
-        var audiences = jdbcAudienceDao.getAll();
-        LOGGER.debug("The audiences has been got");
-        return audiences;
+        LOG.debug("The audiences has been got");
+        return jdbcAudienceDao.getAll();
     }
 
     @Override
     public void create(Audience audience) {
-        if (validateAudience(audience)) {
+        try {
+            validateAudience(audience);
+            LOG.debug("Audience {} has been created", audience);
             jdbcAudienceDao.create(audience);
+        } catch (ValidationException e) {
+            LOG.error("Audience has not created.", e);
         }
     }
 
     @Override
     public void update(Audience audience) {
-        if (validateAudience(audience)) {
+        try {
+            validateAudience(audience);
+            LOG.debug("Audience {} has been updated", audience);
             jdbcAudienceDao.update(audience);
+        } catch (ValidationException e) {
+            LOG.error("Audience has not updated.", e);
         }
     }
 
     @Override
     public void delete(int audienceId) {
         if (jdbcLectureDao.getByAudienceId(audienceId).isEmpty()) {
+            LOG.debug("Audience with id={} has been deleted", audienceId);
             jdbcAudienceDao.delete(audienceId);
         } else {
-            throw new EntityException("Can not delete audience with id=" + audienceId + ", there are links to the audience in database");
+            throw new AudienceDeleteException("Can not delete audience with id=" + audienceId + ", there are links to the audience in database");
         }
     }
 
-    private boolean validateAudience(Audience audience) {
-        if (audience.getRoomNumber() > 0 && audience.getRoomNumber() <= audiencesMaxRoomNumber &&
-            audience.getCapacity() > 0 && audience.getCapacity() <= audienceMaxCapacity) {
-            return true;
-        } else {
-            throw new EntityException("The audience " + audience + " did not pass the validity check");
+    private void validateAudience(Audience audience) {
+        if (!(audience.getRoomNumber() > 0 && audience.getRoomNumber() <= audiencesMaxRoomNumber &&
+              audience.getCapacity() > 0 && audience.getCapacity() <= audienceMaxCapacity)) {
+            throw new ValidationException("The audience " + audience + " did not pass the validity check");
         }
     }
 }

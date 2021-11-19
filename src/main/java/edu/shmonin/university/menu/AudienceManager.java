@@ -1,10 +1,7 @@
 package edu.shmonin.university.menu;
 
-import edu.shmonin.university.exception.EntityException;
 import edu.shmonin.university.model.Audience;
 import edu.shmonin.university.service.AudienceService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -15,8 +12,6 @@ import static java.lang.System.out;
 
 @Component
 public class AudienceManager {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(AudienceManager.class);
 
     private final AudienceService audienceService;
 
@@ -39,31 +34,11 @@ public class AudienceManager {
         var inputKey = scanner.next();
         while (!inputKey.equals("q")) {
             switch (inputKey) {
-                case ("a") -> {
-                    try {
-                        audienceService.create(createNewAudience());
-                        LOGGER.debug("The audience has been created");
-                    } catch (EntityException e) {
-                        LOGGER.error(e.getMessage());
-                    }
-                }
-                case ("b") -> {
-                    try {
-                        audienceService.delete(selectId());
-                        LOGGER.debug("The audience has been deleted");
-                    } catch (EntityException e) {
-                        LOGGER.error(e.getMessage());
-                    }
-                }
-                case ("c") -> {
-                    try {
-                        audienceService.update(updateAudience());
-                        LOGGER.debug("The audience has been updated");
-                    } catch (EntityException e) {
-                        LOGGER.error(e.getMessage());
-                    }
-                }
+                case ("a") -> audienceService.create(createNewAudience());
+                case ("b") -> audienceService.delete(selectId());
+                case ("c") -> audienceService.update(updateAudience());
                 case ("d") -> printAudiences(audienceService.getAll());
+                case ("z") -> audienceService.delete(5);
                 default -> out.println("Input the right letter!");
             }
             out.println(menuText);
