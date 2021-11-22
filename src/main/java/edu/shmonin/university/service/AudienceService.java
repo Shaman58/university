@@ -2,7 +2,8 @@ package edu.shmonin.university.service;
 
 import edu.shmonin.university.dao.AudienceDao;
 import edu.shmonin.university.dao.LectureDao;
-import edu.shmonin.university.exception.AudienceDeleteException;
+import edu.shmonin.university.exception.DeleteException;
+import edu.shmonin.university.exception.EntityNotFoundException;
 import edu.shmonin.university.exception.ValidationException;
 import edu.shmonin.university.model.Audience;
 import org.slf4j.Logger;
@@ -16,7 +17,7 @@ import java.util.List;
 @Service
 public class AudienceService implements EntityService<Audience> {
 
-    private static final Logger LOG = LoggerFactory.getLogger(AudienceService.class);
+    private static final Logger log = LoggerFactory.getLogger(AudienceService.class);
 
     @Value("${university.audiences.max.room.number}")
     private int audiencesMaxRoomNumber;
@@ -34,52 +35,54 @@ public class AudienceService implements EntityService<Audience> {
 
     @Override
     public Audience get(int audienceId) {
-        LOG.debug("The audience with id {} has been got", audienceId);
+        log.debug("Get Audience with id={}", audienceId);
         return jdbcAudienceDao.get(audienceId);
     }
 
     @Override
     public List<Audience> getAll() {
-        LOG.debug("The audiences has been got");
+        log.debug("Get all audiences");
         return jdbcAudienceDao.getAll();
     }
 
     @Override
     public void create(Audience audience) {
-        try {
-            validateAudience(audience);
-            LOG.debug("Audience {} has been created", audience);
-            jdbcAudienceDao.create(audience);
-        } catch (ValidationException e) {
-            LOG.error("Audience has not created.", e);
-        }
+        validateAudience(audience);
+        log.debug("Create Audience {}", audience);
+        jdbcAudienceDao.create(audience);
     }
 
     @Override
     public void update(Audience audience) {
-        try {
-            validateAudience(audience);
-            LOG.debug("Audience {} has been updated", audience);
-            jdbcAudienceDao.update(audience);
-        } catch (ValidationException e) {
-            LOG.error("Audience has not updated.", e);
-        }
+        validateAudience(audience);
+        log.debug("Update audience {}", audience);
+        jdbcAudienceDao.update(audience);
     }
 
     @Override
     public void delete(int audienceId) {
-        if (jdbcLectureDao.getByAudienceId(audienceId).isEmpty()) {
-            LOG.debug("Audience with id={} has been deleted", audienceId);
-            jdbcAudienceDao.delete(audienceId);
-        } else {
-            throw new AudienceDeleteException("Can not delete audience with id=" + audienceId + ", there are links to the audience in database");
+        if (!jdbcLectureDao.getByAudienceId(audienceId).isEmpty()) {
+            throw new DeleteException("Can not delete audience with id=" + audienceId + ", there are links to the audience in database");
         }
+        if (jdbcAudienceDao.get(audienceId) == null) {
+            throw new EntityNotFoundException("Can not delete the audience. There are no audience with id=" + audienceId);
+        }
+        log.debug("Delete audience by id={}", audienceId);
+        jdbcAudienceDao.delete(audienceId);
     }
 
     private void validateAudience(Audience audience) {
-        if (!(audience.getRoomNumber() > 0 && audience.getRoomNumber() <= audiencesMaxRoomNumber &&
-              audience.getCapacity() > 0 && audience.getCapacity() <= audienceMaxCapacity)) {
-            throw new ValidationException("The audience " + audience + " did not pass the validity check");
+        if (audience.getRoomNumber() <= 0) {
+            throw new ValidationException("The audience " + audience + " did not pass the validity check. Room number can not be negative or zero");
+        }
+        if (audience.getRoomNumber() > audiencesMaxRoomNumber) {
+            throw new ValidationException("The audience " + audience + " did not pass the validity check. RoomNumber can not be greater " + audiencesMaxRoomNumber);
+        }
+        if (audience.getCapacity() <= 0) {
+            throw new ValidationException("The audience " + audience + " did not pass the validity check. Audience capacity can not be negative or zero");
+        }
+        if (audience.getCapacity() > audienceMaxCapacity) {
+            throw new ValidationException("The audience " + audience + " did not pass the validity check. Audience capacity can not be greater " + audienceMaxCapacity);
         }
     }
 }

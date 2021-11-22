@@ -1,7 +1,11 @@
 package edu.shmonin.university.menu;
 
+import edu.shmonin.university.exception.DeleteException;
+import edu.shmonin.university.exception.ValidationException;
 import edu.shmonin.university.model.Audience;
 import edu.shmonin.university.service.AudienceService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -12,6 +16,8 @@ import static java.lang.System.out;
 
 @Component
 public class AudienceManager {
+
+    private final static Logger log = LoggerFactory.getLogger(AudienceManager.class);
 
     private final AudienceService audienceService;
 
@@ -34,11 +40,28 @@ public class AudienceManager {
         var inputKey = scanner.next();
         while (!inputKey.equals("q")) {
             switch (inputKey) {
-                case ("a") -> audienceService.create(createNewAudience());
-                case ("b") -> audienceService.delete(selectId());
-                case ("c") -> audienceService.update(updateAudience());
+                case ("a") -> {
+                    try {
+                        audienceService.create(createNewAudience());
+                    } catch (ValidationException e) {
+                        log.error("Audience has not been created.", e);
+                    }
+                }
+                case ("b") -> {
+                    try {
+                        audienceService.delete(selectId());
+                    } catch (DeleteException e) {
+                        log.error("Audience has not deleted.", e);
+                    }
+                }
+                case ("c") -> {
+                    try {
+                        audienceService.update(updateAudience());
+                    } catch (ValidationException e) {
+                        log.error("Audience has not been updated.", e);
+                    }
+                }
                 case ("d") -> printAudiences(audienceService.getAll());
-                case ("z") -> audienceService.delete(5);
                 default -> out.println("Input the right letter!");
             }
             out.println(menuText);

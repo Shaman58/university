@@ -1,4 +1,4 @@
-<configuration debug="false">
+<configuration debug="FALSE">
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
             <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
@@ -17,11 +17,11 @@
         </encoder>
     </appender>
 
-    <root level="DEBUG">
+    <root level="INFO">
         <appender-ref ref="CONSOLE"/>
     </root>
 
-    <logger name="edu.shmonin.university" level="INFO">
+    <logger name="edu.shmonin.university" level="DEBUG">
         <appender-ref ref="FILE"/>
     </logger>
 </configuration>
