@@ -36,8 +36,12 @@ public class AudienceService implements EntityService<Audience> {
 
     @Override
     public Audience get(int audienceId) {
-        log.debug("Get Audience with id={}", audienceId);
-        return jdbcAudienceDao.get(audienceId);
+        try {
+            log.debug("Get audience with id={}", audienceId);
+            return jdbcAudienceDao.get(audienceId);
+        } catch (EmptyResultDataAccessException e) {
+            throw new EntityNotFoundException("Can not find the audience. There are no audience with id=" + audienceId);
+        }
     }
 
     @Override
@@ -49,7 +53,7 @@ public class AudienceService implements EntityService<Audience> {
     @Override
     public void create(Audience audience) {
         validateAudience(audience);
-        log.debug("Create Audience {}", audience);
+        log.debug("Create audience {}", audience);
         jdbcAudienceDao.create(audience);
     }
 
@@ -62,13 +66,13 @@ public class AudienceService implements EntityService<Audience> {
 
     @Override
     public void delete(int audienceId) {
-        if (!jdbcLectureDao.getByAudienceId(audienceId).isEmpty()) {
-            throw new LinkedEntityException("Can not delete audience with id=" + audienceId + ", there are links to the audience in database");
-        }
         try {
             jdbcAudienceDao.get(audienceId);
         } catch (EmptyResultDataAccessException e) {
             throw new EntityNotFoundException("Can not delete the audience. There are no audience with id=" + audienceId);
+        }
+        if (!jdbcLectureDao.getByAudienceId(audienceId).isEmpty()) {
+            throw new LinkedEntityException("Can not delete audience with id=" + audienceId + ", there are lectures with this audience in database");
         }
         log.debug("Delete audience by id={}", audienceId);
         jdbcAudienceDao.delete(audienceId);

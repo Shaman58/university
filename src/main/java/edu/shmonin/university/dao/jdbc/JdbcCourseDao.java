@@ -2,6 +2,7 @@ package edu.shmonin.university.dao.jdbc;
 
 import edu.shmonin.university.dao.CourseDao;
 import edu.shmonin.university.model.Course;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -31,7 +32,7 @@ public class JdbcCourseDao implements CourseDao {
     }
 
     @Override
-    public Course get(int id) {
+    public Course get(int id) throws EmptyResultDataAccessException {
         return jdbcTemplate.queryForObject(GET_QUERY, courseRowMapper, id);
     }
 
