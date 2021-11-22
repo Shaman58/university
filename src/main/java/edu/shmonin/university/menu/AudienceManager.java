@@ -1,6 +1,7 @@
 package edu.shmonin.university.menu;
 
-import edu.shmonin.university.exception.DeleteException;
+import edu.shmonin.university.exception.LinkedEntityException;
+import edu.shmonin.university.exception.EntityNotFoundException;
 import edu.shmonin.university.exception.ValidationException;
 import edu.shmonin.university.model.Audience;
 import edu.shmonin.university.service.AudienceService;
@@ -50,7 +51,7 @@ public class AudienceManager {
                 case ("b") -> {
                     try {
                         audienceService.delete(selectId());
-                    } catch (DeleteException e) {
+                    } catch (LinkedEntityException | EntityNotFoundException e) {
                         log.error("Audience has not deleted.", e);
                     }
                 }

@@ -2,13 +2,14 @@ package edu.shmonin.university.service;
 
 import edu.shmonin.university.dao.AudienceDao;
 import edu.shmonin.university.dao.LectureDao;
-import edu.shmonin.university.exception.DeleteException;
+import edu.shmonin.university.exception.LinkedEntityException;
 import edu.shmonin.university.exception.EntityNotFoundException;
 import edu.shmonin.university.exception.ValidationException;
 import edu.shmonin.university.model.Audience;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -62,9 +63,11 @@ public class AudienceService implements EntityService<Audience> {
     @Override
     public void delete(int audienceId) {
         if (!jdbcLectureDao.getByAudienceId(audienceId).isEmpty()) {
-            throw new DeleteException("Can not delete audience with id=" + audienceId + ", there are links to the audience in database");
+            throw new LinkedEntityException("Can not delete audience with id=" + audienceId + ", there are links to the audience in database");
         }
-        if (jdbcAudienceDao.get(audienceId) == null) {
+        try {
+            jdbcAudienceDao.get(audienceId);
+        } catch (EmptyResultDataAccessException e) {
             throw new EntityNotFoundException("Can not delete the audience. There are no audience with id=" + audienceId);
         }
         log.debug("Delete audience by id={}", audienceId);

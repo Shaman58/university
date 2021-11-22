@@ -2,6 +2,7 @@ package edu.shmonin.university.dao.jdbc;
 
 import edu.shmonin.university.dao.AudienceDao;
 import edu.shmonin.university.model.Audience;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -29,7 +30,7 @@ public class JdbcAudienceDao implements AudienceDao {
     }
 
     @Override
-    public Audience get(int id) {
+    public Audience get(int id) throws EmptyResultDataAccessException {
         return jdbcTemplate.queryForObject(GET_QUERY, audienceRowMapper, id);
     }
 
