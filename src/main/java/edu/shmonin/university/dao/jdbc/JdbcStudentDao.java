@@ -4,6 +4,7 @@ import edu.shmonin.university.dao.StudentDao;
 import edu.shmonin.university.dao.jdbc.rowmapper.StudentRowMapper;
 import edu.shmonin.university.model.Student;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -38,7 +39,7 @@ public class JdbcStudentDao implements StudentDao {
     }
 
     @Override
-    public Student get(int id) {
+    public Student get(int id) throws EmptyResultDataAccessException {
         return jdbcTemplate.queryForObject(GET_QUERY, studentRowMapper, id);
     }
 

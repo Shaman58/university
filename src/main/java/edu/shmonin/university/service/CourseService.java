@@ -34,7 +34,7 @@ public class CourseService implements EntityService<Course> {
             log.debug("Get course with id={}", courseId);
             return jdbcCourseDao.get(courseId);
         } catch (EmptyResultDataAccessException e) {
-            throw new EntityNotFoundException("Can not find the course. There are no course with id=" + courseId);
+            throw new EntityNotFoundException("Can not find the course. There is no course with id=" + courseId);
         }
     }
 
@@ -61,7 +61,7 @@ public class CourseService implements EntityService<Course> {
         try {
             jdbcCourseDao.get(courseId);
         } catch (EmptyResultDataAccessException e) {
-            throw new EntityNotFoundException("Can not delete the course. There are no course with id=" + courseId);
+            throw new EntityNotFoundException("Can not delete the course. There is no course with id=" + courseId);
         }
         if (!jdbcLectureDao.getByCourseId(courseId).isEmpty()) {
             throw new LinkedEntityException("Can not delete course with id=" + courseId + ", there are lectures with this audience in database");

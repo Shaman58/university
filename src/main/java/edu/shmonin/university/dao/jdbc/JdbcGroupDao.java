@@ -4,6 +4,7 @@ import edu.shmonin.university.dao.GroupDao;
 import edu.shmonin.university.dao.jdbc.rowmapper.GroupRowMapper;
 import edu.shmonin.university.model.Group;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Repository;
@@ -36,7 +37,7 @@ public class JdbcGroupDao implements GroupDao {
     }
 
     @Override
-    public Group get(int id) {
+    public Group get(int id) throws EmptyResultDataAccessException {
         return jdbcTemplate.queryForObject(GET_QUERY, groupRowMapper, id);
     }
 

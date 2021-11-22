@@ -40,7 +40,7 @@ public class AudienceService implements EntityService<Audience> {
             log.debug("Get audience with id={}", audienceId);
             return jdbcAudienceDao.get(audienceId);
         } catch (EmptyResultDataAccessException e) {
-            throw new EntityNotFoundException("Can not find the audience. There are no audience with id=" + audienceId);
+            throw new EntityNotFoundException("Can not find the audience. There is no audience with id=" + audienceId);
         }
     }
 
@@ -69,7 +69,7 @@ public class AudienceService implements EntityService<Audience> {
         try {
             jdbcAudienceDao.get(audienceId);
         } catch (EmptyResultDataAccessException e) {
-            throw new EntityNotFoundException("Can not delete the audience. There are no audience with id=" + audienceId);
+            throw new EntityNotFoundException("Can not delete the audience. There is no audience with id=" + audienceId);
         }
         if (!jdbcLectureDao.getByAudienceId(audienceId).isEmpty()) {
             throw new LinkedEntityException("Can not delete audience with id=" + audienceId + ", there are lectures with this audience in database");

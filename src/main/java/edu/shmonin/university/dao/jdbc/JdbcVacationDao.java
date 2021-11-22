@@ -2,6 +2,7 @@ package edu.shmonin.university.dao.jdbc;
 
 import edu.shmonin.university.dao.VacationDao;
 import edu.shmonin.university.model.Vacation;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -33,7 +34,7 @@ public class JdbcVacationDao implements VacationDao {
     }
 
     @Override
-    public Vacation get(int id) {
+    public Vacation get(int id) throws EmptyResultDataAccessException {
         return jdbcTemplate.queryForObject(GET_QUERY, vacationRowMapper, id);
     }
 

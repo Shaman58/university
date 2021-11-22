@@ -67,4 +67,11 @@ public class Vacation {
         result = 31 * result + (endDate != null ? endDate.hashCode() : 0);
         return result;
     }
+
+    @Override
+    public String toString() {
+        return "startDate=" + startDate +
+               ", endDate=" + endDate +
+               ", teacher=" + teacher;
+    }
 }

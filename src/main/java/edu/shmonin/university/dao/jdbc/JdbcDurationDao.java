@@ -2,6 +2,7 @@ package edu.shmonin.university.dao.jdbc;
 
 import edu.shmonin.university.dao.DurationDao;
 import edu.shmonin.university.model.Duration;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -29,7 +30,7 @@ public class JdbcDurationDao implements DurationDao {
     }
 
     @Override
-    public Duration get(int id) {
+    public Duration get(int id) throws EmptyResultDataAccessException {
         return jdbcTemplate.queryForObject(GET_QUERY, durationRowMapper, id);
     }
 

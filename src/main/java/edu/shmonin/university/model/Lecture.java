@@ -107,4 +107,13 @@ public class Lecture {
         result = 31 * result + (teacher != null ? teacher.hashCode() : 0);
         return result;
     }
+
+    @Override
+    public String toString() {
+        return "date=" + date +
+               ", course=" + course +
+               ", audience=" + audience +
+               ", duration=" + duration +
+               ", teacher=" + teacher;
+    }
 }

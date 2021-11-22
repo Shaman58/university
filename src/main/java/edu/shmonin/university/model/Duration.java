@@ -58,4 +58,9 @@ public class Duration {
         result = 31 * result + (endTime != null ? endTime.hashCode() : 0);
         return result;
     }
+
+    @Override
+    public String toString() {
+        return "startTime=" + startTime + ", endTime=" + endTime;
+    }
 }

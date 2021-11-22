@@ -64,6 +64,6 @@ public class Audience {
 
     @Override
     public String toString() {
-        return ", roomNumber=" + roomNumber + ", capacity=" + capacity;
+        return "roomNumber=" + roomNumber + ", capacity=" + capacity;
     }
 }

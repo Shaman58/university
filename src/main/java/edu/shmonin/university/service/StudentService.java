@@ -1,8 +1,13 @@
 package edu.shmonin.university.service;
 
 import edu.shmonin.university.dao.StudentDao;
+import edu.shmonin.university.exception.EntityNotFoundException;
+import edu.shmonin.university.exception.ValidationException;
 import edu.shmonin.university.model.Student;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -11,6 +16,8 @@ import java.util.List;
 
 @Service
 public class StudentService implements EntityService<Student> {
+
+    private static final Logger log = LoggerFactory.getLogger(StudentService.class);
 
     @Value("${university.student.min.age}")
     private int minAge;
@@ -26,30 +33,42 @@ public class StudentService implements EntityService<Student> {
 
     @Override
     public Student get(int studentId) {
-        return jdbcStudentDao.get(studentId);
+        try {
+            log.debug("Get student with id={}", studentId);
+            return jdbcStudentDao.get(studentId);
+        } catch (EmptyResultDataAccessException e) {
+            throw new EntityNotFoundException("Can not find the student. There is no student with id=" + studentId);
+        }
     }
 
     @Override
     public List<Student> getAll() {
+        log.debug("Get all students");
         return jdbcStudentDao.getAll();
     }
 
     @Override
     public void create(Student student) {
-        if (validateStudent(student)) {
-            jdbcStudentDao.create(student);
-        }
+        validateStudent(student);
+        log.debug("Create student {}", student);
+        jdbcStudentDao.create(student);
     }
 
     @Override
     public void update(Student student) {
-        if (validateStudent(student)) {
-            jdbcStudentDao.update(student);
-        }
+        validateStudent(student);
+        log.debug("Update student {}", student);
+        jdbcStudentDao.update(student);
     }
 
     @Override
     public void delete(int studentId) {
+        try {
+            jdbcStudentDao.get(studentId);
+        } catch (EmptyResultDataAccessException e) {
+            throw new EntityNotFoundException("Can not find the student. There is no student with id=" + studentId);
+        }
+        log.debug("Delete student by id={}", studentId);
         jdbcStudentDao.delete(studentId);
     }
 
@@ -57,8 +76,12 @@ public class StudentService implements EntityService<Student> {
         return jdbcStudentDao.getByGroupId(groupId);
     }
 
-    private boolean validateStudent(Student student) {
-        return Period.between(student.getBirthDate(), LocalDate.now()).getYears() >= minAge &&
-               jdbcStudentDao.getByGroupId(student.getGroup().getId()).size() < maxCapacity;
+    private void validateStudent(Student student) {
+        if (Period.between(student.getBirthDate(), LocalDate.now()).getYears() < minAge) {
+            throw new ValidationException("The student " + student + " did not pass the validity check. Student can not be younger " + minAge);
+        }
+        if (jdbcStudentDao.getByGroupId(student.getGroup().getId()).size() >= maxCapacity) {
+            throw new ValidationException("The student " + student + " did not pass the validity check. Group capacity can not be greater than " + maxCapacity);
+        }
     }
 }

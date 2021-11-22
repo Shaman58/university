@@ -111,4 +111,16 @@ public abstract class Human {
         result = 31 * result + (birthDate != null ? birthDate.hashCode() : 0);
         return result;
     }
+
+    @Override
+    public String toString() {
+        return "firstName=" + firstName +
+               ", lastName=" + lastName +
+               ", email=" + email +
+               ", country=" + country +
+               ", gender=" + gender +
+               ", phone=" + phone +
+               ", address=" + address +
+               ", birthDate=" + birthDate;
+    }
 }

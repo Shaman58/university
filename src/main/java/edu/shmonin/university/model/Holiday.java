@@ -58,4 +58,9 @@ public class Holiday {
         result = 31 * result + (date != null ? date.hashCode() : 0);
         return result;
     }
+
+    @Override
+    public String toString() {
+        return "name=" + name + " date=" + date;
+    }
 }
