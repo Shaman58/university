@@ -4,7 +4,6 @@ import edu.shmonin.university.dao.DurationDao;
 import edu.shmonin.university.dao.LectureDao;
 import edu.shmonin.university.exception.ChainedEntityException;
 import edu.shmonin.university.exception.EntityNotFoundException;
-import edu.shmonin.university.exception.ValidationException;
 import edu.shmonin.university.model.Duration;
 import edu.shmonin.university.model.Lecture;
 import org.junit.jupiter.api.Test;
@@ -65,10 +64,10 @@ class DurationServiceTest {
     }
 
     @Test
-    void givenInvalidDuration_whenCreate_thenThrowValidateExceptionAndNotStartedDurationDaoCreate() {
+    void givenInvalidDuration_whenCreate_thenThrowRuntimeExceptionAndNotStartedDurationDaoCreate() {
         var duration = new Duration(LocalTime.of(15, 0), LocalTime.of(14, 0));
 
-        assertThrows(ValidationException.class, () -> durationService.create(duration));
+        assertThrows(RuntimeException.class, () -> durationService.create(duration));
 
         verify(durationDao, never()).create(duration);
     }
@@ -83,10 +82,10 @@ class DurationServiceTest {
     }
 
     @Test
-    void givenInvalidDuration_whenUpdate_thenThrowValidateExceptionAndNotStartedDurationDaoUpdate() {
+    void givenInvalidDuration_whenUpdate_thenThrowRuntimeExceptionAndNotStartedDurationDaoUpdate() {
         var duration = new Duration(LocalTime.of(15, 0), LocalTime.of(14, 0));
 
-        assertThrows(ValidationException.class, () -> durationService.update(duration));
+        assertThrows(RuntimeException.class, () -> durationService.update(duration));
 
         verify(durationDao, never()).update(duration);
     }

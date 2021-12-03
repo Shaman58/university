@@ -2,12 +2,12 @@ package edu.shmonin.university.service;
 
 import edu.shmonin.university.dao.VacationDao;
 import edu.shmonin.university.exception.EntityNotFoundException;
-import edu.shmonin.university.exception.ValidationException;
 import edu.shmonin.university.model.Vacation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -26,7 +26,7 @@ public class VacationService implements EntityService<Vacation> {
     public Vacation get(int vacationId) {
         var vacation = vacationDao.get(vacationId);
         if (vacation.isEmpty()) {
-            throw new EntityNotFoundException("Can not find the vacation. There is no vacation with id=" + vacationId);
+            throw new EntityNotFoundException("Can not find vacation by id=" + vacationId);
         }
         log.debug("Get vacation with id={}", vacationId);
         return vacation.get();
@@ -55,7 +55,7 @@ public class VacationService implements EntityService<Vacation> {
     @Override
     public void delete(int vacationId) {
         if (vacationDao.get(vacationId).isEmpty()) {
-            throw new EntityNotFoundException("Can not find the vacation. There is no vacation with id=" + vacationId);
+            throw new EntityNotFoundException("Can not find vacation by id=" + vacationId);
         }
         log.debug("Delete vacation by id={}", vacationId);
         vacationDao.delete(vacationId);
@@ -67,10 +67,10 @@ public class VacationService implements EntityService<Vacation> {
 
     private void validateVacation(Vacation vacation) {
         if (vacation.getStartDate().isBefore(LocalDate.now())) {
-            throw new ValidationException("The vacation " + vacation + " did not pass the validity check. Vacation start date mast be after current date");
+            throw new DateTimeException("The vacation " + vacation + " did not pass the validity check. Vacation start date mast be after current date");
         }
         if (vacation.getEndDate().isBefore(vacation.getStartDate())) {
-            throw new ValidationException("The vacation " + vacation + " did not pass the validity check. Vacation end date mast be after start date");
+            throw new DateTimeException("The vacation " + vacation + " did not pass the validity check. Vacation end date mast be after start date");
         }
     }
 }

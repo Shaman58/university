@@ -28,7 +28,7 @@ public class GroupService implements EntityService<Group> {
     public Group get(int groupId) {
         var group = groupDao.get(groupId);
         if (group.isEmpty()) {
-            throw new EntityNotFoundException("Can not find the group. There are no group with id=" + groupId);
+            throw new EntityNotFoundException("Can not find group by id=" + groupId);
         }
         log.debug("Get group with id={}", groupId);
         return group.get();
@@ -56,13 +56,13 @@ public class GroupService implements EntityService<Group> {
     public void delete(int groupId) {
         var group = groupDao.get(groupId);
         if (group.isEmpty()) {
-            throw new EntityNotFoundException("Can not delete the group. There is no group with id=" + groupId);
+            throw new EntityNotFoundException("Can not find group by id=" + groupId);
         }
         if (!group.get().getStudents().isEmpty()) {
-            throw new ChainedEntityException("Can not delete group with id=" + groupId + ", there are students with this group in database");
+            throw new ChainedEntityException("Can not delete group by id=" + groupId + ", there are entities with this group in the system");
         }
         if (!lectureDao.getByGroupId(groupId).isEmpty()) {
-            throw new ChainedEntityException("Can not delete group with id=" + groupId + ", there are lectures with this group in database");
+            throw new ChainedEntityException("Can not delete group by id=" + groupId + ", there are entities with this group in the system");
         }
         log.debug("Delete group by id={}", groupId);
         groupDao.delete(groupId);

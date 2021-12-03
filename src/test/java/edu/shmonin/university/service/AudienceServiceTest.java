@@ -4,7 +4,6 @@ import edu.shmonin.university.dao.AudienceDao;
 import edu.shmonin.university.dao.LectureDao;
 import edu.shmonin.university.exception.ChainedEntityException;
 import edu.shmonin.university.exception.EntityNotFoundException;
-import edu.shmonin.university.exception.ValidationException;
 import edu.shmonin.university.model.Audience;
 import edu.shmonin.university.model.Lecture;
 import org.junit.jupiter.api.BeforeEach;
@@ -71,10 +70,10 @@ class AudienceServiceTest {
     }
 
     @Test
-    void givenInvalidAudience_whenCreate_thenNotStartedDaoCreate() {
+    void givenInvalidAudience_whenCreate_thenThrowsRuntimeExceptionAndNotStartedDaoCreate() {
         var invalidAudience = new Audience(1, 91);
 
-        assertThrows(ValidationException.class, () -> audienceService.create(invalidAudience));
+        assertThrows(RuntimeException.class, () -> audienceService.create(invalidAudience));
         verify(audienceDao, never()).create(any());
     }
 
@@ -88,10 +87,10 @@ class AudienceServiceTest {
     }
 
     @Test
-    void givenInvalidAudience_whenUpdate_thenThrowValidationExceptionAndNotStartedDaoUpdate() {
+    void givenInvalidAudience_whenUpdate_thenThrowRuntimeExceptionAndNotStartedDaoUpdate() {
         var audience = new Audience(1, 91);
 
-        assertThrows(ValidationException.class, () -> audienceService.update(audience));
+        assertThrows(RuntimeException.class, () -> audienceService.update(audience));
         verify(audienceDao, never()).update(any());
     }
 

@@ -4,12 +4,12 @@ import edu.shmonin.university.dao.DurationDao;
 import edu.shmonin.university.dao.LectureDao;
 import edu.shmonin.university.exception.EntityNotFoundException;
 import edu.shmonin.university.exception.ChainedEntityException;
-import edu.shmonin.university.exception.ValidationException;
 import edu.shmonin.university.model.Duration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.time.DateTimeException;
 import java.util.List;
 
 @Service
@@ -29,7 +29,7 @@ public class DurationService implements EntityService<Duration> {
     public Duration get(int durationId) {
         var duration = durationDao.get(durationId);
         if (duration.isEmpty()) {
-            throw new EntityNotFoundException("Can not find the duration. There is no duration with id=" + durationId);
+            throw new EntityNotFoundException("Can not find duration by id=" + durationId);
         }
         log.debug("Get duration with id={}", durationId);
         return duration.get();
@@ -58,17 +58,17 @@ public class DurationService implements EntityService<Duration> {
     @Override
     public void delete(int durationId) {
         if (durationDao.get(durationId).isEmpty()) {
-            throw new EntityNotFoundException("Can not delete the duration. There is no duration with id=" + durationId);
+            throw new EntityNotFoundException("Can not find duration by id=" + durationId);
         }
         if (!lectureDao.getByDurationId(durationId).isEmpty()) {
-            throw new ChainedEntityException("Can not delete duration with id=" + durationId + ", there are lectures with this duration in database");
+            throw new ChainedEntityException("Can not delete duration by id=" + durationId + ", there are entities with this duration in the system");
         }
         durationDao.delete(durationId);
     }
 
     private void validateDuration(Duration duration) {
         if (!duration.getStartTime().isBefore(duration.getEndTime())) {
-            throw new ValidationException("The duration " + duration + " did not pass the validity check. Duration end time must be after start time");
+            throw new DateTimeException("The duration " + duration + " did not pass the validity check. Duration end time must be after start time");
         }
     }
 }

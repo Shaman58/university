@@ -31,7 +31,7 @@ public class CourseService implements EntityService<Course> {
     public Course get(int courseId) {
         var course = courseDao.get(courseId);
         if (course.isEmpty()) {
-            throw new EntityNotFoundException("Can not find the course. There is no course with id=" + courseId);
+            throw new EntityNotFoundException("Can not find course by id=" + courseId);
         }
         log.debug("Get course with id={}", courseId);
         return course.get();
@@ -58,18 +58,19 @@ public class CourseService implements EntityService<Course> {
     @Override
     public void delete(int courseId) {
         if (courseDao.get(courseId).isEmpty()) {
-            throw new EntityNotFoundException("Can not delete the course. There is no course with id=" + courseId);
+            throw new EntityNotFoundException("Can not find course by id=" + courseId);
         }
         if (!lectureDao.getByCourseId(courseId).isEmpty()) {
-            throw new ChainedEntityException("Can not delete course with id=" + courseId + ", there are lectures with this audience in database");
+            throw new ChainedEntityException("Can not delete course by id=" + courseId + ", there are entities with this course in the system");
         }
         if (!teacherDao.getByCourseId(courseId).isEmpty()) {
-            throw new ChainedEntityException("Can not delete course with id=" + courseId + ", there are teachers with this audience in database");
+            throw new ChainedEntityException("Can not delete course by id=" + courseId + ", there are entities with this course in the system");
         }
         courseDao.delete(courseId);
     }
 
     public List<Course> getByTeacherId(int teacherId) {
+        log.debug("Get all courses by teacher id");
         return courseDao.getByTeacherId(teacherId);
     }
 }

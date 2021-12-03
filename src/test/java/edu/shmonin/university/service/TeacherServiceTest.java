@@ -81,7 +81,7 @@ class TeacherServiceTest {
     }
 
     @Test
-    void givenInvalidTeacher_whenCreate_thenThrowValidateExceptionAndStartedNotTeacherDaoCreate() {
+    void givenInvalidTeacher_whenCreate_thenThrowRuntimeExceptionAndStartedNotTeacherDaoCreate() {
         var teacher = new Teacher();
         teacher.setFirstName("name-1");
         teacher.setLastName("surname-1");
@@ -93,13 +93,13 @@ class TeacherServiceTest {
         teacher.setBirthDate(LocalDate.now().minusYears(24));
         teacher.setScientificDegree(ScientificDegree.DOCTOR);
 
-        assertThrows(ValidationException.class, () -> teacherService.create(teacher));
+        assertThrows(RuntimeException.class, () -> teacherService.create(teacher));
 
         verify(teacherDao, never()).create(teacher);
     }
 
     @Test
-    void givenInvalidTeacherTooOld_whenCreate_thenThrowValidateExceptionAndNotStartedTeacherDaoCreate() {
+    void givenInvalidTeacherTooOld_whenCreate_thenThrowRuntimeExceptionAndNotStartedTeacherDaoCreate() {
         var teacher = new Teacher();
         teacher.setFirstName("name-1");
         teacher.setLastName("surname-1");
@@ -111,7 +111,7 @@ class TeacherServiceTest {
         teacher.setBirthDate(LocalDate.now().minusYears(100));
         teacher.setScientificDegree(ScientificDegree.DOCTOR);
 
-        assertThrows(ValidationException.class, () -> teacherService.create(teacher));
+        assertThrows(RuntimeException.class, () -> teacherService.create(teacher));
 
         verify(teacherDao, never()).create(teacher);
     }
@@ -140,7 +140,7 @@ class TeacherServiceTest {
     }
 
     @Test
-    void givenValidTeacherAndTeacherHasNotAllNeededCourses_whenUpdate_thenThrowValidateExceptionAndNotStartedTeacherDaoUpdate() {
+    void givenValidTeacherAndTeacherHasNotAllNeededCourses_whenUpdate_thenThrowRuntimeExceptionAndNotStartedTeacherDaoUpdate() {
         var teacher = new Teacher();
         teacher.setFirstName("name-1");
         teacher.setLastName("surname-1");
@@ -157,13 +157,13 @@ class TeacherServiceTest {
         lecture.setCourse(new Course("course1"));
         when(lectureDao.getByTeacherId(1)).thenReturn(List.of(lecture));
 
-        assertThrows(ValidationException.class, () -> teacherService.update(teacher));
+        assertThrows(RuntimeException.class, () -> teacherService.update(teacher));
 
         verify(teacherDao, never()).update(teacher);
     }
 
     @Test
-    void givenInvalidTeacherAndTeacherHasAllNeededCourses_whenUpdate_thenThrowValidateExceptionAndNotStartedTeacherDaoUpdate() {
+    void givenInvalidTeacherAndTeacherHasAllNeededCourses_whenUpdate_thenThrowRuntimeExceptionAndNotStartedTeacherDaoUpdate() {
         var teacher = new Teacher();
         teacher.setFirstName("name-1");
         teacher.setLastName("surname-1");
@@ -180,7 +180,7 @@ class TeacherServiceTest {
         lecture.setCourse(new Course("course1"));
         when(lectureDao.getByTeacherId(1)).thenReturn(List.of(lecture));
 
-        assertThrows(ValidationException.class, () -> teacherService.update(teacher));
+        assertThrows(RuntimeException.class, () -> teacherService.update(teacher));
 
         verify(teacherDao, never()).update(teacher);
     }

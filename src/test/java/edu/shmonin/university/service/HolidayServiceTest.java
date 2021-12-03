@@ -2,7 +2,6 @@ package edu.shmonin.university.service;
 
 import edu.shmonin.university.dao.HolidayDao;
 import edu.shmonin.university.exception.EntityNotFoundException;
-import edu.shmonin.university.exception.ValidationException;
 import edu.shmonin.university.model.Holiday;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -59,10 +58,10 @@ class HolidayServiceTest {
     }
 
     @Test
-    void givenNotValidHoliday_whenCreate_thenThrownValidateExceptionAndNotStartedHolidayDaoCreate() {
+    void givenNotValidHoliday_whenCreate_thenThrownRuntimeExceptionAndNotStartedHolidayDaoCreate() {
         var holiday = new Holiday("holiday", LocalDate.now().minus(1, ChronoUnit.DAYS));
 
-        assertThrows(ValidationException.class, () -> holidayService.create(holiday));
+        assertThrows(RuntimeException.class, () -> holidayService.create(holiday));
 
         verify(holidayDao, never()).create(holiday);
     }
@@ -76,10 +75,10 @@ class HolidayServiceTest {
     }
 
     @Test
-    void givenNotValidHoliday_whenUpdate_thenThrowValidateExceptionAndNotStartedHolidayUpdate() {
+    void givenNotValidHoliday_whenUpdate_thenThrowRuntimeExceptionAndNotStartedHolidayUpdate() {
         var holiday = new Holiday("holiday", LocalDate.now().minus(1, ChronoUnit.DAYS));
 
-        assertThrows(ValidationException.class, () -> holidayService.update(holiday));
+        assertThrows(RuntimeException.class, () -> holidayService.update(holiday));
 
         verify(holidayDao, never()).update(holiday);
     }

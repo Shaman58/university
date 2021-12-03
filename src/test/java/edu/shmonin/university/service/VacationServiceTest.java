@@ -2,7 +2,6 @@ package edu.shmonin.university.service;
 
 import edu.shmonin.university.dao.VacationDao;
 import edu.shmonin.university.exception.EntityNotFoundException;
-import edu.shmonin.university.exception.ValidationException;
 import edu.shmonin.university.model.Vacation;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -63,21 +62,21 @@ class VacationServiceTest {
     }
 
     @Test
-    void givenInvalidVacation_whenCreate_thenThrowValidateExceptionAndNotStartedVacationDaoCreate() {
+    void givenInvalidVacation_whenCreate_thenThrowRuntimeExceptionAndNotStartedVacationDaoCreate() {
         var vacation = new Vacation(LocalDate.now().plusDays(1),
                 LocalDate.now().minusMonths(1));
 
-        assertThrows(ValidationException.class, () -> vacationService.create(vacation));
+        assertThrows(RuntimeException.class, () -> vacationService.create(vacation));
 
         verify(vacationDao, never()).create(vacation);
     }
 
     @Test
-    void givenValidOutOfDateVacation_whenCreate_thenThrowValidateExceptionAndNotStartedVacationDaoCreate() {
+    void givenValidOutOfDateVacation_whenCreate_thenThrowRuntimeExceptionAndNotStartedVacationDaoCreate() {
         var vacation = new Vacation(LocalDate.now().minusDays(1),
                 LocalDate.now().plusMonths(1));
 
-        assertThrows(ValidationException.class, () -> vacationService.create(vacation));
+        assertThrows(RuntimeException.class, () -> vacationService.create(vacation));
 
         verify(vacationDao, never()).create(vacation);
     }
@@ -93,21 +92,21 @@ class VacationServiceTest {
     }
 
     @Test
-    void givenInvalidVacation_whenUpdate_thenThrowValidateExceptionAndNotStartedVacationDaoUpdate() {
+    void givenInvalidVacation_whenUpdate_thenThrowRuntimeExceptionAndNotStartedVacationDaoUpdate() {
         var vacation = new Vacation(LocalDate.now().plusDays(1),
                 LocalDate.now().minusMonths(1));
 
-        assertThrows(ValidationException.class, () -> vacationService.update(vacation));
+        assertThrows(RuntimeException.class, () -> vacationService.update(vacation));
 
         verify(vacationDao, never()).update(vacation);
     }
 
     @Test
-    void givenValidOutOfDateVacation_whenUpdate_thenThrowValidateExceptionAndNotStartedVacationDaoUpdate() {
+    void givenValidOutOfDateVacation_whenUpdate_thenThrowRuntimeExceptionAndNotStartedVacationDaoUpdate() {
         var vacation = new Vacation(LocalDate.now().minusDays(1),
                 LocalDate.now().plusMonths(1));
 
-        assertThrows(ValidationException.class, () -> vacationService.update(vacation));
+        assertThrows(RuntimeException.class, () -> vacationService.update(vacation));
 
         verify(vacationDao, never()).update(vacation);
     }

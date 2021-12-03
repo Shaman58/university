@@ -2,13 +2,14 @@ package edu.shmonin.university.service;
 
 import edu.shmonin.university.dao.StudentDao;
 import edu.shmonin.university.exception.EntityNotFoundException;
-import edu.shmonin.university.exception.ValidationException;
+import edu.shmonin.university.exception.GroupCapacityException;
 import edu.shmonin.university.model.Student;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.List;
@@ -34,7 +35,7 @@ public class StudentService implements EntityService<Student> {
     public Student get(int studentId) {
         var student = studentDao.get(studentId);
         if (student.isEmpty()) {
-            throw new EntityNotFoundException("Can not find the student. There is no student with id=" + studentId);
+            throw new EntityNotFoundException("Can not find student by id=" + studentId);
         }
         log.debug("Get student with id={}", studentId);
         return student.get();
@@ -63,7 +64,7 @@ public class StudentService implements EntityService<Student> {
     @Override
     public void delete(int studentId) {
         if (studentDao.get(studentId).isEmpty()) {
-            throw new EntityNotFoundException("Can not find the student. There is no student with id=" + studentId);
+            throw new EntityNotFoundException("Can not find student by id=" + studentId);
         }
         log.debug("Delete student by id={}", studentId);
         studentDao.delete(studentId);
@@ -75,10 +76,10 @@ public class StudentService implements EntityService<Student> {
 
     private void validateStudent(Student student) {
         if (Period.between(student.getBirthDate(), LocalDate.now()).getYears() < minAge) {
-            throw new ValidationException("The student " + student + " did not pass the validity check. Student can not be younger " + minAge);
+            throw new DateTimeException("The student " + student + " did not pass the validity check. Student can not be younger " + minAge);
         }
         if (studentDao.getByGroupId(student.getGroup().getId()).size() >= maxCapacity) {
-            throw new ValidationException("The student " + student + " did not pass the validity check. Group capacity can not be greater than " + maxCapacity);
+            throw new GroupCapacityException("The student " + student + " did not pass the validity check. The number of students in the group cannot be more than " + maxCapacity);
         }
     }
 }

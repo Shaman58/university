@@ -2,12 +2,12 @@ package edu.shmonin.university.service;
 
 import edu.shmonin.university.dao.HolidayDao;
 import edu.shmonin.university.exception.EntityNotFoundException;
-import edu.shmonin.university.exception.ValidationException;
 import edu.shmonin.university.model.Holiday;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -26,7 +26,7 @@ public class HolidayService implements EntityService<Holiday> {
     public Holiday get(int holidayId) {
         var holiday = holidayDao.get(holidayId);
         if (holiday.isEmpty()) {
-            throw new EntityNotFoundException("Can not find the holiday. There is no holiday with id=" + holidayId);
+            throw new EntityNotFoundException("Can not find holiday by id=" + holidayId);
         }
         return holiday.get();
     }
@@ -54,7 +54,7 @@ public class HolidayService implements EntityService<Holiday> {
     @Override
     public void delete(int holidayId) {
         if (holidayDao.get(holidayId).isEmpty()) {
-            throw new EntityNotFoundException("Can not find the holiday. There is no holiday with id=" + holidayId);
+            throw new EntityNotFoundException("Can not find holiday by id=" + holidayId);
         }
         log.debug("Delete holiday by id={}", holidayId);
         holidayDao.delete(holidayId);
@@ -62,7 +62,7 @@ public class HolidayService implements EntityService<Holiday> {
 
     private void validateHoliday(Holiday holiday) {
         if (!holiday.getDate().isAfter(LocalDate.now())) {
-            throw new ValidationException("The holiday " + holiday + " did not pass the validity check. The date can not be earlier than the current time");
+            throw new DateTimeException("The holiday " + holiday + " did not pass the validity check. The date can not be earlier than the current time");
         }
     }
 }

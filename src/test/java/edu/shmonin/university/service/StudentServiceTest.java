@@ -2,7 +2,6 @@ package edu.shmonin.university.service;
 
 import edu.shmonin.university.dao.StudentDao;
 import edu.shmonin.university.exception.EntityNotFoundException;
-import edu.shmonin.university.exception.ValidationException;
 import edu.shmonin.university.model.Gender;
 import edu.shmonin.university.model.Group;
 import edu.shmonin.university.model.Student;
@@ -81,7 +80,7 @@ class StudentServiceTest {
     }
 
     @Test
-    void givenValidStudentAndGroupListOfStudentsIsFull_whenCreate_thenThrowValidateExceptionAndNotStartedStudentDaoCreate() {
+    void givenValidStudentAndGroupListOfStudentsIsFull_whenCreate_thenThrowRuntimeExceptionAndNotStartedStudentDaoCreate() {
         var student = new Student();
         student.setFirstName("name-1");
         student.setLastName("surname-1");
@@ -97,13 +96,13 @@ class StudentServiceTest {
         var students = List.of(new Student(), new Student());
         when(studentDao.getByGroupId(1)).thenReturn(students);
 
-        assertThrows(ValidationException.class, () -> studentService.create(student));
+        assertThrows(RuntimeException.class, () -> studentService.create(student));
 
         verify(studentDao, never()).create(student);
     }
 
     @Test
-    void givenInvalidStudentAndGroupListOfStudentsIsFull_whenCreate_thenThrowValidateExceptionAndNotStartedStudentDaoCreate() {
+    void givenInvalidStudentAndGroupListOfStudentsIsFull_whenCreate_thenThrowRuntimeExceptionAndNotStartedStudentDaoCreate() {
         var student = new Student();
         student.setFirstName("name-1");
         student.setLastName("surname-1");
@@ -114,7 +113,7 @@ class StudentServiceTest {
         student.setAddress("address-1");
         student.setBirthDate(LocalDate.now().minusYears(16));
 
-        assertThrows(ValidationException.class, () -> studentService.create(student));
+        assertThrows(RuntimeException.class, () -> studentService.create(student));
 
         verify(studentDao, never()).create(student);
     }
@@ -142,7 +141,7 @@ class StudentServiceTest {
     }
 
     @Test
-    void givenValidStudentAndGroupListOfStudentsIsFull_whenUpdate_thenThrowValidateExceptionAndNotStartedStudentDaoUpdate() {
+    void givenValidStudentAndGroupListOfStudentsIsFull_whenUpdate_thenThrowRuntimeExceptionAndNotStartedStudentDaoUpdate() {
         var student = new Student();
         student.setFirstName("name-1");
         student.setLastName("surname-1");
@@ -158,13 +157,13 @@ class StudentServiceTest {
         var students = List.of(new Student(), new Student());
         when(studentDao.getByGroupId(1)).thenReturn(students);
 
-        assertThrows(ValidationException.class, () -> studentService.create(student));
+        assertThrows(RuntimeException.class, () -> studentService.create(student));
 
         verify(studentDao, never()).update(student);
     }
 
     @Test
-    void givenInvalidStudentAndGroupListOfStudentsIsFull_whenUpdate_thenThrowValidateExceptionAndNotStartedStudentDaoUpdate() {
+    void givenInvalidStudentAndGroupListOfStudentsIsFull_whenUpdate_thenThrowRuntimeExceptionAndNotStartedStudentDaoUpdate() {
         var student = new Student();
         student.setFirstName("name-1");
         student.setLastName("surname-1");
@@ -175,7 +174,7 @@ class StudentServiceTest {
         student.setAddress("address-1");
         student.setBirthDate(LocalDate.now().minusYears(16));
 
-        assertThrows(ValidationException.class, () -> studentService.create(student));
+        assertThrows(RuntimeException.class, () -> studentService.create(student));
 
         verify(studentDao, never()).update(student);
     }
