@@ -2,7 +2,10 @@ package edu.shmonin.university.service;
 
 import edu.shmonin.university.dao.AudienceDao;
 import edu.shmonin.university.dao.LectureDao;
-import edu.shmonin.university.exception.*;
+import edu.shmonin.university.exception.AudienceCapacityException;
+import edu.shmonin.university.exception.ChainedEntityException;
+import edu.shmonin.university.exception.EntityNotFoundException;
+import edu.shmonin.university.exception.RoomNumberException;
 import edu.shmonin.university.model.Audience;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -74,17 +77,11 @@ public class AudienceService implements EntityService<Audience> {
     }
 
     private void validateAudience(Audience audience) {
-        if (audience.getRoomNumber() <= 0) {
-            throw new ValidationException("The audience " + audience + " did not pass the validity check. Room number can not be negative or zero");
+        if ((audience.getRoomNumber() <= 0) || (audience.getRoomNumber() > audiencesMaxRoomNumber)) {
+            throw new RoomNumberException("The audience " + audience + " did not pass the validity check. RoomNumber must be greater than 0 and less then " + audiencesMaxRoomNumber);
         }
-        if (audience.getRoomNumber() > audiencesMaxRoomNumber) {
-            throw new MaxRoomNumberException("The audience " + audience + " did not pass the validity check. RoomNumber can not be greater " + audiencesMaxRoomNumber);
-        }
-        if (audience.getCapacity() <= 0) {
-            throw new ValidationException("The audience " + audience + " did not pass the validity check. Audience capacity can not be negative or zero");
-        }
-        if (audience.getCapacity() > audienceMaxCapacity) {
-            throw new AudienceCapacityException("The audience " + audience + " did not pass the validity check. Audience capacity can not be greater " + audienceMaxCapacity);
+        if ((audience.getCapacity() <= 0) || (audience.getCapacity() > audienceMaxCapacity)) {
+            throw new AudienceCapacityException("The audience " + audience + " did not pass the validity check. Audience capacity must be greater than 0 and less than " + audienceMaxCapacity);
         }
     }
 }

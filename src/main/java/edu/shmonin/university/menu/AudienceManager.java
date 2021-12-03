@@ -2,7 +2,6 @@ package edu.shmonin.university.menu;
 
 import edu.shmonin.university.exception.ChainedEntityException;
 import edu.shmonin.university.exception.EntityNotFoundException;
-import edu.shmonin.university.exception.ValidationException;
 import edu.shmonin.university.model.Audience;
 import edu.shmonin.university.service.AudienceService;
 import org.slf4j.Logger;
@@ -44,7 +43,7 @@ public class AudienceManager {
                 case ("a") -> {
                     try {
                         audienceService.create(createNewAudience());
-                    } catch (ValidationException e) {
+                    } catch (RuntimeException e) {
                         log.error("Audience has not been created.", e);
                     }
                 }
@@ -58,7 +57,7 @@ public class AudienceManager {
                 case ("c") -> {
                     try {
                         audienceService.update(updateAudience());
-                    } catch (ValidationException e) {
+                    } catch (RuntimeException e) {
                         log.error("Audience has not been updated.", e);
                     }
                 }

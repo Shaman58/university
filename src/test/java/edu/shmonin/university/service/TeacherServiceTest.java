@@ -4,7 +4,6 @@ import edu.shmonin.university.dao.LectureDao;
 import edu.shmonin.university.dao.TeacherDao;
 import edu.shmonin.university.dao.VacationDao;
 import edu.shmonin.university.exception.EntityNotFoundException;
-import edu.shmonin.university.exception.ValidationException;
 import edu.shmonin.university.model.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
