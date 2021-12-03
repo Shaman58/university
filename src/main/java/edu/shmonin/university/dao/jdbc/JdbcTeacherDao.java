@@ -2,16 +2,18 @@ package edu.shmonin.university.dao.jdbc;
 
 import edu.shmonin.university.dao.TeacherDao;
 import edu.shmonin.university.dao.jdbc.rowmapper.TeacherRowMapper;
+import edu.shmonin.university.model.Course;
 import edu.shmonin.university.model.Teacher;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @Repository
 public class JdbcTeacherDao implements TeacherDao {
@@ -34,8 +36,12 @@ public class JdbcTeacherDao implements TeacherDao {
     }
 
     @Override
-    public Teacher get(int id) throws EmptyResultDataAccessException {
-        return jdbcTemplate.queryForObject(GET_QUERY, teacherRowMapper, id);
+    public Optional<Teacher> get(int id) {
+        try {
+            return Optional.ofNullable(jdbcTemplate.queryForObject(GET_QUERY, teacherRowMapper, id));
+        } catch (RuntimeException e) {
+            return Optional.empty();
+        }
     }
 
     @Override
@@ -69,7 +75,7 @@ public class JdbcTeacherDao implements TeacherDao {
     @Transactional
     @Override
     public void update(Teacher updatedTeacher) {
-        var courses = get(updatedTeacher.getId()).getCourses();
+        var courses = getCoursesFromTheTeacher(updatedTeacher);
         jdbcTemplate.update(UPDATE_QUERY, updatedTeacher.getFirstName(), updatedTeacher.getLastName(), updatedTeacher.getEmail(),
                 updatedTeacher.getCountry(), updatedTeacher.getGender().toString(), updatedTeacher.getPhone(), updatedTeacher.getAddress(),
                 updatedTeacher.getBirthDate(), updatedTeacher.getScientificDegree().toString(), updatedTeacher.getId());
@@ -87,5 +93,14 @@ public class JdbcTeacherDao implements TeacherDao {
     @Override
     public List<Teacher> getByCourseId(int courseId) {
         return jdbcTemplate.query(GET_BY_COURSE, teacherRowMapper, courseId);
+    }
+
+    private List<Course> getCoursesFromTheTeacher(Teacher updatedTeacher) {
+        var teacher = get(updatedTeacher.getId());
+        if (teacher.isPresent()) {
+            return teacher.get().getCourses();
+        } else {
+            return new ArrayList<>();
+        }
     }
 }

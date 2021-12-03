@@ -10,6 +10,7 @@ import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.test.jdbc.JdbcTestUtils;
 
 import java.util.ArrayList;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -25,7 +26,7 @@ class JdbcAudienceDaoTest {
 
     @Test
     void givenId_whenGet_thenReturnAudience() {
-        var expected = new Audience(1, 10);
+        var expected = Optional.of(new Audience(1, 10));
 
         var actual = jdbcAudienceDao.get(1);
 

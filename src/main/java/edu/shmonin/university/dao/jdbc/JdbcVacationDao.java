@@ -2,15 +2,16 @@ package edu.shmonin.university.dao.jdbc;
 
 import edu.shmonin.university.dao.VacationDao;
 import edu.shmonin.university.model.Vacation;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Repository;
 
 import java.sql.Statement;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @Repository
 public class JdbcVacationDao implements VacationDao {
@@ -24,6 +25,8 @@ public class JdbcVacationDao implements VacationDao {
     private static final String DELETE_QUERY = "DELETE FROM vacations WHERE id=?";
     private static final String GET_TEACHER_VACATIONS_QUERY =
             "SELECT id,start_date,end_date FROM vacations WHERE teacher_id=?";
+    private static final String GET_TEACHER_DATE_VACATIONS_QUERY =
+            "SELECT id,start_date,end_date FROM vacations WHERE teacher_id=? AND start_date<=? AND end_date>=?";
 
     private final JdbcTemplate jdbcTemplate;
     private final BeanPropertyRowMapper<Vacation> vacationRowMapper;
@@ -34,8 +37,12 @@ public class JdbcVacationDao implements VacationDao {
     }
 
     @Override
-    public Vacation get(int id) throws EmptyResultDataAccessException {
-        return jdbcTemplate.queryForObject(GET_QUERY, vacationRowMapper, id);
+    public Optional<Vacation> get(int id) {
+        try {
+            return Optional.ofNullable(jdbcTemplate.queryForObject(GET_QUERY, vacationRowMapper, id));
+        } catch (RuntimeException e) {
+            return Optional.empty();
+        }
     }
 
     @Override
@@ -69,5 +76,14 @@ public class JdbcVacationDao implements VacationDao {
     @Override
     public List<Vacation> getByTeacherId(int teacherId) {
         return jdbcTemplate.query(GET_TEACHER_VACATIONS_QUERY, vacationRowMapper, teacherId);
+    }
+
+    @Override
+    public Optional<Vacation> getByTeacherAndDate(int teacherId, LocalDate localDate) {
+        try {
+            return Optional.ofNullable(jdbcTemplate.queryForObject(GET_TEACHER_DATE_VACATIONS_QUERY, vacationRowMapper, teacherId, localDate, localDate));
+        } catch (RuntimeException e) {
+            return Optional.empty();
+        }
     }
 }

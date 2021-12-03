@@ -11,6 +11,7 @@ import org.springframework.test.jdbc.JdbcTestUtils;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -26,7 +27,7 @@ class JdbcVacationDaoTest {
 
     @Test
     void givenId_whenGet_thenReturnVacation() {
-        var expected = new Vacation(LocalDate.of(2021, 1, 1), LocalDate.of(2021, 2, 1));
+        var expected = Optional.of(new Vacation(LocalDate.of(2021, 1, 1), LocalDate.of(2021, 2, 1)));
 
         var actual = jdbcVacationDao.get(1);
 
@@ -82,12 +83,22 @@ class JdbcVacationDaoTest {
     }
 
     @Test
-    void givenTeacherId_whenGetTeacherVacations_ThenReturnVacationsOfTheTeacher() {
+    void givenTeacherId_whenGetByTeacherId_ThenReturnVacationsOfTheTeacher() {
         var expected = new ArrayList<Vacation>();
         expected.add(new Vacation(LocalDate.of(2021, 1, 1), LocalDate.of(2021, 2, 1)));
         expected.add(new Vacation(LocalDate.of(2021, 3, 1), LocalDate.of(2021, 4, 1)));
 
         var actual = jdbcVacationDao.getByTeacherId(1);
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void givenTeacherIdAndDate_whenGetByTeacherIdAndDate_ThenReturnVacationsOfTheTeacher() {
+        var date = LocalDate.of(2021, 2, 1);
+        var expected = Optional.of(new Vacation(LocalDate.of(2021, 1, 1), date));
+
+        var actual = jdbcVacationDao.getByTeacherAndDate(1, date);
 
         assertEquals(expected, actual);
     }

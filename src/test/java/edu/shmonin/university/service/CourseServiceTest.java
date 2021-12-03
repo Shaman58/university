@@ -3,6 +3,8 @@ package edu.shmonin.university.service;
 import edu.shmonin.university.dao.CourseDao;
 import edu.shmonin.university.dao.LectureDao;
 import edu.shmonin.university.dao.TeacherDao;
+import edu.shmonin.university.exception.ChainedEntityException;
+import edu.shmonin.university.exception.EntityNotFoundException;
 import edu.shmonin.university.model.Course;
 import edu.shmonin.university.model.Lecture;
 import edu.shmonin.university.model.Teacher;
@@ -14,8 +16,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -34,7 +38,7 @@ class CourseServiceTest {
     @Test
     void givenId_whenGet_thenReturnCourse() {
         var expected = new Course("math");
-        when(courseDao.get(1)).thenReturn(expected);
+        when(courseDao.get(1)).thenReturn(Optional.of(expected));
 
         var actual = courseService.get(1);
 
@@ -75,29 +79,41 @@ class CourseServiceTest {
     void givenIdAndEmptyListsOfCoursesInLectureDaoAndTeacherDao_whenDelete_thenStartedCourseDaoDelete() {
         when(lectureDao.getByCourseId(1)).thenReturn(new ArrayList<>());
         when(teacherDao.getByCourseId(1)).thenReturn(new ArrayList<>());
+        when(courseDao.get(1)).thenReturn(Optional.of(new Course()));
         courseService.delete(1);
 
         verify(courseDao).delete(1);
     }
 
     @Test
-    void givenIdAndNotEmptyListOfCoursesInLectureDao_whenDelete_thenNotStartedCourseDaoDelete() {
+    void givenIdAndNotEmptyListOfCoursesInLectureDao_whenDelete_thenThrowChainedEntityExceptionAndNotStartedCourseDaoDelete() {
         var lectures = new ArrayList<Lecture>();
         lectures.add(new Lecture());
         when(lectureDao.getByCourseId(1)).thenReturn(lectures);
+        when(courseDao.get(1)).thenReturn(Optional.of(new Course()));
 
-        courseService.delete(1);
+        assertThrows(ChainedEntityException.class, () -> courseService.delete(1));
 
         verify(courseDao, never()).delete(1);
     }
 
     @Test
-    void givenIdAndNotEmptyListOfCoursesInTeacherDao_whenDelete_thenNotStartedCourseDaoDelete() {
+    void givenIdAndNotEmptyListOfCoursesInTeacherDao_whenDelete_thenThrownChainedEntityExceptionAndNotStartedCourseDaoDelete() {
         var teachers = new ArrayList<Teacher>();
         teachers.add(new Teacher());
         when(teacherDao.getByCourseId(1)).thenReturn(teachers);
+        when(courseDao.get(1)).thenReturn(Optional.of(new Course()));
 
-        courseService.delete(1);
+        assertThrows(ChainedEntityException.class, () -> courseService.delete(1));
+
+        verify(courseDao, never()).delete(1);
+    }
+
+    @Test
+    void givenIdAndEmptyOptionalInGet_whenDelete_thenThrownEntityNotFoundExceptionAndNotStartedCourseDaoDelete() {
+        when(courseDao.get(1)).thenReturn(Optional.empty());
+
+        assertThrows(EntityNotFoundException.class, () -> courseService.delete(1));
 
         verify(courseDao, never()).delete(1);
     }

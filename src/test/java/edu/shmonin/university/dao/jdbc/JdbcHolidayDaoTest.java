@@ -11,6 +11,7 @@ import org.springframework.test.jdbc.JdbcTestUtils;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -26,7 +27,7 @@ class JdbcHolidayDaoTest {
 
     @Test
     void givenId_whenGet_thenReturnHoliday() {
-        var expected = new Holiday("holiday-1", LocalDate.of(2021, 1, 1));
+        var expected = Optional.of(new Holiday("holiday-1", LocalDate.of(2021, 1, 1)));
 
         var actual = jdbcHolidayDao.get(1);
 
@@ -77,6 +78,16 @@ class JdbcHolidayDaoTest {
         jdbcHolidayDao.delete(1);
 
         var actual = JdbcTestUtils.countRowsInTable(jdbcTemplate, "holidays");
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void givenDate_whenGetByDate_thenReturnHolidayByDate() {
+        var date = LocalDate.of(2021, 1, 1);
+        var expected = Optional.of(new Holiday("holiday-1", date));
+
+        var actual = jdbcHolidayDao.getByDate(date);
 
         assertEquals(expected, actual);
     }

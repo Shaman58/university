@@ -2,6 +2,8 @@ package edu.shmonin.university.service;
 
 import edu.shmonin.university.dao.GroupDao;
 import edu.shmonin.university.dao.LectureDao;
+import edu.shmonin.university.exception.ChainedEntityException;
+import edu.shmonin.university.exception.EntityNotFoundException;
 import edu.shmonin.university.model.Group;
 import edu.shmonin.university.model.Lecture;
 import edu.shmonin.university.model.Student;
@@ -13,8 +15,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 
@@ -32,7 +36,7 @@ class GroupServiceTest {
     @Test
     void givenId_whenGet_thenReturnedGroup() {
         var expected = new Group("group");
-        when(groupDao.get(1)).thenReturn(expected);
+        when(groupDao.get(1)).thenReturn(Optional.of(expected));
 
         var actual = groupService.get(1);
 
@@ -68,11 +72,11 @@ class GroupServiceTest {
     }
 
     @Test
-    void givenIdAndEmptyListOfGroupStudentsAndGroupLectures_whenDelete_thenStartedGroupDaoDelete() {
+    void givenIdAndEmptyListOfGroupStudentsAndGroupLecturesAndGroupDaoGetReturnNotEmptyOptional_whenDelete_thenStartedGroupDaoDelete() {
         var group = new Group("group");
         group.setStudents(new ArrayList<>());
         when(lectureDao.getByGroupId(1)).thenReturn(new ArrayList<>());
-        when(groupDao.get(1)).thenReturn(group);
+        when(groupDao.get(1)).thenReturn(Optional.of(group));
 
         groupService.delete(1);
 
@@ -80,24 +84,33 @@ class GroupServiceTest {
     }
 
     @Test
-    void givenIdAndNotEmptyListOfGroupStudentsAndGroupLectures_whenDelete_thenNotStartedGroupDaoDelete() {
+    void givenIdAndNotEmptyListOfGroupStudentsAndGroupDaoGetReturnNotEmptyOptional_whenDelete_thenThrowChainedEntityExceptionNotStartedGroupDaoDelete() {
         var group = new Group("group");
         group.setStudents(List.of(new Student()));
-        when(lectureDao.getByGroupId(1)).thenReturn(new ArrayList<>());
-        when(groupDao.get(1)).thenReturn(group);
+        when(groupDao.get(1)).thenReturn(Optional.of(group));
 
-        groupService.delete(1);
+        assertThrows(ChainedEntityException.class, () -> groupService.delete(1));
 
         verify(groupDao, never()).delete(1);
     }
 
     @Test
-    void givenIdAndNotEmptyListOfGroupLectures_whenDelete_thenNotStartedGroupDaoDelete() {
+    void givenIdAndNotEmptyListOfGroupLecturesAndGroupStudentsAndGroupDaoGetReturnNotEmptyOptional_whenDelete_thenThrowChainedEntityExceptionAndNotStartedGroupDaoDelete() {
         var group = new Group("group");
         group.setStudents(new ArrayList<>());
         when(lectureDao.getByGroupId(1)).thenReturn(List.of(new Lecture()));
+        when(groupDao.get(1)).thenReturn(Optional.of(group));
 
-        groupService.delete(1);
+        assertThrows(ChainedEntityException.class, () -> groupService.delete(1));
+
+        verify(groupDao, never()).delete(1);
+    }
+
+    @Test
+    void givenIdAndGroupDaoGetReturnEmptyOptional_whenDelete_thenThrowEntityNotFoundExceptionAndNotStartedGroupDaoDelete() {
+        when(groupDao.get(1)).thenReturn(Optional.empty());
+
+        assertThrows(EntityNotFoundException.class, () -> groupService.delete(1));
 
         verify(groupDao, never()).delete(1);
     }

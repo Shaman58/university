@@ -1,6 +1,8 @@
 package edu.shmonin.university.service;
 
 import edu.shmonin.university.dao.StudentDao;
+import edu.shmonin.university.exception.EntityNotFoundException;
+import edu.shmonin.university.exception.ValidationException;
 import edu.shmonin.university.model.Gender;
 import edu.shmonin.university.model.Group;
 import edu.shmonin.university.model.Student;
@@ -14,8 +16,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.util.ReflectionTestUtils.setField;
 
@@ -37,7 +41,7 @@ class StudentServiceTest {
     @Test
     void givenId_whenGet_thenReturnedStudent() {
         var expected = new Student();
-        when(studentDao.get(1)).thenReturn(expected);
+        when(studentDao.get(1)).thenReturn(Optional.of(expected));
 
         var actual = studentService.get(1);
 
@@ -77,7 +81,7 @@ class StudentServiceTest {
     }
 
     @Test
-    void givenValidStudentAndGroupListOfStudentsIsFull_whenCreate_thenNotStartedStudentDaoCreate() {
+    void givenValidStudentAndGroupListOfStudentsIsFull_whenCreate_thenThrowValidateExceptionAndNotStartedStudentDaoCreate() {
         var student = new Student();
         student.setFirstName("name-1");
         student.setLastName("surname-1");
@@ -93,13 +97,13 @@ class StudentServiceTest {
         var students = List.of(new Student(), new Student());
         when(studentDao.getByGroupId(1)).thenReturn(students);
 
-        studentService.create(student);
+        assertThrows(ValidationException.class, () -> studentService.create(student));
 
         verify(studentDao, never()).create(student);
     }
 
     @Test
-    void givenInvalidStudentAndGroupListOfStudentsIsFull_whenCreate_thenNotStartedStudentDaoCreate() {
+    void givenInvalidStudentAndGroupListOfStudentsIsFull_whenCreate_thenThrowValidateExceptionAndNotStartedStudentDaoCreate() {
         var student = new Student();
         student.setFirstName("name-1");
         student.setLastName("surname-1");
@@ -110,7 +114,7 @@ class StudentServiceTest {
         student.setAddress("address-1");
         student.setBirthDate(LocalDate.now().minusYears(16));
 
-        studentService.create(student);
+        assertThrows(ValidationException.class, () -> studentService.create(student));
 
         verify(studentDao, never()).create(student);
     }
@@ -138,7 +142,7 @@ class StudentServiceTest {
     }
 
     @Test
-    void givenValidStudentAndGroupListOfStudentsIsFull_whenUpdate_thenNotStartedStudentDaoUpdate() {
+    void givenValidStudentAndGroupListOfStudentsIsFull_whenUpdate_thenThrowValidateExceptionAndNotStartedStudentDaoUpdate() {
         var student = new Student();
         student.setFirstName("name-1");
         student.setLastName("surname-1");
@@ -154,13 +158,13 @@ class StudentServiceTest {
         var students = List.of(new Student(), new Student());
         when(studentDao.getByGroupId(1)).thenReturn(students);
 
-        studentService.update(student);
+        assertThrows(ValidationException.class, () -> studentService.create(student));
 
         verify(studentDao, never()).update(student);
     }
 
     @Test
-    void givenInvalidStudentAndGroupListOfStudentsIsFull_whenUpdate_thenNotStartedStudentDaoUpdate() {
+    void givenInvalidStudentAndGroupListOfStudentsIsFull_whenUpdate_thenThrowValidateExceptionAndNotStartedStudentDaoUpdate() {
         var student = new Student();
         student.setFirstName("name-1");
         student.setLastName("surname-1");
@@ -171,16 +175,27 @@ class StudentServiceTest {
         student.setAddress("address-1");
         student.setBirthDate(LocalDate.now().minusYears(16));
 
-        studentService.update(student);
+        assertThrows(ValidationException.class, () -> studentService.create(student));
 
         verify(studentDao, never()).update(student);
     }
 
     @Test
-    void givenId_whenDelete_thenStartedStudentDaoDelete() {
+    void givenIdAndStudentDaoReturnNotEmptyOptional_whenDelete_thenStartedStudentDaoDelete() {
+        when(studentDao.get(1)).thenReturn(Optional.of(new Student()));
+
         studentService.delete(1);
 
         verify(studentDao).delete(1);
+    }
+
+    @Test
+    void givenIdAndStudentDaoReturnEmptyOptional_whenDelete_thenThrowEntityNotFoundExceptionNotStartedStudentDaoDelete() {
+        when(studentDao.get(1)).thenReturn(Optional.empty());
+
+        assertThrows(EntityNotFoundException.class, () -> studentService.delete(1));
+
+        verify(studentDao, never()).delete(1);
     }
 
     @Test

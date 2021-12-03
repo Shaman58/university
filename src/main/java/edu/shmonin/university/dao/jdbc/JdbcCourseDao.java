@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 import java.sql.Statement;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @Repository
 public class JdbcCourseDao implements CourseDao {
@@ -32,8 +33,12 @@ public class JdbcCourseDao implements CourseDao {
     }
 
     @Override
-    public Course get(int id) throws EmptyResultDataAccessException {
-        return jdbcTemplate.queryForObject(GET_QUERY, courseRowMapper, id);
+    public Optional<Course> get(int id) {
+        try {
+            return Optional.ofNullable(jdbcTemplate.queryForObject(GET_QUERY, courseRowMapper, id));
+        } catch (RuntimeException e) {
+            return Optional.empty();
+        }
     }
 
     @Override

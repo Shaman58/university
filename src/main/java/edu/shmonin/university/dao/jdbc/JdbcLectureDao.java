@@ -2,16 +2,19 @@ package edu.shmonin.university.dao.jdbc;
 
 import edu.shmonin.university.dao.LectureDao;
 import edu.shmonin.university.dao.jdbc.rowmapper.LectureRowMapper;
+import edu.shmonin.university.model.Group;
 import edu.shmonin.university.model.Lecture;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Statement;
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @Repository
 public class JdbcLectureDao implements LectureDao {
@@ -28,6 +31,7 @@ public class JdbcLectureDao implements LectureDao {
     private static final String GET_ALL_BY_DURATION = "SELECT * FROM lectures WHERE duration_id=?";
     private static final String GET_ALL_BY_GROUP = "SELECT id,date,course_id,audience_id,duration_id,teacher_id FROM lectures INNER JOIN lecture_groups ON lectures.id = lecture_groups.lecture_id WHERE group_id=?";
     private static final String GET_ALL_BY_TEACHER = "SELECT * FROM lectures WHERE teacher_id=?";
+    private static final String GET_ALL_BY_GROUP_DATE_DURATION = "SELECT id,date,course_id,audience_id,duration_id,teacher_id FROM lectures INNER JOIN lecture_groups ON lectures.id = lecture_groups.lecture_id WHERE group_id=? AND date=? AND duration_id=?";
 
     private final JdbcTemplate jdbcTemplate;
     private final LectureRowMapper lectureRowMapper;
@@ -38,8 +42,12 @@ public class JdbcLectureDao implements LectureDao {
     }
 
     @Override
-    public Lecture get(int id) throws EmptyResultDataAccessException {
-        return jdbcTemplate.queryForObject(GET_QUERY, lectureRowMapper, id);
+    public Optional<Lecture> get(int id) {
+        try {
+            return Optional.ofNullable(jdbcTemplate.queryForObject(GET_QUERY, lectureRowMapper, id));
+        } catch (RuntimeException e) {
+            return Optional.empty();
+        }
     }
 
     @Override
@@ -68,13 +76,13 @@ public class JdbcLectureDao implements LectureDao {
     @Transactional
     @Override
     public void update(Lecture updatedLecture) {
-        var groups = get(updatedLecture.getId()).getGroups();
+        var groups = getGroupsFromTheLecture(updatedLecture);
         jdbcTemplate.update(UPDATE_QUERY, updatedLecture.getDate(), updatedLecture.getCourse().getId(), updatedLecture.getAudience().getId(),
                 updatedLecture.getDuration().getId(), updatedLecture.getTeacher().getId(), updatedLecture.getId());
-        groups.stream().filter(p -> !updatedLecture.getGroups().contains(p))
-                .forEach(p -> jdbcTemplate.update(DELETE_LECTURE_GROUP, p.getId(), updatedLecture.getId()));
-        updatedLecture.getGroups().stream().filter(p -> !groups.contains(p))
-                .forEach(p -> jdbcTemplate.update(ADD_LECTURE_GROUP, p.getId(), updatedLecture.getId()));
+        groups.stream().filter(p -> !updatedLecture.getGroups().contains(p)).
+                forEach(p -> jdbcTemplate.update(DELETE_LECTURE_GROUP, p.getId(), updatedLecture.getId()));
+        updatedLecture.getGroups().stream().filter(p -> !groups.contains(p)).
+                forEach(p -> jdbcTemplate.update(ADD_LECTURE_GROUP, p.getId(), updatedLecture.getId()));
     }
 
     @Override
@@ -105,5 +113,23 @@ public class JdbcLectureDao implements LectureDao {
     @Override
     public List<Lecture> getByTeacherId(int teacherId) {
         return jdbcTemplate.query(GET_ALL_BY_TEACHER, lectureRowMapper, teacherId);
+    }
+
+    @Override
+    public Optional<Lecture> getByGroupDateDuration(int groupId, LocalDate localDate, int durationId) {
+        try {
+            return Optional.ofNullable(jdbcTemplate.queryForObject(GET_ALL_BY_GROUP_DATE_DURATION, lectureRowMapper, groupId, localDate, durationId));
+        } catch (RuntimeException e) {
+            return Optional.empty();
+        }
+    }
+
+    private List<Group> getGroupsFromTheLecture(Lecture updatedLecture) {
+        var lecture = get(updatedLecture.getId());
+        if (lecture.isPresent()) {
+            return lecture.get().getGroups();
+        } else {
+            return new ArrayList<>();
+        }
     }
 }

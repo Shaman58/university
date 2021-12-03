@@ -9,8 +9,10 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Repository;
 
 import java.sql.Statement;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @Repository
 public class JdbcHolidayDao implements HolidayDao {
@@ -20,6 +22,7 @@ public class JdbcHolidayDao implements HolidayDao {
     private static final String CREATE_QUERY = "INSERT INTO holidays(name, date) VALUES(?,?)";
     private static final String UPDATE_QUERY = "UPDATE holidays SET name=?, date=? WHERE id=?";
     private static final String DELETE_QUERY = "DELETE FROM holidays WHERE id=?";
+    private static final String GET_BY_DATE_QUERY = "SELECT * FROM holidays WHERE date=?";
 
     private final JdbcTemplate jdbcTemplate;
     private final BeanPropertyRowMapper<Holiday> holidayRowMapper;
@@ -30,8 +33,12 @@ public class JdbcHolidayDao implements HolidayDao {
     }
 
     @Override
-    public Holiday get(int id) throws EmptyResultDataAccessException {
-        return jdbcTemplate.queryForObject(GET_QUERY, holidayRowMapper, id);
+    public Optional<Holiday> get(int id) {
+        try {
+            return Optional.ofNullable(jdbcTemplate.queryForObject(GET_QUERY, holidayRowMapper, id));
+        } catch (RuntimeException e) {
+            return Optional.empty();
+        }
     }
 
     @Override
@@ -59,5 +66,14 @@ public class JdbcHolidayDao implements HolidayDao {
     @Override
     public void delete(int id) {
         jdbcTemplate.update(DELETE_QUERY, id);
+    }
+
+    @Override
+    public Optional<Holiday> getByDate(LocalDate localDate) {
+        try {
+            return Optional.ofNullable(jdbcTemplate.queryForObject(GET_BY_DATE_QUERY, holidayRowMapper, localDate));
+        } catch (EmptyResultDataAccessException e) {
+            return Optional.empty();
+        }
     }
 }

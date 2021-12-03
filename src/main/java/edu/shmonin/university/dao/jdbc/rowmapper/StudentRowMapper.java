@@ -1,6 +1,7 @@
 package edu.shmonin.university.dao.jdbc.rowmapper;
 
 import edu.shmonin.university.dao.jdbc.JdbcGroupDao;
+import edu.shmonin.university.exception.EntityNotFoundException;
 import edu.shmonin.university.model.Gender;
 import edu.shmonin.university.model.Student;
 import org.springframework.jdbc.core.RowMapper;
@@ -31,7 +32,9 @@ public class StudentRowMapper implements RowMapper<Student> {
         student.setPhone(resultSet.getString("phone"));
         student.setAddress(resultSet.getString("address"));
         student.setBirthDate(resultSet.getObject("birth_date", LocalDate.class));
-        student.setGroup(jdbcGroupDao.get(resultSet.getInt("group_id")));
+        var finalGroupId = resultSet.getInt("group_id");
+        student.setGroup(jdbcGroupDao.get(finalGroupId).
+                orElseThrow(() -> new EntityNotFoundException("Can not find teacher by id=" + finalGroupId)));
         return student;
     }
 }

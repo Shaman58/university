@@ -1,14 +1,12 @@
 package edu.shmonin.university.service;
 
-import edu.shmonin.university.dao.HolidayDao;
-import edu.shmonin.university.dao.LectureDao;
+import edu.shmonin.university.dao.*;
 import edu.shmonin.university.exception.EntityNotFoundException;
 import edu.shmonin.university.exception.ValidationException;
 import edu.shmonin.university.model.Lecture;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -22,62 +20,68 @@ public class LectureService implements EntityService<Lecture> {
     @Value("${university.lecture.max.groups}")
     private int maxGroups;
 
-    private final LectureDao jdbcLectureDao;
-    private final HolidayDao jdbcHolidayDao;
+    private final LectureDao lectureDao;
+    private final HolidayDao holidayDao;
+    private final VacationDao vacationDao;
+    private final StudentDao studentDao;
 
-    public LectureService(LectureDao jdbcLectureDao, HolidayDao jdbcHolidayDao) {
-        this.jdbcLectureDao = jdbcLectureDao;
-        this.jdbcHolidayDao = jdbcHolidayDao;
+    public LectureService(LectureDao lectureDao, HolidayDao holidayDao, VacationDao vacationDao, StudentDao studentDao) {
+        this.lectureDao = lectureDao;
+        this.holidayDao = holidayDao;
+        this.vacationDao = vacationDao;
+        this.studentDao = studentDao;
     }
 
     @Override
     public Lecture get(int lectureId) {
-        try {
-            log.debug("Get lecture with id={}", lectureId);
-            return jdbcLectureDao.get(lectureId);
-        } catch (EmptyResultDataAccessException e) {
+        var lecture = lectureDao.get(lectureId);
+        if (lecture.isEmpty()) {
             throw new EntityNotFoundException("Can not find the lecture. There is no lecture with id=" + lectureId);
         }
+        log.debug("Get lecture with id={}", lectureId);
+        return lecture.get();
+
     }
 
     @Override
     public List<Lecture> getAll() {
         log.debug("Get all lectures");
-        return jdbcLectureDao.getAll();
+        return lectureDao.getAll();
     }
 
     @Override
     public void create(Lecture lecture) {
         validateLecture(lecture);
         log.debug("Create lecture {}", lecture);
-        jdbcLectureDao.create(lecture);
+        lectureDao.create(lecture);
     }
 
     @Override
     public void update(Lecture lecture) {
         validateLecture(lecture);
         log.debug("Update lecture {}", lecture);
-        jdbcLectureDao.update(lecture);
+        lectureDao.update(lecture);
     }
 
     @Override
     public void delete(int lectureId) {
-        try {
-            jdbcLectureDao.get(lectureId);
-        } catch (EmptyResultDataAccessException e) {
+        if (lectureDao.get(lectureId).isEmpty()) {
             throw new EntityNotFoundException("Can not find the lecture. There is no lecture with id=" + lectureId);
         }
-        jdbcLectureDao.delete(lectureId);
+        log.debug("Delete lecture by id={}", lectureId);
+        lectureDao.delete(lectureId);
     }
 
     private void validateLecture(Lecture lecture) {
         validateDateOfLecture(lecture);
-        validateVacationsForLecture(lecture);
+        validateAudienceBusyness(lecture);
         validateHolidaysForLecture(lecture);
+        validateVacationsForLecture(lecture);
+        validateTeacherBusyness(lecture);
         validateTeacherCourses(lecture);
         validateMaxGroups(lecture);
-        validateAudienceBusyness(lecture);
-        validateTeacherBusyness(lecture);
+        validateGroupsBusyness(lecture);
+        validateAudienceStudentCapacity(lecture);
     }
 
     private void validateDateOfLecture(Lecture lecture) {
@@ -87,13 +91,13 @@ public class LectureService implements EntityService<Lecture> {
     }
 
     private void validateVacationsForLecture(Lecture lecture) {
-        if (lecture.getTeacher().getVacations().stream().anyMatch(p -> p.getStartDate().isBefore(lecture.getDate()) && p.getEndDate().isAfter(lecture.getDate()))) {
+        if (vacationDao.getByTeacherAndDate(lecture.getTeacher().getId(), lecture.getDate()).isPresent()) {
             throw new ValidationException("The lecture " + lecture + " did not pass the validity check. Lecture's date is on the vacation of teacher");
         }
     }
 
     private void validateHolidaysForLecture(Lecture lecture) {
-        if (jdbcHolidayDao.getAll().stream().anyMatch(p -> p.getDate().isEqual(lecture.getDate()))) {
+        if (holidayDao.getByDate(lecture.getDate()).isPresent()) {
             throw new ValidationException("The lecture " + lecture + " did not pass the validity check. Lecture's date is on the holiday");
         }
     }
@@ -111,7 +115,7 @@ public class LectureService implements EntityService<Lecture> {
     }
 
     private void validateAudienceBusyness(Lecture lecture) {
-        if (jdbcLectureDao.getByAudienceId(lecture.getAudience().getId()).stream().
+        if (lectureDao.getByAudienceId(lecture.getAudience().getId()).stream().
                 anyMatch(p -> p.getDate().isEqual(lecture.getDate()) &&
                               p.getDuration().equals(lecture.getDuration()))) {
             throw new ValidationException("The lecture " + lecture + " did not pass the validity check. Audience is busy on the lecture's date");
@@ -119,10 +123,23 @@ public class LectureService implements EntityService<Lecture> {
     }
 
     private void validateTeacherBusyness(Lecture lecture) {
-        if (jdbcLectureDao.getByTeacherId(lecture.getTeacher().getId()).stream().
+        if (lectureDao.getByTeacherId(lecture.getTeacher().getId()).stream().
                 anyMatch(p -> p.getDate().isEqual(lecture.getDate()) &&
                               p.getDuration().equals(lecture.getDuration()))) {
             throw new ValidationException("The lecture " + lecture + " did not pass the validity check. Teacher is busy on the lecture's date");
+        }
+    }
+
+    private void validateGroupsBusyness(Lecture lecture) {
+        if (lecture.getGroups().stream().anyMatch((p -> lectureDao.getByGroupDateDuration(p.getId(), lecture.getDate(), lecture.getDuration().getId()).isPresent()))) {
+            throw new ValidationException("The lecture " + lecture + " did not pass the validity check. One or more groups are busy on the lecture's date");
+        }
+    }
+
+    private void validateAudienceStudentCapacity(Lecture lecture) {
+        lecture.getGroups().forEach(p -> p.setStudents(studentDao.getByGroupId(p.getId())));
+        if (lecture.getGroups().stream().mapToInt(g -> g.getStudents().size()).sum() > lecture.getAudience().getCapacity()) {
+            throw new ValidationException("The lecture " + lecture + " did not pass the validity check. Audience can not accommodate all students");
         }
     }
 }

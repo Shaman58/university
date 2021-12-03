@@ -6,7 +6,6 @@ import edu.shmonin.university.exception.ValidationException;
 import edu.shmonin.university.model.Holiday;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -17,51 +16,48 @@ public class HolidayService implements EntityService<Holiday> {
 
     private static final Logger log = LoggerFactory.getLogger(HolidayService.class);
 
-    private final HolidayDao jdbcHolidayDao;
+    private final HolidayDao holidayDao;
 
-    public HolidayService(HolidayDao jdbcHolidayDao) {
-        this.jdbcHolidayDao = jdbcHolidayDao;
+    public HolidayService(HolidayDao holidayDao) {
+        this.holidayDao = holidayDao;
     }
 
     @Override
     public Holiday get(int holidayId) {
-        try {
-            log.debug("Get holiday with id={}", holidayId);
-            return jdbcHolidayDao.get(holidayId);
-        } catch (EmptyResultDataAccessException e) {
+        var holiday = holidayDao.get(holidayId);
+        if (holiday.isEmpty()) {
             throw new EntityNotFoundException("Can not find the holiday. There is no holiday with id=" + holidayId);
         }
+        return holiday.get();
     }
 
     @Override
     public List<Holiday> getAll() {
         log.debug("Get all holidays");
-        return jdbcHolidayDao.getAll();
+        return holidayDao.getAll();
     }
 
     @Override
     public void create(Holiday holiday) {
         validateHoliday(holiday);
         log.debug("Create holiday {}", holiday);
-        jdbcHolidayDao.create(holiday);
+        holidayDao.create(holiday);
     }
 
     @Override
     public void update(Holiday holiday) {
         validateHoliday(holiday);
         log.debug("Update holiday {}", holiday);
-        jdbcHolidayDao.update(holiday);
+        holidayDao.update(holiday);
     }
 
     @Override
     public void delete(int holidayId) {
-        try {
-            jdbcHolidayDao.get(holidayId);
-        } catch (EmptyResultDataAccessException e) {
+        if (holidayDao.get(holidayId).isEmpty()) {
             throw new EntityNotFoundException("Can not find the holiday. There is no holiday with id=" + holidayId);
         }
         log.debug("Delete holiday by id={}", holidayId);
-        jdbcHolidayDao.delete(holidayId);
+        holidayDao.delete(holidayId);
     }
 
     private void validateHoliday(Holiday holiday) {

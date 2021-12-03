@@ -12,6 +12,7 @@ import org.springframework.test.jdbc.JdbcTestUtils;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -27,15 +28,16 @@ class JdbcStudentDaoTest {
 
     @Test
     void givenId_whenGet_thenReturnStudent() {
-        var expected = new Student();
-        expected.setFirstName("name-1");
-        expected.setLastName("surname-1");
-        expected.setEmail("email-1");
-        expected.setCountry("country-1");
-        expected.setGender(Gender.MALE);
-        expected.setPhone("phone-1");
-        expected.setAddress("address-1");
-        expected.setBirthDate(LocalDate.of(2000, 1, 1));
+        var student = new Student();
+        student.setFirstName("name-1");
+        student.setLastName("surname-1");
+        student.setEmail("email-1");
+        student.setCountry("country-1");
+        student.setGender(Gender.MALE);
+        student.setPhone("phone-1");
+        student.setAddress("address-1");
+        student.setBirthDate(LocalDate.of(2000, 1, 1));
+        var expected = Optional.of(student);
 
         var actual = jdbcStudentDao.get(1);
 

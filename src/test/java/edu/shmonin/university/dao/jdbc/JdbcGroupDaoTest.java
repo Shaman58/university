@@ -11,6 +11,7 @@ import org.springframework.test.jdbc.JdbcTestUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -26,7 +27,7 @@ class JdbcGroupDaoTest {
 
     @Test
     void givenId_whenGet_thenReturnGroup() {
-        var expected = new Group("group-1");
+        var expected = Optional.of(new Group("group-1"));
 
         var actual = jdbcGroupDao.get(1);
 

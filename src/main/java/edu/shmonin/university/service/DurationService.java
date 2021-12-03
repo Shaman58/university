@@ -3,12 +3,11 @@ package edu.shmonin.university.service;
 import edu.shmonin.university.dao.DurationDao;
 import edu.shmonin.university.dao.LectureDao;
 import edu.shmonin.university.exception.EntityNotFoundException;
-import edu.shmonin.university.exception.LinkedEntityException;
+import edu.shmonin.university.exception.ChainedEntityException;
 import edu.shmonin.university.exception.ValidationException;
 import edu.shmonin.university.model.Duration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,55 +17,53 @@ public class DurationService implements EntityService<Duration> {
 
     private static final Logger log = LoggerFactory.getLogger(DurationService.class);
 
-    private final DurationDao jdbcDurationDao;
-    private final LectureDao jdbcLectureDao;
+    private final DurationDao durationDao;
+    private final LectureDao lectureDao;
 
-    public DurationService(DurationDao jdbcDurationDao, LectureDao jdbcLectureDao) {
-        this.jdbcDurationDao = jdbcDurationDao;
-        this.jdbcLectureDao = jdbcLectureDao;
+    public DurationService(DurationDao durationDao, LectureDao lectureDao) {
+        this.durationDao = durationDao;
+        this.lectureDao = lectureDao;
     }
 
     @Override
     public Duration get(int durationId) {
-        try {
-            log.debug("Get duration with id={}", durationId);
-            return jdbcDurationDao.get(durationId);
-        } catch (EmptyResultDataAccessException e) {
+        var duration = durationDao.get(durationId);
+        if (duration.isEmpty()) {
             throw new EntityNotFoundException("Can not find the duration. There is no duration with id=" + durationId);
         }
+        log.debug("Get duration with id={}", durationId);
+        return duration.get();
     }
 
     @Override
     public List<Duration> getAll() {
         log.debug("Get all durations");
-        return jdbcDurationDao.getAll();
+        return durationDao.getAll();
     }
 
     @Override
     public void create(Duration duration) {
         validateDuration(duration);
         log.debug("Create duration {}", duration);
-        jdbcDurationDao.create(duration);
+        durationDao.create(duration);
     }
 
     @Override
     public void update(Duration duration) {
         validateDuration(duration);
         log.debug("Update duration {}", duration);
-        jdbcDurationDao.update(duration);
+        durationDao.update(duration);
     }
 
     @Override
     public void delete(int durationId) {
-        try {
-            jdbcDurationDao.get(durationId);
-        } catch (EmptyResultDataAccessException e) {
+        if (durationDao.get(durationId).isEmpty()) {
             throw new EntityNotFoundException("Can not delete the duration. There is no duration with id=" + durationId);
         }
-        if (!jdbcLectureDao.getByDurationId(durationId).isEmpty()) {
-            throw new LinkedEntityException("Can not delete duration with id=" + durationId + ", there are lectures with this duration in database");
+        if (!lectureDao.getByDurationId(durationId).isEmpty()) {
+            throw new ChainedEntityException("Can not delete duration with id=" + durationId + ", there are lectures with this duration in database");
         }
-        jdbcDurationDao.delete(durationId);
+        durationDao.delete(durationId);
     }
 
     private void validateDuration(Duration duration) {

@@ -4,14 +4,13 @@ import edu.shmonin.university.dao.LectureDao;
 import edu.shmonin.university.dao.TeacherDao;
 import edu.shmonin.university.dao.VacationDao;
 import edu.shmonin.university.exception.EntityNotFoundException;
-import edu.shmonin.university.exception.LinkedEntityException;
+import edu.shmonin.university.exception.ChainedEntityException;
 import edu.shmonin.university.exception.ValidationException;
 import edu.shmonin.university.model.Lecture;
 import edu.shmonin.university.model.Teacher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -30,37 +29,37 @@ public class TeacherService implements EntityService<Teacher> {
     @Value("${university.human.max.age}")
     private int maxAge;
 
-    private final TeacherDao jdbcTeacherDao;
-    private final LectureDao jdbcLectureDao;
-    private final VacationDao jdbcVacationDao;
+    private final TeacherDao teacherDao;
+    private final LectureDao lectureDao;
+    private final VacationDao vacationDao;
 
-    public TeacherService(TeacherDao jdbcTeacherDao, LectureDao jdbcLectureDao, VacationDao jdbcVacationDao) {
-        this.jdbcTeacherDao = jdbcTeacherDao;
-        this.jdbcLectureDao = jdbcLectureDao;
-        this.jdbcVacationDao = jdbcVacationDao;
+    public TeacherService(TeacherDao teacherDao, LectureDao lectureDao, VacationDao vacationDao) {
+        this.teacherDao = teacherDao;
+        this.lectureDao = lectureDao;
+        this.vacationDao = vacationDao;
     }
 
     @Override
     public Teacher get(int teacherId) {
-        try {
-            log.debug("Get teacher with id={}", teacherId);
-            return jdbcTeacherDao.get(teacherId);
-        } catch (EmptyResultDataAccessException e) {
+        var teacher = teacherDao.get(teacherId);
+        if (teacher.isEmpty()) {
             throw new EntityNotFoundException("Can not find the teacher. There is no teacher with id=" + teacherId);
         }
+        log.debug("Get teacher with id={}", teacherId);
+        return teacher.get();
     }
 
     @Override
     public List<Teacher> getAll() {
         log.debug("Get all teachers");
-        return jdbcTeacherDao.getAll();
+        return teacherDao.getAll();
     }
 
     @Override
     public void create(Teacher teacher) {
         validateAgeOfTeacher(teacher);
         log.debug("Create teacher {}", teacher);
-        jdbcTeacherDao.create(teacher);
+        teacherDao.create(teacher);
     }
 
     @Override
@@ -68,27 +67,25 @@ public class TeacherService implements EntityService<Teacher> {
         validateTeachersCourses(teacher);
         validateAgeOfTeacher(teacher);
         log.debug("Update teacher {}", teacher);
-        jdbcTeacherDao.update(teacher);
+        teacherDao.update(teacher);
     }
 
     @Override
     public void delete(int teacherId) {
-        try {
-            jdbcTeacherDao.get(teacherId);
-        } catch (EmptyResultDataAccessException e) {
+        if (teacherDao.get(teacherId).isEmpty()) {
             throw new EntityNotFoundException("Can not find the teacher. There is no teacher with id=" + teacherId);
         }
-        if (!jdbcLectureDao.getByTeacherId(teacherId).isEmpty()) {
-            throw new LinkedEntityException("Can not delete teacher with id=" + teacherId + ", there are lectures with this teacher in database");
+        if (!lectureDao.getByTeacherId(teacherId).isEmpty()) {
+            throw new ChainedEntityException("Can not delete teacher with id=" + teacherId + ", there are lectures with this teacher in database");
         }
         log.debug("Delete teacher by id={}", teacherId);
-        jdbcTeacherDao.get(teacherId).getVacations().forEach(p -> jdbcVacationDao.delete(p.getId()));
-        jdbcTeacherDao.delete(teacherId);
+        vacationDao.getByTeacherId(teacherId).forEach(p -> vacationDao.delete(p.getId()));
+        teacherDao.delete(teacherId);
 
     }
 
     private void validateTeachersCourses(Teacher teacher) {
-        var courses = jdbcLectureDao.getByTeacherId(teacher.getId())
+        var courses = lectureDao.getByTeacherId(teacher.getId())
                 .stream().map(Lecture::getCourse).collect(Collectors.toSet());
         if (!teacher.getCourses().containsAll(courses)) {
             throw new ValidationException("The teacher " + teacher + " did not pass the validity check. The teacher has not all needed courses");

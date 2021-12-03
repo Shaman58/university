@@ -24,10 +24,6 @@ public class Teacher extends Human {
         this.courses = courses;
     }
 
-    public List<Vacation> getVacations() {
-        return vacations;
-    }
-
     public void setVacations(List<Vacation> vacations) {
         this.vacations = vacations;
     }

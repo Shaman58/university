@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 import java.sql.Statement;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @Repository
 public class JdbcAudienceDao implements AudienceDao {
@@ -30,8 +31,12 @@ public class JdbcAudienceDao implements AudienceDao {
     }
 
     @Override
-    public Audience get(int id) throws EmptyResultDataAccessException {
-        return jdbcTemplate.queryForObject(GET_QUERY, audienceRowMapper, id);
+    public Optional<Audience> get(int id) {
+        try {
+            return Optional.ofNullable(jdbcTemplate.queryForObject(GET_QUERY, audienceRowMapper, id));
+        } catch (RuntimeException e) {
+            return Optional.empty();
+        }
     }
 
     @Override

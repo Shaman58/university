@@ -1,6 +1,8 @@
 package edu.shmonin.university.service;
 
 import edu.shmonin.university.dao.VacationDao;
+import edu.shmonin.university.exception.EntityNotFoundException;
+import edu.shmonin.university.exception.ValidationException;
 import edu.shmonin.university.model.Vacation;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -10,8 +12,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -27,7 +31,7 @@ class VacationServiceTest {
     void givenId_whenGet_thenReturnedVacation() {
         var expected = new Vacation(LocalDate.of(2021, 1, 1),
                 LocalDate.of(2021, 2, 1));
-        when(vacationDao.get(1)).thenReturn(expected);
+        when(vacationDao.get(1)).thenReturn(Optional.of(expected));
 
         var actual = vacationService.get(1);
 
@@ -59,21 +63,21 @@ class VacationServiceTest {
     }
 
     @Test
-    void givenInvalidVacation_whenCreate_thenNotStartedVacationDaoCreate() {
+    void givenInvalidVacation_whenCreate_thenThrowValidateExceptionAndNotStartedVacationDaoCreate() {
         var vacation = new Vacation(LocalDate.now().plusDays(1),
                 LocalDate.now().minusMonths(1));
 
-        vacationService.create(vacation);
+        assertThrows(ValidationException.class, () -> vacationService.create(vacation));
 
         verify(vacationDao, never()).create(vacation);
     }
 
     @Test
-    void givenValidOutOfDateVacation_whenCreate_thenNotStartedVacationDaoCreate() {
+    void givenValidOutOfDateVacation_whenCreate_thenThrowValidateExceptionAndNotStartedVacationDaoCreate() {
         var vacation = new Vacation(LocalDate.now().minusDays(1),
                 LocalDate.now().plusMonths(1));
 
-        vacationService.create(vacation);
+        assertThrows(ValidationException.class, () -> vacationService.create(vacation));
 
         verify(vacationDao, never()).create(vacation);
     }
@@ -89,30 +93,41 @@ class VacationServiceTest {
     }
 
     @Test
-    void givenInvalidVacation_whenUpdate_thenNotStartedVacationDaoUpdate() {
+    void givenInvalidVacation_whenUpdate_thenThrowValidateExceptionAndNotStartedVacationDaoUpdate() {
         var vacation = new Vacation(LocalDate.now().plusDays(1),
                 LocalDate.now().minusMonths(1));
 
-        vacationService.update(vacation);
+        assertThrows(ValidationException.class, () -> vacationService.update(vacation));
 
         verify(vacationDao, never()).update(vacation);
     }
 
     @Test
-    void givenValidOutOfDateVacation_whenUpdate_thenStartedVacationDaoUpdate() {
+    void givenValidOutOfDateVacation_whenUpdate_thenThrowValidateExceptionAndNotStartedVacationDaoUpdate() {
         var vacation = new Vacation(LocalDate.now().minusDays(1),
                 LocalDate.now().plusMonths(1));
 
-        vacationService.update(vacation);
+        assertThrows(ValidationException.class, () -> vacationService.update(vacation));
 
         verify(vacationDao, never()).update(vacation);
     }
 
     @Test
-    void givenId_whenDelete_thenStartedVacationDaoDelete() {
+    void givenIdAndVacationDaoGetReturnNotEmptyOptional_whenDelete_thenStartedVacationDaoDelete() {
+        when(vacationDao.get(1)).thenReturn(Optional.of(new Vacation()));
+
         vacationService.delete(1);
 
         verify(vacationDao).delete(1);
+    }
+
+    @Test
+    void givenIdAndVacationDaoGetReturnEmptyOptional_whenDelete_thenThrowEntityNotFoundExceptionAndStartedVacationDaoDelete() {
+        when(vacationDao.get(1)).thenReturn(Optional.empty());
+
+        assertThrows(EntityNotFoundException.class, () -> vacationService.delete(1));
+
+        verify(vacationDao, never()).delete(1);
     }
 
     @Test

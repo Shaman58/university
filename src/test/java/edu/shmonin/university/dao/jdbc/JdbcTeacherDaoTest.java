@@ -13,6 +13,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -28,19 +29,20 @@ class JdbcTeacherDaoTest {
 
     @Test
     void givenId_whenGet_thenReturnTeacher() {
-        var expected = new Teacher();
-        expected.setFirstName("name-1");
-        expected.setLastName("surname-1");
-        expected.setEmail("email-1");
-        expected.setCountry("country-1");
-        expected.setGender(Gender.MALE);
-        expected.setPhone("phone-1");
-        expected.setAddress("address-1");
-        expected.setBirthDate(LocalDate.of(1980, 1, 1));
-        expected.setScientificDegree(ScientificDegree.DOCTOR);
-        expected.setCourses(List.of(new Course("course-1"), new Course("course-2")));
-        expected.setVacations(List.of(new Vacation(LocalDate.of(2021, 1, 1), LocalDate.of(2021, 2, 1)),
+        var teacher = new Teacher();
+        teacher.setFirstName("name-1");
+        teacher.setLastName("surname-1");
+        teacher.setEmail("email-1");
+        teacher.setCountry("country-1");
+        teacher.setGender(Gender.MALE);
+        teacher.setPhone("phone-1");
+        teacher.setAddress("address-1");
+        teacher.setBirthDate(LocalDate.of(1980, 1, 1));
+        teacher.setScientificDegree(ScientificDegree.DOCTOR);
+        teacher.setCourses(List.of(new Course("course-1"), new Course("course-2")));
+        teacher.setVacations(List.of(new Vacation(LocalDate.of(2021, 1, 1), LocalDate.of(2021, 2, 1)),
                 new Vacation(LocalDate.of(2021, 3, 1), LocalDate.of(2021, 4, 1))));
+        var expected = Optional.of(teacher);
 
         var actual = jdbcTeacherDao.get(1);
 

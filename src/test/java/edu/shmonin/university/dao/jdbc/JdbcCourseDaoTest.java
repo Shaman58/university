@@ -10,6 +10,7 @@ import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.test.jdbc.JdbcTestUtils;
 
 import java.util.ArrayList;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -25,7 +26,7 @@ class JdbcCourseDaoTest {
 
     @Test
     void givenId_whenGet_thenReturnCourse() {
-        var expected = new Course("course-1");
+        var expected = Optional.of(new Course("course-1"));
 
         var actual = jdbcCourseDao.get(1);
 

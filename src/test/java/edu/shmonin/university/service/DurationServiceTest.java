@@ -2,6 +2,9 @@ package edu.shmonin.university.service;
 
 import edu.shmonin.university.dao.DurationDao;
 import edu.shmonin.university.dao.LectureDao;
+import edu.shmonin.university.exception.ChainedEntityException;
+import edu.shmonin.university.exception.EntityNotFoundException;
+import edu.shmonin.university.exception.ValidationException;
 import edu.shmonin.university.model.Duration;
 import edu.shmonin.university.model.Lecture;
 import org.junit.jupiter.api.Test;
@@ -13,8 +16,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -31,7 +36,7 @@ class DurationServiceTest {
     @Test
     void givenId_whenGet_thenReturnDuration() {
         var expected = new Duration(LocalTime.of(12, 0), LocalTime.of(14, 0));
-        when(durationDao.get(1)).thenReturn(expected);
+        when(durationDao.get(1)).thenReturn(Optional.of(expected));
 
         var actual = durationService.get(1);
 
@@ -60,10 +65,10 @@ class DurationServiceTest {
     }
 
     @Test
-    void givenInvalidDuration_whenCreate_thenNotStartedDurationDaoCreate() {
+    void givenInvalidDuration_whenCreate_thenThrowValidateExceptionAndNotStartedDurationDaoCreate() {
         var duration = new Duration(LocalTime.of(15, 0), LocalTime.of(14, 0));
 
-        durationService.create(duration);
+        assertThrows(ValidationException.class, () -> durationService.create(duration));
 
         verify(durationDao, never()).create(duration);
     }
@@ -78,10 +83,10 @@ class DurationServiceTest {
     }
 
     @Test
-    void givenInvalidDuration_whenUpdate_thenNotStartedDurationDaoUpdate() {
+    void givenInvalidDuration_whenUpdate_thenThrowValidateExceptionAndNotStartedDurationDaoUpdate() {
         var duration = new Duration(LocalTime.of(15, 0), LocalTime.of(14, 0));
 
-        durationService.update(duration);
+        assertThrows(ValidationException.class, () -> durationService.update(duration));
 
         verify(durationDao, never()).update(duration);
     }
@@ -89,6 +94,7 @@ class DurationServiceTest {
     @Test
     void givenIdAndEmptyLecturesInLectureDaoGetByDuration_whenDelete_thenStartedDurationDaoDelete() {
         when(lectureDao.getByDurationId(1)).thenReturn(new ArrayList<>());
+        when(durationDao.get(1)).thenReturn(Optional.of(new Duration()));
 
         durationService.delete(1);
 
@@ -96,10 +102,20 @@ class DurationServiceTest {
     }
 
     @Test
-    void givenIdAndNotEmptyLecturesInLectureDaoGetByDuration_whenDelete_thenNotStartedDurationDaoDelete() {
+    void givenIdAndNotEmptyLecturesInLectureDaoGetByDuration_whenDelete_thenThrowChainedEntityExceptionAndNotStartedDurationDaoDelete() {
         when(lectureDao.getByDurationId(1)).thenReturn(List.of(new Lecture()));
+        when(durationDao.get(1)).thenReturn(Optional.of(new Duration()));
 
-        durationService.delete(1);
+        assertThrows(ChainedEntityException.class, () -> durationService.delete(1));
+
+        verify(durationDao, never()).delete(1);
+    }
+
+    @Test
+    void givenIdAndEmptyOptionalInGet_whenDelete_thenThrowEntityNotFoundExceptionAndNotStartedDurationDaoDelete() {
+        when(durationDao.get(1)).thenReturn(Optional.empty());
+
+        assertThrows(EntityNotFoundException.class, () -> durationService.delete(1));
 
         verify(durationDao, never()).delete(1);
     }

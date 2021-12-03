@@ -11,6 +11,7 @@ import org.springframework.test.jdbc.JdbcTestUtils;
 
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -26,7 +27,7 @@ class JdbcDurationDaoTest {
 
     @Test
     void givenId_whenGet_thenReturnDuration() {
-        var expected = new Duration(LocalTime.of(9, 0), LocalTime.of(10, 0));
+        var expected = Optional.of(new Duration(LocalTime.of(9, 0), LocalTime.of(10, 0)));
 
         var actual = jdbcDurationDao.get(1);
 
