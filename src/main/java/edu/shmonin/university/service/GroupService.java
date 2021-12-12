@@ -3,7 +3,7 @@ package edu.shmonin.university.service;
 import edu.shmonin.university.dao.GroupDao;
 import edu.shmonin.university.dao.LectureDao;
 import edu.shmonin.university.exception.EntityNotFoundException;
-import edu.shmonin.university.exception.ChainedEntityException;
+import edu.shmonin.university.exception.RemoveException;
 import edu.shmonin.university.model.Group;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,12 +26,9 @@ public class GroupService implements EntityService<Group> {
 
     @Override
     public Group get(int groupId) {
-        var group = groupDao.get(groupId);
-        if (group.isEmpty()) {
-            throw new EntityNotFoundException("Can not find group by id=" + groupId);
-        }
         log.debug("Get group with id={}", groupId);
-        return group.get();
+        return groupDao.get(groupId)
+                .orElseThrow(() -> new EntityNotFoundException("Can not find group by id=" + groupId));
     }
 
     @Override
@@ -54,17 +51,13 @@ public class GroupService implements EntityService<Group> {
 
     @Override
     public void delete(int groupId) {
-        var group = groupDao.get(groupId);
-        if (group.isEmpty()) {
-            throw new EntityNotFoundException("Can not find group by id=" + groupId);
-        }
-        if (!group.get().getStudents().isEmpty()) {
-            throw new ChainedEntityException("Can not delete group by id=" + groupId + ", there are entities with this group in the system");
+        log.debug("Delete group by id={}", groupId);
+        if (!this.get(groupId).getStudents().isEmpty()) {
+            throw new RemoveException("There are students with this group");
         }
         if (!lectureDao.getByGroupId(groupId).isEmpty()) {
-            throw new ChainedEntityException("Can not delete group by id=" + groupId + ", there are entities with this group in the system");
+            throw new RemoveException("There are lectures with this group");
         }
-        log.debug("Delete group by id={}", groupId);
         groupDao.delete(groupId);
     }
 }

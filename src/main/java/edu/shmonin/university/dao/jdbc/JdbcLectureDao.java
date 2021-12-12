@@ -2,7 +2,6 @@ package edu.shmonin.university.dao.jdbc;
 
 import edu.shmonin.university.dao.LectureDao;
 import edu.shmonin.university.dao.jdbc.rowmapper.LectureRowMapper;
-import edu.shmonin.university.model.Group;
 import edu.shmonin.university.model.Lecture;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -11,7 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Statement;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -44,7 +42,7 @@ public class JdbcLectureDao implements LectureDao {
     @Override
     public Optional<Lecture> get(int id) {
         try {
-            return Optional.ofNullable(jdbcTemplate.queryForObject(GET_QUERY, lectureRowMapper, id));
+            return Optional.of(jdbcTemplate.queryForObject(GET_QUERY, lectureRowMapper, id));
         } catch (RuntimeException e) {
             return Optional.empty();
         }
@@ -76,13 +74,13 @@ public class JdbcLectureDao implements LectureDao {
     @Transactional
     @Override
     public void update(Lecture updatedLecture) {
-        var groups = getGroupsFromTheLecture(updatedLecture);
+        var groups = this.get(updatedLecture.getId()).orElse(new Lecture()).getGroups();
         jdbcTemplate.update(UPDATE_QUERY, updatedLecture.getDate(), updatedLecture.getCourse().getId(), updatedLecture.getAudience().getId(),
                 updatedLecture.getDuration().getId(), updatedLecture.getTeacher().getId(), updatedLecture.getId());
-        groups.stream().filter(p -> !updatedLecture.getGroups().contains(p)).
-                forEach(p -> jdbcTemplate.update(DELETE_LECTURE_GROUP, p.getId(), updatedLecture.getId()));
-        updatedLecture.getGroups().stream().filter(p -> !groups.contains(p)).
-                forEach(p -> jdbcTemplate.update(ADD_LECTURE_GROUP, p.getId(), updatedLecture.getId()));
+        groups.stream().filter(p -> !updatedLecture.getGroups().contains(p))
+                .forEach(p -> jdbcTemplate.update(DELETE_LECTURE_GROUP, p.getId(), updatedLecture.getId()));
+        updatedLecture.getGroups().stream().filter(p -> !groups.contains(p))
+                .forEach(p -> jdbcTemplate.update(ADD_LECTURE_GROUP, p.getId(), updatedLecture.getId()));
     }
 
     @Override
@@ -116,20 +114,11 @@ public class JdbcLectureDao implements LectureDao {
     }
 
     @Override
-    public Optional<Lecture> getByGroupDateDuration(int groupId, LocalDate localDate, int durationId) {
+    public Optional<Lecture> getByGroupIdAndDateAndDuration(int groupId, LocalDate date, int durationId) {
         try {
-            return Optional.ofNullable(jdbcTemplate.queryForObject(GET_ALL_BY_GROUP_DATE_DURATION, lectureRowMapper, groupId, localDate, durationId));
+            return Optional.of(jdbcTemplate.queryForObject(GET_ALL_BY_GROUP_DATE_DURATION, lectureRowMapper, groupId, date, durationId));
         } catch (RuntimeException e) {
             return Optional.empty();
-        }
-    }
-
-    private List<Group> getGroupsFromTheLecture(Lecture updatedLecture) {
-        var lecture = get(updatedLecture.getId());
-        if (lecture.isPresent()) {
-            return lecture.get().getGroups();
-        } else {
-            return new ArrayList<>();
         }
     }
 }

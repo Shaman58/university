@@ -4,7 +4,7 @@ import edu.shmonin.university.dao.HolidayDao;
 import edu.shmonin.university.dao.LectureDao;
 import edu.shmonin.university.dao.StudentDao;
 import edu.shmonin.university.dao.VacationDao;
-import edu.shmonin.university.exception.EntityNotFoundException;
+import edu.shmonin.university.exception.*;
 import edu.shmonin.university.model.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -87,7 +87,7 @@ class LectureServiceTest {
         when(lectureDao.getByAudienceId(audience.getId())).thenReturn(new ArrayList<>());
         when(holidayDao.getByDate(lecture.getDate())).thenReturn(Optional.empty());
         when(lectureDao.getByTeacherId(teacher.getId())).thenReturn(new ArrayList<>());
-        when(vacationDao.getByTeacherAndDate(teacher.getId(), lecture.getDate())).thenReturn(Optional.empty());
+        when(vacationDao.getByTeacherIdAndDate(teacher.getId(), lecture.getDate())).thenReturn(Optional.empty());
         when(studentDao.getByGroupId(group.getId())).thenReturn(students);
 
         lectureService.create(lecture);
@@ -96,17 +96,18 @@ class LectureServiceTest {
     }
 
     @Test
-    void givenOutOfDateLecture_whenCreate_thenThrowRuntimeExceptionAndNotStartedLectureDaoCreate() {
+    void givenOutOfDateLecture_whenCreate_thenThrowDateNotAvailableExceptionAndNotStartedLectureDaoCreate() {
         var lecture = new Lecture();
         lecture.setDate(LocalDate.now().minus(1, ChronoUnit.DAYS));
 
-        assertThrows(RuntimeException.class, () -> lectureService.create(lecture));
+        var exception = assertThrows(DateNotAvailableException.class, () -> lectureService.create(lecture));
 
         verify(lectureDao, never()).create(lecture);
+        assertEquals("Lecture's date can not be earlier than the current time", exception.getMessage());
     }
 
     @Test
-    void givenValidLectureAndAudienceIsBusyness_whenCreate_thenThrowRuntimeExceptionAndNotStartedLectureDaoCreate() {
+    void givenValidLectureAndAudienceIsBusyness_whenCreate_thenThrowAudienceNotAvailableExceptionAndNotStartedLectureDaoCreate() {
         var lecture = new Lecture();
         lecture.setDate(LocalDate.now().plus(1, ChronoUnit.DAYS));
         var audience = new Audience(1, 60);
@@ -115,13 +116,14 @@ class LectureServiceTest {
         lecture.setDuration(new Duration(LocalTime.of(12, 0), LocalTime.of(14, 0)));
         when(lectureDao.getByAudienceId(audience.getId())).thenReturn(List.of(lecture));
 
-        assertThrows(RuntimeException.class, () -> lectureService.create(lecture));
+        var exception = assertThrows(AudienceNotAvailableException.class, () -> lectureService.create(lecture));
 
         verify(lectureDao, never()).create(lecture);
+        assertEquals("Audience is busy on the lecture's date", exception.getMessage());
     }
 
     @Test
-    void givenValidLectureOnHoliday_whenCreate_thenThrowRuntimeExceptionAndNotStartedLectureDaoCreate() {
+    void givenValidLectureOnHoliday_whenCreate_thenThrowDateNotAvailableExceptionAndNotStartedLectureDaoCreate() {
         var lecture = new Lecture();
         lecture.setDate(LocalDate.now().plus(1, ChronoUnit.DAYS));
         var audience = new Audience(1, 60);
@@ -131,13 +133,14 @@ class LectureServiceTest {
         when(lectureDao.getByAudienceId(audience.getId())).thenReturn(new ArrayList<>());
         when(holidayDao.getByDate(lecture.getDate())).thenReturn(Optional.of(new Holiday()));
 
-        assertThrows(RuntimeException.class, () -> lectureService.create(lecture));
+        var exception = assertThrows(DateNotAvailableException.class, () -> lectureService.create(lecture));
 
         verify(lectureDao, never()).create(lecture);
+        assertEquals("Lecture's date is on the holiday", exception.getMessage());
     }
 
     @Test
-    void givenValidLectureOnTeacherVacation_whenCreate_thenThrowRuntimeExceptionAndNotStartedLectureDaoCreate() {
+    void givenValidLectureOnTeacherVacation_whenCreate_thenThrowTeacherNotAvailableExceptionAndNotStartedLectureDaoCreate() {
         var lecture = new Lecture();
         lecture.setDate(LocalDate.now().plus(1, ChronoUnit.DAYS));
         var audience = new Audience(1, 60);
@@ -150,15 +153,16 @@ class LectureServiceTest {
         lecture.setTeacher(teacher);
         when(lectureDao.getByAudienceId(audience.getId())).thenReturn(new ArrayList<>());
         when(holidayDao.getByDate(lecture.getDate())).thenReturn(Optional.empty());
-        when(vacationDao.getByTeacherAndDate(teacher.getId(), lecture.getDate())).thenReturn(Optional.of(new Vacation()));
+        when(vacationDao.getByTeacherIdAndDate(teacher.getId(), lecture.getDate())).thenReturn(Optional.of(new Vacation()));
 
-        assertThrows(RuntimeException.class, () -> lectureService.create(lecture));
+        var exception = assertThrows(TeacherNotAvailableException.class, () -> lectureService.create(lecture));
 
         verify(lectureDao, never()).create(lecture);
+        assertEquals("Lecture's date is on the vacation of teacher", exception.getMessage());
     }
 
     @Test
-    void givenValidLectureAndTeacherIsBusyness_whenCreate_thenThrowRuntimeExceptionAndNotStartedLectureDaoCreate() {
+    void givenValidLectureAndTeacherIsBusyness_whenCreate_thenThrowTeacherNotAvailableExceptionAndNotStartedLectureDaoCreate() {
         var lecture = new Lecture();
         lecture.setDate(LocalDate.now().plus(1, ChronoUnit.DAYS));
         var audience = new Audience(1, 60);
@@ -172,15 +176,16 @@ class LectureServiceTest {
         when(lectureDao.getByAudienceId(audience.getId())).thenReturn(new ArrayList<>());
         when(holidayDao.getByDate(lecture.getDate())).thenReturn(Optional.empty());
         when(lectureDao.getByTeacherId(teacher.getId())).thenReturn(List.of(lecture));
-        when(vacationDao.getByTeacherAndDate(teacher.getId(), lecture.getDate())).thenReturn(Optional.empty());
+        when(vacationDao.getByTeacherIdAndDate(teacher.getId(), lecture.getDate())).thenReturn(Optional.empty());
 
-        assertThrows(RuntimeException.class, () -> lectureService.create(lecture));
+        var exception = assertThrows(TeacherNotAvailableException.class, () -> lectureService.create(lecture));
 
         verify(lectureDao, never()).create(lecture);
+        assertEquals("Teacher is busy on the lecture's date", exception.getMessage());
     }
 
     @Test
-    void givenValidLectureAndTeacherHasNotNeededCourse_whenCreate_thenThrowRuntimeExceptionAndNotStartedLectureDaoCreate() {
+    void givenValidLectureAndTeacherHasNotNeededCourse_whenCreate_thenThrowTeacherNotAvailableExceptionAndNotStartedLectureDaoCreate() {
         var lecture = new Lecture();
         lecture.setDate(LocalDate.now().plus(1, ChronoUnit.DAYS));
         var audience = new Audience(1, 60);
@@ -197,15 +202,16 @@ class LectureServiceTest {
         when(lectureDao.getByAudienceId(audience.getId())).thenReturn(new ArrayList<>());
         when(holidayDao.getByDate(lecture.getDate())).thenReturn(Optional.empty());
         when(lectureDao.getByTeacherId(teacher.getId())).thenReturn(new ArrayList<>());
-        when(vacationDao.getByTeacherAndDate(teacher.getId(), lecture.getDate())).thenReturn(Optional.empty());
+        when(vacationDao.getByTeacherIdAndDate(teacher.getId(), lecture.getDate())).thenReturn(Optional.empty());
 
-        assertThrows(RuntimeException.class, () -> lectureService.create(lecture));
+        var exception = assertThrows(TeacherNotAvailableException.class, () -> lectureService.create(lecture));
 
         verify(lectureDao, never()).create(lecture);
+        assertEquals("The teacher doesn't have the right course", exception.getMessage());
     }
 
     @Test
-    void givenValidLectureGroupsAreMoreThenAllowed_whenCreate_thenThrowRuntimeExceptionAndNotStartedLectureDaoCreate() {
+    void givenValidLectureGroupsAreMoreThenAllowed_whenCreate_thenThrowGroupLimitReachedExceptionAndNotStartedLectureDaoCreate() {
         var lecture = new Lecture();
         lecture.setDate(LocalDate.now().plus(1, ChronoUnit.DAYS));
         var audience = new Audience(1, 60);
@@ -222,16 +228,17 @@ class LectureServiceTest {
         when(lectureDao.getByAudienceId(audience.getId())).thenReturn(new ArrayList<>());
         when(holidayDao.getByDate(lecture.getDate())).thenReturn(Optional.empty());
         when(lectureDao.getByTeacherId(teacher.getId())).thenReturn(new ArrayList<>());
-        when(vacationDao.getByTeacherAndDate(teacher.getId(), lecture.getDate())).thenReturn(Optional.empty());
+        when(vacationDao.getByTeacherIdAndDate(teacher.getId(), lecture.getDate())).thenReturn(Optional.empty());
         lecture.setGroups(List.of(new Group(), new Group(), new Group(), new Group()));
 
-        assertThrows(RuntimeException.class, () -> lectureService.create(lecture));
+        var exception = assertThrows(GroupLimitReachedException.class, () -> lectureService.create(lecture));
 
         verify(lectureDao, never()).create(lecture);
+        assertEquals("Group limit reached", exception.getMessage());
     }
 
     @Test
-    void givenValidLectureAndGroupIsBusy_whenCreate_thenThrowRuntimeExceptionAndNotStartedLectureDaoUpdate() {
+    void givenValidLectureAndGroupIsBusy_whenCreate_thenThrowGroupNotAvailableExceptionAndNotStartedLectureDaoUpdate() {
         var lecture = new Lecture();
         var date = LocalDate.now().plus(1, ChronoUnit.DAYS);
         lecture.setDate(date);
@@ -254,16 +261,17 @@ class LectureServiceTest {
         when(lectureDao.getByAudienceId(audience.getId())).thenReturn(new ArrayList<>());
         when(holidayDao.getByDate(lecture.getDate())).thenReturn(Optional.empty());
         when(lectureDao.getByTeacherId(teacher.getId())).thenReturn(new ArrayList<>());
-        when(vacationDao.getByTeacherAndDate(teacher.getId(), lecture.getDate())).thenReturn(Optional.empty());
-        when(lectureDao.getByGroupDateDuration(1, date, 1)).thenReturn(Optional.of(new Lecture()));
+        when(vacationDao.getByTeacherIdAndDate(teacher.getId(), lecture.getDate())).thenReturn(Optional.empty());
+        when(lectureDao.getByGroupIdAndDateAndDuration(1, date, 1)).thenReturn(Optional.of(new Lecture()));
 
-        assertThrows(RuntimeException.class, () -> lectureService.create(lecture));
+        var exception = assertThrows(GroupNotAvailableException.class, () -> lectureService.create(lecture));
 
         verify(lectureDao, never()).update(lecture);
+        assertEquals("One or more groups are busy on the lecture's date", exception.getMessage());
     }
 
     @Test
-    void givenValidLectureAndGroupsStudentAreTooMany_whenCreate_thenThrowRuntimeExceptionAndNotStartedLectureDaoUpdate() {
+    void givenValidLectureAndGroupsStudentAreTooMany_whenCreate_thenThrowInvalidCapacityExceptionAndNotStartedLectureDaoUpdate() {
         var lecture = new Lecture();
         var date = LocalDate.now().plus(1, ChronoUnit.DAYS);
         lecture.setDate(date);
@@ -286,13 +294,14 @@ class LectureServiceTest {
         when(lectureDao.getByAudienceId(audience.getId())).thenReturn(new ArrayList<>());
         when(holidayDao.getByDate(lecture.getDate())).thenReturn(Optional.empty());
         when(lectureDao.getByTeacherId(teacher.getId())).thenReturn(new ArrayList<>());
-        when(vacationDao.getByTeacherAndDate(teacher.getId(), lecture.getDate())).thenReturn(Optional.empty());
-        when(lectureDao.getByGroupDateDuration(1, date, 1)).thenReturn(Optional.empty());
+        when(vacationDao.getByTeacherIdAndDate(teacher.getId(), lecture.getDate())).thenReturn(Optional.empty());
+        when(lectureDao.getByGroupIdAndDateAndDuration(1, date, 1)).thenReturn(Optional.empty());
         when(studentDao.getByGroupId(1)).thenReturn(List.of(new Student(), new Student(), new Student(), new Student(), new Student(), new Student()));
 
-        assertThrows(RuntimeException.class, () -> lectureService.create(lecture));
+        var exception = assertThrows(InvalidCapacityException.class, () -> lectureService.create(lecture));
 
         verify(lectureDao, never()).update(lecture);
+        assertEquals("Audience can not accommodate all students", exception.getMessage());
     }
 
     @Test
@@ -317,7 +326,7 @@ class LectureServiceTest {
         when(lectureDao.getByAudienceId(audience.getId())).thenReturn(new ArrayList<>());
         when(holidayDao.getByDate(lecture.getDate())).thenReturn(Optional.empty());
         when(lectureDao.getByTeacherId(teacher.getId())).thenReturn(new ArrayList<>());
-        when(vacationDao.getByTeacherAndDate(teacher.getId(), lecture.getDate())).thenReturn(Optional.empty());
+        when(vacationDao.getByTeacherIdAndDate(teacher.getId(), lecture.getDate())).thenReturn(Optional.empty());
         when(studentDao.getByGroupId(group.getId())).thenReturn(students);
 
         lectureService.update(lecture);
@@ -326,17 +335,18 @@ class LectureServiceTest {
     }
 
     @Test
-    void givenOutOfDateLecture_whenUpdate_thenThrowRuntimeExceptionAndNotStartedLectureDaoUpdate() {
+    void givenOutOfDateLecture_whenUpdate_thenThrowDateNotAvailableExceptionAndNotStartedLectureDaoUpdate() {
         var lecture = new Lecture();
         lecture.setDate(LocalDate.now().minus(1, ChronoUnit.DAYS));
 
-        assertThrows(RuntimeException.class, () -> lectureService.update(lecture));
+        var exception = assertThrows(DateNotAvailableException.class, () -> lectureService.update(lecture));
 
         verify(lectureDao, never()).update(lecture);
+        assertEquals("Lecture's date can not be earlier than the current time", exception.getMessage());
     }
 
     @Test
-    void givenValidLectureAndAudienceIsBusyness_whenUpdate_thenThrowRuntimeExceptionAndNotStartedLectureDaoUpdate() {
+    void givenValidLectureAndAudienceIsBusyness_whenUpdate_thenThrowAudienceNotAvailableExceptionAndNotStartedLectureDaoUpdate() {
         var lecture = new Lecture();
         lecture.setDate(LocalDate.now().plus(1, ChronoUnit.DAYS));
         var audience = new Audience(1, 60);
@@ -345,13 +355,14 @@ class LectureServiceTest {
         lecture.setDuration(new Duration(LocalTime.of(12, 0), LocalTime.of(14, 0)));
         when(lectureDao.getByAudienceId(audience.getId())).thenReturn(List.of(lecture));
 
-        assertThrows(RuntimeException.class, () -> lectureService.update(lecture));
+        var exception = assertThrows(AudienceNotAvailableException.class, () -> lectureService.update(lecture));
 
         verify(lectureDao, never()).update(lecture);
+        assertEquals("Audience is busy on the lecture's date", exception.getMessage());
     }
 
     @Test
-    void givenValidLectureOnHoliday_whenUpdate_thenThrowRuntimeExceptionAndNotStartedLectureDaoUpdate() {
+    void givenValidLectureOnHoliday_whenUpdate_thenThrowDateNotAvailableExceptionAndNotStartedLectureDaoUpdate() {
         var lecture = new Lecture();
         lecture.setDate(LocalDate.now().plus(1, ChronoUnit.DAYS));
         var audience = new Audience(1, 60);
@@ -361,13 +372,14 @@ class LectureServiceTest {
         when(lectureDao.getByAudienceId(audience.getId())).thenReturn(new ArrayList<>());
         when(holidayDao.getByDate(lecture.getDate())).thenReturn(Optional.of(new Holiday()));
 
-        assertThrows(RuntimeException.class, () -> lectureService.update(lecture));
+        var exception = assertThrows(DateNotAvailableException.class, () -> lectureService.update(lecture));
 
         verify(lectureDao, never()).update(lecture);
+        assertEquals("Lecture's date is on the holiday", exception.getMessage());
     }
 
     @Test
-    void givenValidLectureOnTeacherVacation_whenUpdate_thenThrowRuntimeExceptionAndNotStartedLectureDaoUpdate() {
+    void givenValidLectureOnTeacherVacation_whenUpdate_thenThrowTeacherNotAvailableExceptionAndNotStartedLectureDaoUpdate() {
         var lecture = new Lecture();
         lecture.setDate(LocalDate.now().plus(1, ChronoUnit.DAYS));
         var audience = new Audience(1, 60);
@@ -380,15 +392,16 @@ class LectureServiceTest {
         lecture.setTeacher(teacher);
         when(lectureDao.getByAudienceId(audience.getId())).thenReturn(new ArrayList<>());
         when(holidayDao.getByDate(lecture.getDate())).thenReturn(Optional.empty());
-        when(vacationDao.getByTeacherAndDate(teacher.getId(), lecture.getDate())).thenReturn(Optional.of(new Vacation()));
+        when(vacationDao.getByTeacherIdAndDate(teacher.getId(), lecture.getDate())).thenReturn(Optional.of(new Vacation()));
 
-        assertThrows(RuntimeException.class, () -> lectureService.update(lecture));
+        var exception = assertThrows(TeacherNotAvailableException.class, () -> lectureService.update(lecture));
 
         verify(lectureDao, never()).update(lecture);
+        assertEquals("Lecture's date is on the vacation of teacher", exception.getMessage());
     }
 
     @Test
-    void givenValidLectureAndTeacherIsBusyness_whenUpdate_thenThrowRuntimeExceptionAndNotStartedLectureDaoUpdate() {
+    void givenValidLectureAndTeacherIsBusyness_whenUpdate_thenThrowTeacherNotAvailableExceptionAndNotStartedLectureDaoUpdate() {
         var lecture = new Lecture();
         lecture.setDate(LocalDate.now().plus(1, ChronoUnit.DAYS));
         var audience = new Audience(1, 60);
@@ -402,15 +415,16 @@ class LectureServiceTest {
         when(lectureDao.getByAudienceId(audience.getId())).thenReturn(new ArrayList<>());
         when(holidayDao.getByDate(lecture.getDate())).thenReturn(Optional.empty());
         when(lectureDao.getByTeacherId(teacher.getId())).thenReturn(List.of(lecture));
-        when(vacationDao.getByTeacherAndDate(teacher.getId(), lecture.getDate())).thenReturn(Optional.empty());
+        when(vacationDao.getByTeacherIdAndDate(teacher.getId(), lecture.getDate())).thenReturn(Optional.empty());
 
-        assertThrows(RuntimeException.class, () -> lectureService.update(lecture));
+        var exception = assertThrows(TeacherNotAvailableException.class, () -> lectureService.update(lecture));
 
         verify(lectureDao, never()).update(lecture);
+        assertEquals("Teacher is busy on the lecture's date", exception.getMessage());
     }
 
     @Test
-    void givenValidLectureAndTeacherHasNotNeededCourse_whenUpdate_thenThrowRuntimeExceptionAndNotStartedLectureDaoUpdate() {
+    void givenValidLectureAndTeacherHasNotNeededCourse_whenUpdate_thenThrowTeacherNotAvailableExceptionAndNotStartedLectureDaoUpdate() {
         var lecture = new Lecture();
         lecture.setDate(LocalDate.now().plus(1, ChronoUnit.DAYS));
         var audience = new Audience(1, 60);
@@ -427,15 +441,16 @@ class LectureServiceTest {
         when(lectureDao.getByAudienceId(audience.getId())).thenReturn(new ArrayList<>());
         when(holidayDao.getByDate(lecture.getDate())).thenReturn(Optional.empty());
         when(lectureDao.getByTeacherId(teacher.getId())).thenReturn(new ArrayList<>());
-        when(vacationDao.getByTeacherAndDate(teacher.getId(), lecture.getDate())).thenReturn(Optional.empty());
+        when(vacationDao.getByTeacherIdAndDate(teacher.getId(), lecture.getDate())).thenReturn(Optional.empty());
 
-        assertThrows(RuntimeException.class, () -> lectureService.update(lecture));
+        var exception = assertThrows(TeacherNotAvailableException.class, () -> lectureService.update(lecture));
 
         verify(lectureDao, never()).update(lecture);
+        assertEquals("The teacher doesn't have the right course", exception.getMessage());
     }
 
     @Test
-    void givenValidLectureGroupsAreMoreThenAllowed_whenUpdate_thenThrowRuntimeExceptionAndNotStartedLectureDaoUpdate() {
+    void givenValidLectureGroupsAreMoreThenAllowed_whenUpdate_thenThrowGroupLimitReachedExceptionAndNotStartedLectureDaoUpdate() {
         var lecture = new Lecture();
         lecture.setDate(LocalDate.now().plus(1, ChronoUnit.DAYS));
         var audience = new Audience(1, 60);
@@ -452,16 +467,17 @@ class LectureServiceTest {
         when(lectureDao.getByAudienceId(audience.getId())).thenReturn(new ArrayList<>());
         when(holidayDao.getByDate(lecture.getDate())).thenReturn(Optional.empty());
         when(lectureDao.getByTeacherId(teacher.getId())).thenReturn(new ArrayList<>());
-        when(vacationDao.getByTeacherAndDate(teacher.getId(), lecture.getDate())).thenReturn(Optional.empty());
+        when(vacationDao.getByTeacherIdAndDate(teacher.getId(), lecture.getDate())).thenReturn(Optional.empty());
         lecture.setGroups(List.of(new Group(), new Group(), new Group(), new Group()));
 
-        assertThrows(RuntimeException.class, () -> lectureService.update(lecture));
+        var exception = assertThrows(GroupLimitReachedException.class, () -> lectureService.update(lecture));
 
         verify(lectureDao, never()).update(lecture);
+        assertEquals("Group limit reached", exception.getMessage());
     }
 
     @Test
-    void givenValidLectureAndGroupIsBusy_whenUpdate_thenThrowRuntimeExceptionAndNotStartedLectureDaoUpdate() {
+    void givenValidLectureAndGroupIsBusy_whenUpdate_thenThrowGroupNotAvailableExceptionAndNotStartedLectureDaoUpdate() {
         var lecture = new Lecture();
         var date = LocalDate.now().plus(1, ChronoUnit.DAYS);
         lecture.setDate(date);
@@ -484,16 +500,17 @@ class LectureServiceTest {
         when(lectureDao.getByAudienceId(audience.getId())).thenReturn(new ArrayList<>());
         when(holidayDao.getByDate(lecture.getDate())).thenReturn(Optional.empty());
         when(lectureDao.getByTeacherId(teacher.getId())).thenReturn(new ArrayList<>());
-        when(vacationDao.getByTeacherAndDate(teacher.getId(), lecture.getDate())).thenReturn(Optional.empty());
-        when(lectureDao.getByGroupDateDuration(1, date, 1)).thenReturn(Optional.of(new Lecture()));
+        when(vacationDao.getByTeacherIdAndDate(teacher.getId(), lecture.getDate())).thenReturn(Optional.empty());
+        when(lectureDao.getByGroupIdAndDateAndDuration(1, date, 1)).thenReturn(Optional.of(new Lecture()));
 
-        assertThrows(RuntimeException.class, () -> lectureService.update(lecture));
+        var exception = assertThrows(GroupNotAvailableException.class, () -> lectureService.update(lecture));
 
         verify(lectureDao, never()).update(lecture);
+        assertEquals("One or more groups are busy on the lecture's date", exception.getMessage());
     }
 
     @Test
-    void givenValidLectureAndGroupsStudentAreTooMany_whenUpdate_thenThrowRuntimeExceptionAndNotStartedLectureDaoUpdate() {
+    void givenValidLectureAndGroupsStudentAreTooMany_whenUpdate_thenThrowGroupLimitReachedExceptionAndNotStartedLectureDaoUpdate() {
         var lecture = new Lecture();
         var date = LocalDate.now().plus(1, ChronoUnit.DAYS);
         lecture.setDate(date);
@@ -516,13 +533,14 @@ class LectureServiceTest {
         when(lectureDao.getByAudienceId(audience.getId())).thenReturn(new ArrayList<>());
         when(holidayDao.getByDate(lecture.getDate())).thenReturn(Optional.empty());
         when(lectureDao.getByTeacherId(teacher.getId())).thenReturn(new ArrayList<>());
-        when(vacationDao.getByTeacherAndDate(teacher.getId(), lecture.getDate())).thenReturn(Optional.empty());
-        when(lectureDao.getByGroupDateDuration(1, date, 1)).thenReturn(Optional.empty());
+        when(vacationDao.getByTeacherIdAndDate(teacher.getId(), lecture.getDate())).thenReturn(Optional.empty());
+        when(lectureDao.getByGroupIdAndDateAndDuration(1, date, 1)).thenReturn(Optional.empty());
         when(studentDao.getByGroupId(1)).thenReturn(List.of(new Student(), new Student(), new Student(), new Student(), new Student(), new Student()));
 
-        assertThrows(RuntimeException.class, () -> lectureService.update(lecture));
+        var exception = assertThrows(GroupLimitReachedException.class, () -> lectureService.update(lecture));
 
         verify(lectureDao, never()).update(lecture);
+        assertEquals("Group limit reached", exception.getMessage());
     }
 
     @Test
@@ -538,8 +556,9 @@ class LectureServiceTest {
     void givenLectureDaoGetReturnEmptyOptional_whenDelete_thenEntityNotFoundExceptionAndNotStartedLectureUpdateDelete() {
         when(lectureDao.get(1)).thenReturn(Optional.empty());
 
-        assertThrows(EntityNotFoundException.class, () -> lectureService.delete(1));
+        var exception = assertThrows(EntityNotFoundException.class, () -> lectureService.delete(1));
 
         verify(lectureDao, never()).delete(1);
+        assertEquals("Can not find lecture by id=1", exception.getMessage());
     }
 }

@@ -41,7 +41,7 @@ public class JdbcStudentDao implements StudentDao {
     @Override
     public Optional<Student> get(int id) {
         try {
-            return Optional.ofNullable(jdbcTemplate.queryForObject(GET_QUERY, studentRowMapper, id));
+            return Optional.of(jdbcTemplate.queryForObject(GET_QUERY, studentRowMapper, id));
         } catch (RuntimeException e) {
             return Optional.empty();
         }

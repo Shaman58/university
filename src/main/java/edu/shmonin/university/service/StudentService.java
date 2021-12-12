@@ -2,14 +2,14 @@ package edu.shmonin.university.service;
 
 import edu.shmonin.university.dao.StudentDao;
 import edu.shmonin.university.exception.EntityNotFoundException;
-import edu.shmonin.university.exception.GroupCapacityException;
+import edu.shmonin.university.exception.StudentNotAvailableException;
+import edu.shmonin.university.exception.StudentsLimitReachedException;
 import edu.shmonin.university.model.Student;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.List;
@@ -33,12 +33,8 @@ public class StudentService implements EntityService<Student> {
 
     @Override
     public Student get(int studentId) {
-        var student = studentDao.get(studentId);
-        if (student.isEmpty()) {
-            throw new EntityNotFoundException("Can not find student by id=" + studentId);
-        }
         log.debug("Get student with id={}", studentId);
-        return student.get();
+        return studentDao.get(studentId).orElseThrow(() -> new EntityNotFoundException("Can not find student by id=" + studentId));
     }
 
     @Override
@@ -49,37 +45,36 @@ public class StudentService implements EntityService<Student> {
 
     @Override
     public void create(Student student) {
-        validateStudent(student);
         log.debug("Create student {}", student);
+        validateStudent(student);
         studentDao.create(student);
     }
 
     @Override
     public void update(Student student) {
-        validateStudent(student);
         log.debug("Update student {}", student);
+        validateStudent(student);
         studentDao.update(student);
     }
 
     @Override
     public void delete(int studentId) {
-        if (studentDao.get(studentId).isEmpty()) {
-            throw new EntityNotFoundException("Can not find student by id=" + studentId);
-        }
         log.debug("Delete student by id={}", studentId);
+        this.get(studentId);
         studentDao.delete(studentId);
     }
 
     public List<Student> getByGroupId(int groupId) {
+        log.debug("Get students with group id={}", groupId);
         return studentDao.getByGroupId(groupId);
     }
 
     private void validateStudent(Student student) {
         if (Period.between(student.getBirthDate(), LocalDate.now()).getYears() < minAge) {
-            throw new DateTimeException("The student " + student + " did not pass the validity check. Student can not be younger " + minAge);
+            throw new StudentNotAvailableException("Student can not be younger " + minAge);
         }
         if (studentDao.getByGroupId(student.getGroup().getId()).size() >= maxCapacity) {
-            throw new GroupCapacityException("The student " + student + " did not pass the validity check. The number of students in the group cannot be more than " + maxCapacity);
+            throw new StudentsLimitReachedException("The number of students in the group cannot be more than " + maxCapacity);
         }
     }
 }

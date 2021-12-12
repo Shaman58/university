@@ -2,7 +2,9 @@ package edu.shmonin.university.service;
 
 import edu.shmonin.university.dao.AudienceDao;
 import edu.shmonin.university.dao.LectureDao;
-import edu.shmonin.university.exception.ChainedEntityException;
+import edu.shmonin.university.exception.InvalidCapacityException;
+import edu.shmonin.university.exception.InvalidRoomNumberException;
+import edu.shmonin.university.exception.RemoveException;
 import edu.shmonin.university.exception.EntityNotFoundException;
 import edu.shmonin.university.model.Audience;
 import edu.shmonin.university.model.Lecture;
@@ -16,8 +18,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.ArrayList;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.util.ReflectionTestUtils.setField;
 
@@ -35,7 +36,7 @@ class AudienceServiceTest {
     @BeforeEach
     void setUp() {
         setField(audienceService, "audiencesMaxRoomNumber", 300);
-        setField(audienceService, "audienceMaxCapacity", 60);
+        setField(audienceService, "audienceMaxCapacity", 90);
     }
 
     @Test
@@ -70,11 +71,23 @@ class AudienceServiceTest {
     }
 
     @Test
-    void givenInvalidAudience_whenCreate_thenThrowsRuntimeExceptionAndNotStartedDaoCreate() {
+    void givenInvalidAudienceCapacity_whenCreate_thenThrowsInvalidCapacityExceptionAndNotStartedDaoCreate() {
         var invalidAudience = new Audience(1, 91);
 
-        assertThrows(RuntimeException.class, () -> audienceService.create(invalidAudience));
+        var exception = assertThrows(InvalidCapacityException.class, () -> audienceService.create(invalidAudience));
+
         verify(audienceDao, never()).create(any());
+        assertEquals("Audience capacity must be greater than 0 and less than 90", exception.getMessage());
+    }
+
+    @Test
+    void givenInvalidAudienceRoomNumber_whenCreate_thenThrowsInvalidRoomNumberExceptionAndNotStartedDaoCreate() {
+        var invalidAudience = new Audience(301, 30);
+
+        var exception = assertThrows(InvalidRoomNumberException.class, () -> audienceService.create(invalidAudience));
+
+        verify(audienceDao, never()).create(any());
+        assertEquals("RoomNumber must be greater than 0 and less then 300", exception.getMessage());
     }
 
     @Test
@@ -87,11 +100,23 @@ class AudienceServiceTest {
     }
 
     @Test
-    void givenInvalidAudience_whenUpdate_thenThrowRuntimeExceptionAndNotStartedDaoUpdate() {
+    void givenInvalidAudienceCapacity_whenUpdate_thenThrowInvalidCapacityExceptionAndNotStartedDaoUpdate() {
         var audience = new Audience(1, 91);
 
-        assertThrows(RuntimeException.class, () -> audienceService.update(audience));
+        var exception = assertThrows(InvalidCapacityException.class, () -> audienceService.update(audience));
+
         verify(audienceDao, never()).update(any());
+        assertEquals("Audience capacity must be greater than 0 and less than 90", exception.getMessage());
+    }
+
+    @Test
+    void givenInvalidAudienceRoomNumber_whenUpdate_thenThrowInvalidRoomNumberExceptionAndNotStartedDaoUpdate() {
+        var audience = new Audience(301, 60);
+
+        var exception = assertThrows(InvalidRoomNumberException.class, () -> audienceService.update(audience));
+
+        verify(audienceDao, never()).update(any());
+        assertEquals("RoomNumber must be greater than 0 and less then 300", exception.getMessage());
     }
 
     @Test
@@ -105,23 +130,25 @@ class AudienceServiceTest {
     }
 
     @Test
-    void givenIdAndNotEmptyListLecturesAndAudienceDaoGetReturnAudience_whenDelete_thenThrowChainedEntityExceptionAndNotStartedDaoDelete() {
+    void givenIdAndNotEmptyListLecturesAndAudienceDaoGetReturnAudience_whenDelete_thenThrowRemoveExceptionAndNotStartedDaoDelete() {
         var lectures = new ArrayList<Lecture>();
         lectures.add(new Lecture());
         when(lectureDao.getByAudienceId(1)).thenReturn(lectures);
         when(audienceDao.get(1)).thenReturn(Optional.of(new Audience()));
 
-        assertThrows(ChainedEntityException.class, () -> audienceService.delete(1));
+        var exception = assertThrows(RemoveException.class, () -> audienceService.delete(1));
 
         verify(audienceDao, never()).delete(1);
+        assertEquals("There are lectures with this audience", exception.getMessage());
     }
 
     @Test
     void givenIdAndAudienceDaoGetReturnEmpty_whenDelete_thenThrowEntityNotFoundExceptionAndNotStartedDaoDelete() {
         when(audienceDao.get(1)).thenReturn(Optional.empty());
 
-        assertThrows(EntityNotFoundException.class, () -> audienceService.delete(1));
+        var exception = assertThrows(EntityNotFoundException.class, () -> audienceService.delete(1));
 
         verify(audienceDao, never()).delete(1);
+        assertEquals("Can not find audience by id=1", exception.getMessage());
     }
 }

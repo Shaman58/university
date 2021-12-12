@@ -33,8 +33,8 @@ public class JdbcAudienceDao implements AudienceDao {
     @Override
     public Optional<Audience> get(int id) {
         try {
-            return Optional.ofNullable(jdbcTemplate.queryForObject(GET_QUERY, audienceRowMapper, id));
-        } catch (RuntimeException e) {
+            return Optional.of(jdbcTemplate.queryForObject(GET_QUERY, audienceRowMapper, id));
+        } catch (EmptyResultDataAccessException e) {
             return Optional.empty();
         }
     }

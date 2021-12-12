@@ -395,7 +395,7 @@ class JdbcLectureDaoTest {
                 teacher1);
         var expected = Optional.of(lecture2);
 
-        var actual = jdbcLectureDao.getByGroupDateDuration(1, date, 1);
+        var actual = jdbcLectureDao.getByGroupIdAndDateAndDuration(1, date, 1);
 
         assertEquals(expected, actual);
     }

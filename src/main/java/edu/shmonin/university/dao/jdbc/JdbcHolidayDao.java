@@ -35,7 +35,7 @@ public class JdbcHolidayDao implements HolidayDao {
     @Override
     public Optional<Holiday> get(int id) {
         try {
-            return Optional.ofNullable(jdbcTemplate.queryForObject(GET_QUERY, holidayRowMapper, id));
+            return Optional.of(jdbcTemplate.queryForObject(GET_QUERY, holidayRowMapper, id));
         } catch (RuntimeException e) {
             return Optional.empty();
         }
@@ -71,7 +71,7 @@ public class JdbcHolidayDao implements HolidayDao {
     @Override
     public Optional<Holiday> getByDate(LocalDate localDate) {
         try {
-            return Optional.ofNullable(jdbcTemplate.queryForObject(GET_BY_DATE_QUERY, holidayRowMapper, localDate));
+            return Optional.of(jdbcTemplate.queryForObject(GET_BY_DATE_QUERY, holidayRowMapper, localDate));
         } catch (EmptyResultDataAccessException e) {
             return Optional.empty();
         }

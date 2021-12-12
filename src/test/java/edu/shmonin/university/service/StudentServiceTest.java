@@ -2,6 +2,8 @@ package edu.shmonin.university.service;
 
 import edu.shmonin.university.dao.StudentDao;
 import edu.shmonin.university.exception.EntityNotFoundException;
+import edu.shmonin.university.exception.StudentNotAvailableException;
+import edu.shmonin.university.exception.StudentsLimitReachedException;
 import edu.shmonin.university.model.Gender;
 import edu.shmonin.university.model.Group;
 import edu.shmonin.university.model.Student;
@@ -80,7 +82,7 @@ class StudentServiceTest {
     }
 
     @Test
-    void givenValidStudentAndGroupListOfStudentsIsFull_whenCreate_thenThrowRuntimeExceptionAndNotStartedStudentDaoCreate() {
+    void givenValidStudentAndGroupListOfStudentsIsFull_whenCreate_thenThrowStudentsLimitReachedExceptionAndNotStartedStudentDaoCreate() {
         var student = new Student();
         student.setFirstName("name-1");
         student.setLastName("surname-1");
@@ -96,13 +98,14 @@ class StudentServiceTest {
         var students = List.of(new Student(), new Student());
         when(studentDao.getByGroupId(1)).thenReturn(students);
 
-        assertThrows(RuntimeException.class, () -> studentService.create(student));
+        var exception = assertThrows(StudentsLimitReachedException.class, () -> studentService.create(student));
 
         verify(studentDao, never()).create(student);
+        assertEquals("The number of students in the group cannot be more than 2", exception.getMessage());
     }
 
     @Test
-    void givenInvalidStudentAndGroupListOfStudentsIsFull_whenCreate_thenThrowRuntimeExceptionAndNotStartedStudentDaoCreate() {
+    void givenInvalidStudent_whenCreate_thenThrowStudentNotAvailableExceptionAndNotStartedStudentDaoCreate() {
         var student = new Student();
         student.setFirstName("name-1");
         student.setLastName("surname-1");
@@ -113,9 +116,10 @@ class StudentServiceTest {
         student.setAddress("address-1");
         student.setBirthDate(LocalDate.now().minusYears(16));
 
-        assertThrows(RuntimeException.class, () -> studentService.create(student));
+        var exception = assertThrows(StudentNotAvailableException.class, () -> studentService.create(student));
 
         verify(studentDao, never()).create(student);
+        assertEquals("Student can not be younger 17", exception.getMessage());
     }
 
     @Test
@@ -141,7 +145,7 @@ class StudentServiceTest {
     }
 
     @Test
-    void givenValidStudentAndGroupListOfStudentsIsFull_whenUpdate_thenThrowRuntimeExceptionAndNotStartedStudentDaoUpdate() {
+    void givenValidStudentAndGroupListOfStudentsIsFull_whenUpdate_thenThrowStudentsLimitReachedExceptionAndNotStartedStudentDaoUpdate() {
         var student = new Student();
         student.setFirstName("name-1");
         student.setLastName("surname-1");
@@ -157,13 +161,14 @@ class StudentServiceTest {
         var students = List.of(new Student(), new Student());
         when(studentDao.getByGroupId(1)).thenReturn(students);
 
-        assertThrows(RuntimeException.class, () -> studentService.create(student));
+        var exception = assertThrows(StudentsLimitReachedException.class, () -> studentService.create(student));
 
         verify(studentDao, never()).update(student);
+        assertEquals("The number of students in the group cannot be more than 2", exception.getMessage());
     }
 
     @Test
-    void givenInvalidStudentAndGroupListOfStudentsIsFull_whenUpdate_thenThrowRuntimeExceptionAndNotStartedStudentDaoUpdate() {
+    void givenInvalidStudent_whenUpdate_thenThrowStudentNotAvailableExceptionAndNotStartedStudentDaoUpdate() {
         var student = new Student();
         student.setFirstName("name-1");
         student.setLastName("surname-1");
@@ -174,9 +179,10 @@ class StudentServiceTest {
         student.setAddress("address-1");
         student.setBirthDate(LocalDate.now().minusYears(16));
 
-        assertThrows(RuntimeException.class, () -> studentService.create(student));
+        var exception = assertThrows(StudentNotAvailableException.class, () -> studentService.create(student));
 
         verify(studentDao, never()).update(student);
+        assertEquals("Student can not be younger 17", exception.getMessage());
     }
 
     @Test
@@ -192,9 +198,10 @@ class StudentServiceTest {
     void givenIdAndStudentDaoReturnEmptyOptional_whenDelete_thenThrowEntityNotFoundExceptionNotStartedStudentDaoDelete() {
         when(studentDao.get(1)).thenReturn(Optional.empty());
 
-        assertThrows(EntityNotFoundException.class, () -> studentService.delete(1));
+        var exception = assertThrows(EntityNotFoundException.class, () -> studentService.delete(1));
 
         verify(studentDao, never()).delete(1);
+        assertEquals("Can not find student by id=1", exception.getMessage());
     }
 
     @Test

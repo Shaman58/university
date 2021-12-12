@@ -1,7 +1,6 @@
 package edu.shmonin.university.dao.jdbc.rowmapper;
 
 import edu.shmonin.university.dao.jdbc.*;
-import edu.shmonin.university.exception.EntityNotFoundException;
 import edu.shmonin.university.model.Lecture;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
@@ -35,18 +34,14 @@ public class LectureRowMapper implements RowMapper<Lecture> {
         lecture.setId(resultSet.getInt("id"));
         lecture.setDate(resultSet.getObject("date", LocalDate.class));
         var finalCourseId = resultSet.getInt("course_id");
-        lecture.setCourse(courseDao.get(finalCourseId).
-                orElseThrow(() -> new EntityNotFoundException("Can not find course by id=" + finalCourseId)));
+        lecture.setCourse(courseDao.get(finalCourseId).get());
         lecture.setGroups(groupDao.getByLectureId(lecture.getId()));
         var finalAudienceId = resultSet.getInt("audience_id");
-        lecture.setAudience(audienceDao.get(finalAudienceId).
-                orElseThrow(() -> new EntityNotFoundException("Can not find audience by id=" + finalAudienceId)));
+        lecture.setAudience(audienceDao.get(finalAudienceId).get());
         var finalDurationId = resultSet.getInt("duration_id");
-        lecture.setDuration(durationDao.get(finalDurationId).
-                orElseThrow(() -> new EntityNotFoundException("Can not find duration by id=" + finalDurationId)));
+        lecture.setDuration(durationDao.get(finalDurationId).get());
         var finalTeacherId = resultSet.getInt("teacher_id");
-        lecture.setTeacher(teacherDao.get(finalTeacherId).
-                orElseThrow(() -> new EntityNotFoundException("Can not find teacher by id=" + finalTeacherId)));
+        lecture.setTeacher(teacherDao.get(finalTeacherId).get());
         return lecture;
     }
 }

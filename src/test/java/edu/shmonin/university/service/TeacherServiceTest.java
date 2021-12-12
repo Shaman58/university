@@ -4,6 +4,7 @@ import edu.shmonin.university.dao.LectureDao;
 import edu.shmonin.university.dao.TeacherDao;
 import edu.shmonin.university.dao.VacationDao;
 import edu.shmonin.university.exception.EntityNotFoundException;
+import edu.shmonin.university.exception.TeacherNotAvailableException;
 import edu.shmonin.university.model.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -80,7 +81,7 @@ class TeacherServiceTest {
     }
 
     @Test
-    void givenInvalidTeacher_whenCreate_thenThrowRuntimeExceptionAndStartedNotTeacherDaoCreate() {
+    void givenInvalidTeacherTooYang_whenCreate_thenThrowTeacherNotAvailableExceptionAndStartedNotTeacherDaoCreate() {
         var teacher = new Teacher();
         teacher.setFirstName("name-1");
         teacher.setLastName("surname-1");
@@ -92,13 +93,14 @@ class TeacherServiceTest {
         teacher.setBirthDate(LocalDate.now().minusYears(24));
         teacher.setScientificDegree(ScientificDegree.DOCTOR);
 
-        assertThrows(RuntimeException.class, () -> teacherService.create(teacher));
+        var exception = assertThrows(TeacherNotAvailableException.class, () -> teacherService.create(teacher));
 
         verify(teacherDao, never()).create(teacher);
+        assertEquals("The teacher's age is not in the acceptable range", exception.getMessage());
     }
 
     @Test
-    void givenInvalidTeacherTooOld_whenCreate_thenThrowRuntimeExceptionAndNotStartedTeacherDaoCreate() {
+    void givenInvalidTeacherTooOld_whenCreate_thenThrowTeacherNotAvailableExceptionAndNotStartedTeacherDaoCreate() {
         var teacher = new Teacher();
         teacher.setFirstName("name-1");
         teacher.setLastName("surname-1");
@@ -110,9 +112,10 @@ class TeacherServiceTest {
         teacher.setBirthDate(LocalDate.now().minusYears(100));
         teacher.setScientificDegree(ScientificDegree.DOCTOR);
 
-        assertThrows(RuntimeException.class, () -> teacherService.create(teacher));
+        var exception = assertThrows(TeacherNotAvailableException.class, () -> teacherService.create(teacher));
 
         verify(teacherDao, never()).create(teacher);
+        assertEquals("The teacher's age is not in the acceptable range", exception.getMessage());
     }
 
     @Test
@@ -139,7 +142,7 @@ class TeacherServiceTest {
     }
 
     @Test
-    void givenValidTeacherAndTeacherHasNotAllNeededCourses_whenUpdate_thenThrowRuntimeExceptionAndNotStartedTeacherDaoUpdate() {
+    void givenValidTeacherAndTeacherHasNotAllNeededCourses_whenUpdate_thenThrowTeacherNotAvailableExceptionAndNotStartedTeacherDaoUpdate() {
         var teacher = new Teacher();
         teacher.setFirstName("name-1");
         teacher.setLastName("surname-1");
@@ -156,13 +159,14 @@ class TeacherServiceTest {
         lecture.setCourse(new Course("course1"));
         when(lectureDao.getByTeacherId(1)).thenReturn(List.of(lecture));
 
-        assertThrows(RuntimeException.class, () -> teacherService.update(teacher));
+        var exception = assertThrows(TeacherNotAvailableException.class, () -> teacherService.update(teacher));
 
         verify(teacherDao, never()).update(teacher);
+        assertEquals("The teacher has not all needed courses", exception.getMessage());
     }
 
     @Test
-    void givenInvalidTeacherAndTeacherHasAllNeededCourses_whenUpdate_thenThrowRuntimeExceptionAndNotStartedTeacherDaoUpdate() {
+    void givenInvalidTeacherAndTeacherHasAllNeededCourses_whenUpdate_thenThrowTeacherNotAvailableExceptionAndNotStartedTeacherDaoUpdate() {
         var teacher = new Teacher();
         teacher.setFirstName("name-1");
         teacher.setLastName("surname-1");
@@ -179,9 +183,10 @@ class TeacherServiceTest {
         lecture.setCourse(new Course("course1"));
         when(lectureDao.getByTeacherId(1)).thenReturn(List.of(lecture));
 
-        assertThrows(RuntimeException.class, () -> teacherService.update(teacher));
+        var exception = assertThrows(TeacherNotAvailableException.class, () -> teacherService.update(teacher));
 
         verify(teacherDao, never()).update(teacher);
+        assertEquals("The teacher's age is not in the acceptable range", exception.getMessage());
     }
 
     @Test
@@ -201,9 +206,10 @@ class TeacherServiceTest {
     void givenIdAndTeacherDaoReturnEmptyOptional_whenDelete_thenThrowEntityNotFoundExceptionAndNotStartedTeacherDaoDelete() {
         when(teacherDao.get(1)).thenReturn(Optional.empty());
 
-        assertThrows(EntityNotFoundException.class, () -> teacherService.delete(1));
+        var exception = assertThrows(EntityNotFoundException.class, () -> teacherService.delete(1));
 
         verify(teacherDao, never()).delete(1);
         verify(vacationDao, never()).delete(any(Integer.class));
+        assertEquals("Can not find teacher by id=1", exception.getMessage());
     }
 }

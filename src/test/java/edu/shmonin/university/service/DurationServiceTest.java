@@ -2,7 +2,8 @@ package edu.shmonin.university.service;
 
 import edu.shmonin.university.dao.DurationDao;
 import edu.shmonin.university.dao.LectureDao;
-import edu.shmonin.university.exception.ChainedEntityException;
+import edu.shmonin.university.exception.InvalidDurationException;
+import edu.shmonin.university.exception.RemoveException;
 import edu.shmonin.university.exception.EntityNotFoundException;
 import edu.shmonin.university.model.Duration;
 import edu.shmonin.university.model.Lecture;
@@ -64,12 +65,13 @@ class DurationServiceTest {
     }
 
     @Test
-    void givenInvalidDuration_whenCreate_thenThrowRuntimeExceptionAndNotStartedDurationDaoCreate() {
+    void givenInvalidDuration_whenCreate_thenThrowInvalidDurationExceptionAndNotStartedDurationDaoCreate() {
         var duration = new Duration(LocalTime.of(15, 0), LocalTime.of(14, 0));
 
-        assertThrows(RuntimeException.class, () -> durationService.create(duration));
+        var exception = assertThrows(InvalidDurationException.class, () -> durationService.create(duration));
 
         verify(durationDao, never()).create(duration);
+        assertEquals("Duration end time must be after start time", exception.getMessage());
     }
 
     @Test
@@ -82,12 +84,13 @@ class DurationServiceTest {
     }
 
     @Test
-    void givenInvalidDuration_whenUpdate_thenThrowRuntimeExceptionAndNotStartedDurationDaoUpdate() {
+    void givenInvalidDuration_whenUpdate_thenThrowInvalidDurationExceptionAndNotStartedDurationDaoUpdate() {
         var duration = new Duration(LocalTime.of(15, 0), LocalTime.of(14, 0));
 
-        assertThrows(RuntimeException.class, () -> durationService.update(duration));
+        var exception = assertThrows(InvalidDurationException.class, () -> durationService.update(duration));
 
         verify(durationDao, never()).update(duration);
+        assertEquals("Duration end time must be after start time, but got startTime=" + duration.getStartTime() + ", endTime=" + duration.getEndTime(), exception.getMessage());
     }
 
     @Test
@@ -101,21 +104,23 @@ class DurationServiceTest {
     }
 
     @Test
-    void givenIdAndNotEmptyLecturesInLectureDaoGetByDuration_whenDelete_thenThrowChainedEntityExceptionAndNotStartedDurationDaoDelete() {
+    void givenIdAndNotEmptyLecturesInLectureDaoGetByDuration_whenDelete_thenThrowRemoveExceptionAndNotStartedDurationDaoDelete() {
         when(lectureDao.getByDurationId(1)).thenReturn(List.of(new Lecture()));
         when(durationDao.get(1)).thenReturn(Optional.of(new Duration()));
 
-        assertThrows(ChainedEntityException.class, () -> durationService.delete(1));
+        var exception = assertThrows(RemoveException.class, () -> durationService.delete(1));
 
         verify(durationDao, never()).delete(1);
+        assertEquals("There are lectures with this duration", exception.getMessage());
     }
 
     @Test
     void givenIdAndEmptyOptionalInGet_whenDelete_thenThrowEntityNotFoundExceptionAndNotStartedDurationDaoDelete() {
         when(durationDao.get(1)).thenReturn(Optional.empty());
 
-        assertThrows(EntityNotFoundException.class, () -> durationService.delete(1));
+        var exception = assertThrows(EntityNotFoundException.class, () -> durationService.delete(1));
 
         verify(durationDao, never()).delete(1);
+        assertEquals("Can not find duration by id=1", exception.getMessage());
     }
 }

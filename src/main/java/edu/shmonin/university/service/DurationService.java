@@ -2,14 +2,14 @@ package edu.shmonin.university.service;
 
 import edu.shmonin.university.dao.DurationDao;
 import edu.shmonin.university.dao.LectureDao;
+import edu.shmonin.university.exception.RemoveException;
 import edu.shmonin.university.exception.EntityNotFoundException;
-import edu.shmonin.university.exception.ChainedEntityException;
+import edu.shmonin.university.exception.InvalidDurationException;
 import edu.shmonin.university.model.Duration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import java.time.DateTimeException;
 import java.util.List;
 
 @Service
@@ -27,11 +27,11 @@ public class DurationService implements EntityService<Duration> {
 
     @Override
     public Duration get(int durationId) {
+        log.debug("Get duration with id={}", durationId);
         var duration = durationDao.get(durationId);
         if (duration.isEmpty()) {
             throw new EntityNotFoundException("Can not find duration by id=" + durationId);
         }
-        log.debug("Get duration with id={}", durationId);
         return duration.get();
     }
 
@@ -43,32 +43,31 @@ public class DurationService implements EntityService<Duration> {
 
     @Override
     public void create(Duration duration) {
-        validateDuration(duration);
         log.debug("Create duration {}", duration);
+        validateDuration(duration);
         durationDao.create(duration);
     }
 
     @Override
     public void update(Duration duration) {
-        validateDuration(duration);
         log.debug("Update duration {}", duration);
+        validateDuration(duration);
         durationDao.update(duration);
     }
 
     @Override
     public void delete(int durationId) {
-        if (durationDao.get(durationId).isEmpty()) {
-            throw new EntityNotFoundException("Can not find duration by id=" + durationId);
-        }
+        log.debug("Delete duration by id={}", durationId);
+        this.get(durationId);
         if (!lectureDao.getByDurationId(durationId).isEmpty()) {
-            throw new ChainedEntityException("Can not delete duration by id=" + durationId + ", there are entities with this duration in the system");
+            throw new RemoveException("There are lectures with this duration");
         }
         durationDao.delete(durationId);
     }
 
     private void validateDuration(Duration duration) {
         if (!duration.getStartTime().isBefore(duration.getEndTime())) {
-            throw new DateTimeException("The duration " + duration + " did not pass the validity check. Duration end time must be after start time");
+            throw new InvalidDurationException("Duration end time must be after start time, but got startTime=" + duration.getStartTime() + ", endTime=" + duration.getEndTime());
         }
     }
 }

@@ -3,7 +3,7 @@ package edu.shmonin.university.service;
 import edu.shmonin.university.dao.CourseDao;
 import edu.shmonin.university.dao.LectureDao;
 import edu.shmonin.university.dao.TeacherDao;
-import edu.shmonin.university.exception.ChainedEntityException;
+import edu.shmonin.university.exception.RemoveException;
 import edu.shmonin.university.exception.EntityNotFoundException;
 import edu.shmonin.university.model.Course;
 import edu.shmonin.university.model.Lecture;
@@ -86,36 +86,39 @@ class CourseServiceTest {
     }
 
     @Test
-    void givenIdAndNotEmptyListOfCoursesInLectureDao_whenDelete_thenThrowChainedEntityExceptionAndNotStartedCourseDaoDelete() {
+    void givenIdAndNotEmptyListOfCoursesInLectureDao_whenDelete_thenThrowRemoveExceptionAndNotStartedCourseDaoDelete() {
         var lectures = new ArrayList<Lecture>();
         lectures.add(new Lecture());
         when(lectureDao.getByCourseId(1)).thenReturn(lectures);
         when(courseDao.get(1)).thenReturn(Optional.of(new Course()));
 
-        assertThrows(ChainedEntityException.class, () -> courseService.delete(1));
+        var exception = assertThrows(RemoveException.class, () -> courseService.delete(1));
 
         verify(courseDao, never()).delete(1);
+        assertEquals("There are lectures with this course", exception.getMessage());
     }
 
     @Test
-    void givenIdAndNotEmptyListOfCoursesInTeacherDao_whenDelete_thenThrownChainedEntityExceptionAndNotStartedCourseDaoDelete() {
+    void givenIdAndNotEmptyListOfCoursesInTeacherDao_whenDelete_thenThrownRemoveExceptionAndNotStartedCourseDaoDelete() {
         var teachers = new ArrayList<Teacher>();
         teachers.add(new Teacher());
         when(teacherDao.getByCourseId(1)).thenReturn(teachers);
         when(courseDao.get(1)).thenReturn(Optional.of(new Course()));
 
-        assertThrows(ChainedEntityException.class, () -> courseService.delete(1));
+        var exception = assertThrows(RemoveException.class, () -> courseService.delete(1));
 
         verify(courseDao, never()).delete(1);
+        assertEquals("There are teachers with this course", exception.getMessage());
     }
 
     @Test
     void givenIdAndEmptyOptionalInGet_whenDelete_thenThrownEntityNotFoundExceptionAndNotStartedCourseDaoDelete() {
         when(courseDao.get(1)).thenReturn(Optional.empty());
 
-        assertThrows(EntityNotFoundException.class, () -> courseService.delete(1));
+        var exception = assertThrows(EntityNotFoundException.class, () -> courseService.delete(1));
 
         verify(courseDao, never()).delete(1);
+        assertEquals("Can not find course by id=1", exception.getMessage());
     }
 
     @Test

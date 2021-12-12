@@ -1,6 +1,7 @@
 package edu.shmonin.university.service;
 
 import edu.shmonin.university.dao.VacationDao;
+import edu.shmonin.university.exception.DateNotAvailableException;
 import edu.shmonin.university.exception.EntityNotFoundException;
 import edu.shmonin.university.model.Vacation;
 import org.junit.jupiter.api.Test;
@@ -62,23 +63,25 @@ class VacationServiceTest {
     }
 
     @Test
-    void givenInvalidVacation_whenCreate_thenThrowRuntimeExceptionAndNotStartedVacationDaoCreate() {
+    void givenInvalidVacation_whenCreate_thenThrowDateNotAvailableExceptionAndNotStartedVacationDaoCreate() {
         var vacation = new Vacation(LocalDate.now().plusDays(1),
                 LocalDate.now().minusMonths(1));
 
-        assertThrows(RuntimeException.class, () -> vacationService.create(vacation));
+        var exception = assertThrows(DateNotAvailableException.class, () -> vacationService.create(vacation));
 
         verify(vacationDao, never()).create(vacation);
+        assertEquals("Vacation end date mast be after start date", exception.getMessage());
     }
 
     @Test
-    void givenValidOutOfDateVacation_whenCreate_thenThrowRuntimeExceptionAndNotStartedVacationDaoCreate() {
+    void givenValidOutOfDateVacation_whenCreate_thenThrowDateNotAvailableExceptionAndNotStartedVacationDaoCreate() {
         var vacation = new Vacation(LocalDate.now().minusDays(1),
                 LocalDate.now().plusMonths(1));
 
-        assertThrows(RuntimeException.class, () -> vacationService.create(vacation));
+        var exception = assertThrows(DateNotAvailableException.class, () -> vacationService.create(vacation));
 
         verify(vacationDao, never()).create(vacation);
+        assertEquals("Vacation start date mast be after current date", exception.getMessage());
     }
 
     @Test
@@ -92,23 +95,25 @@ class VacationServiceTest {
     }
 
     @Test
-    void givenInvalidVacation_whenUpdate_thenThrowRuntimeExceptionAndNotStartedVacationDaoUpdate() {
+    void givenInvalidVacation_whenUpdate_thenThrowDateNotAvailableExceptionAndNotStartedVacationDaoUpdate() {
         var vacation = new Vacation(LocalDate.now().plusDays(1),
                 LocalDate.now().minusMonths(1));
 
-        assertThrows(RuntimeException.class, () -> vacationService.update(vacation));
+        var exception = assertThrows(DateNotAvailableException.class, () -> vacationService.update(vacation));
 
         verify(vacationDao, never()).update(vacation);
+        assertEquals("Vacation end date mast be after start date", exception.getMessage());
     }
 
     @Test
-    void givenValidOutOfDateVacation_whenUpdate_thenThrowRuntimeExceptionAndNotStartedVacationDaoUpdate() {
+    void givenValidOutOfDateVacation_whenUpdate_thenThrowDateNotAvailableExceptionAndNotStartedVacationDaoUpdate() {
         var vacation = new Vacation(LocalDate.now().minusDays(1),
                 LocalDate.now().plusMonths(1));
 
-        assertThrows(RuntimeException.class, () -> vacationService.update(vacation));
+        var exception = assertThrows(DateNotAvailableException.class, () -> vacationService.update(vacation));
 
         verify(vacationDao, never()).update(vacation);
+        assertEquals("Vacation start date mast be after current date", exception.getMessage());
     }
 
     @Test
@@ -124,9 +129,10 @@ class VacationServiceTest {
     void givenIdAndVacationDaoGetReturnEmptyOptional_whenDelete_thenThrowEntityNotFoundExceptionAndStartedVacationDaoDelete() {
         when(vacationDao.get(1)).thenReturn(Optional.empty());
 
-        assertThrows(EntityNotFoundException.class, () -> vacationService.delete(1));
+        var exception = assertThrows(EntityNotFoundException.class, () -> vacationService.delete(1));
 
         verify(vacationDao, never()).delete(1);
+        assertEquals("Can not find vacation by id=1", exception.getMessage());
     }
 
     @Test

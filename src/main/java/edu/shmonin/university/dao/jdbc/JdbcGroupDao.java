@@ -39,7 +39,7 @@ public class JdbcGroupDao implements GroupDao {
     @Override
     public Optional<Group> get(int id) {
         try {
-            return Optional.ofNullable(jdbcTemplate.queryForObject(GET_QUERY, groupRowMapper, id));
+            return Optional.of(jdbcTemplate.queryForObject(GET_QUERY, groupRowMapper, id));
         } catch (RuntimeException e) {
             return Optional.empty();
         }

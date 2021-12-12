@@ -3,8 +3,9 @@ package edu.shmonin.university.service;
 import edu.shmonin.university.dao.LectureDao;
 import edu.shmonin.university.dao.TeacherDao;
 import edu.shmonin.university.dao.VacationDao;
-import edu.shmonin.university.exception.ChainedEntityException;
 import edu.shmonin.university.exception.EntityNotFoundException;
+import edu.shmonin.university.exception.RemoveException;
+import edu.shmonin.university.exception.TeacherNotAvailableException;
 import edu.shmonin.university.model.Lecture;
 import edu.shmonin.university.model.Teacher;
 import org.slf4j.Logger;
@@ -12,7 +13,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.List;
@@ -41,12 +41,9 @@ public class TeacherService implements EntityService<Teacher> {
 
     @Override
     public Teacher get(int teacherId) {
-        var teacher = teacherDao.get(teacherId);
-        if (teacher.isEmpty()) {
-            throw new EntityNotFoundException("Can not find teacher by id=" + teacherId);
-        }
         log.debug("Get teacher with id={}", teacherId);
-        return teacher.get();
+        return teacherDao.get(teacherId)
+                .orElseThrow(() -> new EntityNotFoundException("Can not find teacher by id=" + teacherId));
     }
 
     @Override
@@ -57,28 +54,26 @@ public class TeacherService implements EntityService<Teacher> {
 
     @Override
     public void create(Teacher teacher) {
-        validateAgeOfTeacher(teacher);
         log.debug("Create teacher {}", teacher);
+        validateAgeOfTeacher(teacher);
         teacherDao.create(teacher);
     }
 
     @Override
     public void update(Teacher teacher) {
+        log.debug("Update teacher {}", teacher);
         validateTeachersCourses(teacher);
         validateAgeOfTeacher(teacher);
-        log.debug("Update teacher {}", teacher);
         teacherDao.update(teacher);
     }
 
     @Override
     public void delete(int teacherId) {
-        if (teacherDao.get(teacherId).isEmpty()) {
-            throw new EntityNotFoundException("Can not find teacher by id=" + teacherId);
-        }
-        if (!lectureDao.getByTeacherId(teacherId).isEmpty()) {
-            throw new ChainedEntityException("Can not delete teacher by id=" + teacherId + ", there are entities with this teacher in the system");
-        }
         log.debug("Delete teacher by id={}", teacherId);
+        this.get(teacherId);
+        if (!lectureDao.getByTeacherId(teacherId).isEmpty()) {
+            throw new RemoveException("There are lectures with this teacher");
+        }
         vacationDao.getByTeacherId(teacherId).forEach(p -> vacationDao.delete(p.getId()));
         teacherDao.delete(teacherId);
 
@@ -88,14 +83,14 @@ public class TeacherService implements EntityService<Teacher> {
         var courses = lectureDao.getByTeacherId(teacher.getId())
                 .stream().map(Lecture::getCourse).collect(Collectors.toSet());
         if (!teacher.getCourses().containsAll(courses)) {
-            throw new ChainedEntityException("The teacher " + teacher + " did not pass the validity check. The teacher has not all needed courses");
+            throw new TeacherNotAvailableException("The teacher has not all needed courses");
         }
     }
 
     private void validateAgeOfTeacher(Teacher teacher) {
         var age = Period.between(teacher.getBirthDate(), LocalDate.now()).getYears();
         if (age < minAge || age >= maxAge) {
-            throw new DateTimeException("The teacher " + teacher + " did not pass the validity check. The teacher's age is not in the acceptable range");
+            throw new TeacherNotAvailableException("The teacher's age is not in the acceptable range");
         }
     }
 }

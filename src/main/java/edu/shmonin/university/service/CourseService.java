@@ -4,7 +4,7 @@ import edu.shmonin.university.dao.CourseDao;
 import edu.shmonin.university.dao.LectureDao;
 import edu.shmonin.university.dao.TeacherDao;
 import edu.shmonin.university.exception.EntityNotFoundException;
-import edu.shmonin.university.exception.ChainedEntityException;
+import edu.shmonin.university.exception.RemoveException;
 import edu.shmonin.university.model.Course;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,12 +29,9 @@ public class CourseService implements EntityService<Course> {
 
     @Override
     public Course get(int courseId) {
-        var course = courseDao.get(courseId);
-        if (course.isEmpty()) {
-            throw new EntityNotFoundException("Can not find course by id=" + courseId);
-        }
         log.debug("Get course with id={}", courseId);
-        return course.get();
+        return courseDao.get(courseId)
+                .orElseThrow(() -> new EntityNotFoundException("Can not find course by id=" + courseId));
     }
 
     @Override
@@ -57,14 +54,13 @@ public class CourseService implements EntityService<Course> {
 
     @Override
     public void delete(int courseId) {
-        if (courseDao.get(courseId).isEmpty()) {
-            throw new EntityNotFoundException("Can not find course by id=" + courseId);
-        }
+        log.debug("Delete course by id={}", courseId);
+        this.get(courseId);
         if (!lectureDao.getByCourseId(courseId).isEmpty()) {
-            throw new ChainedEntityException("Can not delete course by id=" + courseId + ", there are entities with this course in the system");
+            throw new RemoveException("There are lectures with this course");
         }
         if (!teacherDao.getByCourseId(courseId).isEmpty()) {
-            throw new ChainedEntityException("Can not delete course by id=" + courseId + ", there are entities with this course in the system");
+            throw new RemoveException("There are teachers with this course");
         }
         courseDao.delete(courseId);
     }

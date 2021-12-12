@@ -38,7 +38,7 @@ public class JdbcTeacherDao implements TeacherDao {
     @Override
     public Optional<Teacher> get(int id) {
         try {
-            return Optional.ofNullable(jdbcTemplate.queryForObject(GET_QUERY, teacherRowMapper, id));
+            return Optional.of(jdbcTemplate.queryForObject(GET_QUERY, teacherRowMapper, id));
         } catch (RuntimeException e) {
             return Optional.empty();
         }

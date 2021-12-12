@@ -39,7 +39,7 @@ public class JdbcVacationDao implements VacationDao {
     @Override
     public Optional<Vacation> get(int id) {
         try {
-            return Optional.ofNullable(jdbcTemplate.queryForObject(GET_QUERY, vacationRowMapper, id));
+            return Optional.of(jdbcTemplate.queryForObject(GET_QUERY, vacationRowMapper, id));
         } catch (RuntimeException e) {
             return Optional.empty();
         }
@@ -79,9 +79,9 @@ public class JdbcVacationDao implements VacationDao {
     }
 
     @Override
-    public Optional<Vacation> getByTeacherAndDate(int teacherId, LocalDate localDate) {
+    public Optional<Vacation> getByTeacherIdAndDate(int teacherId, LocalDate date) {
         try {
-            return Optional.ofNullable(jdbcTemplate.queryForObject(GET_TEACHER_DATE_VACATIONS_QUERY, vacationRowMapper, teacherId, localDate, localDate));
+            return Optional.of(jdbcTemplate.queryForObject(GET_TEACHER_DATE_VACATIONS_QUERY, vacationRowMapper, teacherId, date, date));
         } catch (RuntimeException e) {
             return Optional.empty();
         }

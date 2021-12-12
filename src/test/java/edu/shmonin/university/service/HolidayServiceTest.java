@@ -1,6 +1,7 @@
 package edu.shmonin.university.service;
 
 import edu.shmonin.university.dao.HolidayDao;
+import edu.shmonin.university.exception.DateNotAvailableException;
 import edu.shmonin.university.exception.EntityNotFoundException;
 import edu.shmonin.university.model.Holiday;
 import org.junit.jupiter.api.Test;
@@ -58,12 +59,13 @@ class HolidayServiceTest {
     }
 
     @Test
-    void givenNotValidHoliday_whenCreate_thenThrownRuntimeExceptionAndNotStartedHolidayDaoCreate() {
+    void givenNotValidHoliday_whenCreate_thenThrownDateNotAvailableExceptionAndNotStartedHolidayDaoCreate() {
         var holiday = new Holiday("holiday", LocalDate.now().minus(1, ChronoUnit.DAYS));
 
-        assertThrows(RuntimeException.class, () -> holidayService.create(holiday));
+        var exception = assertThrows(DateNotAvailableException.class, () -> holidayService.create(holiday));
 
         verify(holidayDao, never()).create(holiday);
+        assertEquals("The date can not be earlier than the current time", exception.getMessage());
     }
 
     @Test
@@ -75,12 +77,13 @@ class HolidayServiceTest {
     }
 
     @Test
-    void givenNotValidHoliday_whenUpdate_thenThrowRuntimeExceptionAndNotStartedHolidayUpdate() {
+    void givenNotValidHoliday_whenUpdate_thenThrowDateNotAvailableExceptionAndNotStartedHolidayUpdate() {
         var holiday = new Holiday("holiday", LocalDate.now().minus(1, ChronoUnit.DAYS));
 
-        assertThrows(RuntimeException.class, () -> holidayService.update(holiday));
+        var exception = assertThrows(DateNotAvailableException.class, () -> holidayService.update(holiday));
 
         verify(holidayDao, never()).update(holiday);
+        assertEquals("The date can not be earlier than the current time", exception.getMessage());
     }
 
     @Test
@@ -96,8 +99,9 @@ class HolidayServiceTest {
     void givenIdAndHolidayDaoGetReturnEmptyOptional_whenDelete_thenThrowEntityNotFoundExceptionAndNotStartedHolidayDaoDelete() {
         when(holidayDao.get(1)).thenReturn(Optional.empty());
 
-        assertThrows(EntityNotFoundException.class, () -> holidayService.delete(1));
+        var exception = assertThrows(EntityNotFoundException.class, () -> holidayService.delete(1));
 
         verify(holidayDao, never()).delete(1);
+        assertEquals("Can not find holiday by id=1", exception.getMessage());
     }
 }

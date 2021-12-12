@@ -9,5 +9,5 @@ import java.util.Optional;
 public interface VacationDao extends Dao<Vacation> {
     List<Vacation> getByTeacherId(int teacherId);
 
-    Optional<Vacation> getByTeacherAndDate(int teacherId, LocalDate localDate);
+    Optional<Vacation> getByTeacherIdAndDate(int teacherId, LocalDate date);
 }

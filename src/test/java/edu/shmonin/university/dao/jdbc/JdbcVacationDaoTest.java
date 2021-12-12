@@ -98,7 +98,7 @@ class JdbcVacationDaoTest {
         var date = LocalDate.of(2021, 2, 1);
         var expected = Optional.of(new Vacation(LocalDate.of(2021, 1, 1), date));
 
-        var actual = jdbcVacationDao.getByTeacherAndDate(1, date);
+        var actual = jdbcVacationDao.getByTeacherIdAndDate(1, date);
 
         assertEquals(expected, actual);
     }
