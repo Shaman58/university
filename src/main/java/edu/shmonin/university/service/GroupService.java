@@ -3,7 +3,7 @@ package edu.shmonin.university.service;
 import edu.shmonin.university.dao.GroupDao;
 import edu.shmonin.university.dao.LectureDao;
 import edu.shmonin.university.exception.EntityNotFoundException;
-import edu.shmonin.university.exception.RemoveException;
+import edu.shmonin.university.exception.ForeignReferenceException;
 import edu.shmonin.university.model.Group;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,10 +53,10 @@ public class GroupService implements EntityService<Group> {
     public void delete(int groupId) {
         log.debug("Delete group by id={}", groupId);
         if (!this.get(groupId).getStudents().isEmpty()) {
-            throw new RemoveException("There are students with this group");
+            throw new ForeignReferenceException("There are students with this group");
         }
         if (!lectureDao.getByGroupId(groupId).isEmpty()) {
-            throw new RemoveException("There are lectures with this group");
+            throw new ForeignReferenceException("There are lectures with this group");
         }
         groupDao.delete(groupId);
     }

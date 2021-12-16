@@ -4,7 +4,7 @@ import edu.shmonin.university.dao.AudienceDao;
 import edu.shmonin.university.dao.LectureDao;
 import edu.shmonin.university.exception.InvalidCapacityException;
 import edu.shmonin.university.exception.InvalidRoomNumberException;
-import edu.shmonin.university.exception.RemoveException;
+import edu.shmonin.university.exception.ForeignReferenceException;
 import edu.shmonin.university.exception.EntityNotFoundException;
 import edu.shmonin.university.model.Audience;
 import edu.shmonin.university.model.Lecture;
@@ -130,13 +130,13 @@ class AudienceServiceTest {
     }
 
     @Test
-    void givenIdAndNotEmptyListLecturesAndAudienceDaoGetReturnAudience_whenDelete_thenThrowRemoveExceptionAndNotStartedDaoDelete() {
+    void givenIdAndNotEmptyListLecturesAndAudienceDaoGetReturnAudience_whenDelete_thenThrowForeignReferenceExceptionAndNotStartedDaoDelete() {
         var lectures = new ArrayList<Lecture>();
         lectures.add(new Lecture());
         when(lectureDao.getByAudienceId(1)).thenReturn(lectures);
         when(audienceDao.get(1)).thenReturn(Optional.of(new Audience()));
 
-        var exception = assertThrows(RemoveException.class, () -> audienceService.delete(1));
+        var exception = assertThrows(ForeignReferenceException.class, () -> audienceService.delete(1));
 
         verify(audienceDao, never()).delete(1);
         assertEquals("There are lectures with this audience", exception.getMessage());

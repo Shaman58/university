@@ -4,7 +4,7 @@ import edu.shmonin.university.dao.LectureDao;
 import edu.shmonin.university.dao.TeacherDao;
 import edu.shmonin.university.dao.VacationDao;
 import edu.shmonin.university.exception.EntityNotFoundException;
-import edu.shmonin.university.exception.RemoveException;
+import edu.shmonin.university.exception.ForeignReferenceException;
 import edu.shmonin.university.exception.TeacherNotAvailableException;
 import edu.shmonin.university.model.Lecture;
 import edu.shmonin.university.model.Teacher;
@@ -72,7 +72,7 @@ public class TeacherService implements EntityService<Teacher> {
         log.debug("Delete teacher by id={}", teacherId);
         this.get(teacherId);
         if (!lectureDao.getByTeacherId(teacherId).isEmpty()) {
-            throw new RemoveException("There are lectures with this teacher");
+            throw new ForeignReferenceException("There are lectures with this teacher");
         }
         vacationDao.getByTeacherId(teacherId).forEach(p -> vacationDao.delete(p.getId()));
         teacherDao.delete(teacherId);

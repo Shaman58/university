@@ -3,7 +3,7 @@ package edu.shmonin.university.service;
 import edu.shmonin.university.dao.DurationDao;
 import edu.shmonin.university.dao.LectureDao;
 import edu.shmonin.university.exception.InvalidDurationException;
-import edu.shmonin.university.exception.RemoveException;
+import edu.shmonin.university.exception.ForeignReferenceException;
 import edu.shmonin.university.exception.EntityNotFoundException;
 import edu.shmonin.university.model.Duration;
 import edu.shmonin.university.model.Lecture;
@@ -71,7 +71,7 @@ class DurationServiceTest {
         var exception = assertThrows(InvalidDurationException.class, () -> durationService.create(duration));
 
         verify(durationDao, never()).create(duration);
-        assertEquals("Duration end time must be after start time", exception.getMessage());
+        assertEquals("Duration end time must be after start time, but got startTime=" + duration.getStartTime() + ", endTime=" + duration.getEndTime(), exception.getMessage());
     }
 
     @Test
@@ -104,11 +104,11 @@ class DurationServiceTest {
     }
 
     @Test
-    void givenIdAndNotEmptyLecturesInLectureDaoGetByDuration_whenDelete_thenThrowRemoveExceptionAndNotStartedDurationDaoDelete() {
+    void givenIdAndNotEmptyLecturesInLectureDaoGetByDuration_whenDelete_thenThrowForeignReferenceExceptionAndNotStartedDurationDaoDelete() {
         when(lectureDao.getByDurationId(1)).thenReturn(List.of(new Lecture()));
         when(durationDao.get(1)).thenReturn(Optional.of(new Duration()));
 
-        var exception = assertThrows(RemoveException.class, () -> durationService.delete(1));
+        var exception = assertThrows(ForeignReferenceException.class, () -> durationService.delete(1));
 
         verify(durationDao, never()).delete(1);
         assertEquals("There are lectures with this duration", exception.getMessage());

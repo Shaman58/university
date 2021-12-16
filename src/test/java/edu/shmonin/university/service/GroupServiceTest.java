@@ -3,7 +3,7 @@ package edu.shmonin.university.service;
 import edu.shmonin.university.dao.GroupDao;
 import edu.shmonin.university.dao.LectureDao;
 import edu.shmonin.university.exception.EntityNotFoundException;
-import edu.shmonin.university.exception.RemoveException;
+import edu.shmonin.university.exception.ForeignReferenceException;
 import edu.shmonin.university.model.Group;
 import edu.shmonin.university.model.Lecture;
 import edu.shmonin.university.model.Student;
@@ -84,25 +84,25 @@ class GroupServiceTest {
     }
 
     @Test
-    void givenIdAndNotEmptyListOfGroupStudentsAndGroupDaoGetReturnNotEmptyOptional_whenDelete_thenThrowRemoveExceptionNotStartedGroupDaoDelete() {
+    void givenIdAndNotEmptyListOfGroupStudentsAndGroupDaoGetReturnNotEmptyOptional_whenDelete_thenThrowForeignReferenceExceptionNotStartedGroupDaoDelete() {
         var group = new Group("group");
         group.setStudents(List.of(new Student()));
         when(groupDao.get(1)).thenReturn(Optional.of(group));
 
-        var exception = assertThrows(RemoveException.class, () -> groupService.delete(1));
+        var exception = assertThrows(ForeignReferenceException.class, () -> groupService.delete(1));
 
         verify(groupDao, never()).delete(1);
         assertEquals("There are students with this group", exception.getMessage());
     }
 
     @Test
-    void givenIdAndNotEmptyListOfGroupLecturesAndGroupStudentsAndGroupDaoGetReturnNotEmptyOptional_whenDelete_thenThrowRemoveExceptionAndNotStartedGroupDaoDelete() {
+    void givenIdAndNotEmptyListOfGroupLecturesAndGroupStudentsAndGroupDaoGetReturnNotEmptyOptional_whenDelete_thenThrowForeignReferenceExceptionAndNotStartedGroupDaoDelete() {
         var group = new Group("group");
         group.setStudents(new ArrayList<>());
         when(lectureDao.getByGroupId(1)).thenReturn(List.of(new Lecture()));
         when(groupDao.get(1)).thenReturn(Optional.of(group));
 
-        var exception = assertThrows(RemoveException.class, () -> groupService.delete(1));
+        var exception = assertThrows(ForeignReferenceException.class, () -> groupService.delete(1));
 
         verify(groupDao, never()).delete(1);
         assertEquals("There are lectures with this group", exception.getMessage());

@@ -2,7 +2,7 @@ package edu.shmonin.university.service;
 
 import edu.shmonin.university.dao.DurationDao;
 import edu.shmonin.university.dao.LectureDao;
-import edu.shmonin.university.exception.RemoveException;
+import edu.shmonin.university.exception.ForeignReferenceException;
 import edu.shmonin.university.exception.EntityNotFoundException;
 import edu.shmonin.university.exception.InvalidDurationException;
 import edu.shmonin.university.model.Duration;
@@ -60,7 +60,7 @@ public class DurationService implements EntityService<Duration> {
         log.debug("Delete duration by id={}", durationId);
         this.get(durationId);
         if (!lectureDao.getByDurationId(durationId).isEmpty()) {
-            throw new RemoveException("There are lectures with this duration");
+            throw new ForeignReferenceException("There are lectures with this duration");
         }
         durationDao.delete(durationId);
     }

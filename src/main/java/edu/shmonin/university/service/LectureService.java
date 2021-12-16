@@ -82,13 +82,13 @@ public class LectureService implements EntityService<Lecture> {
 
     private void validateDateOfLecture(Lecture lecture) {
         if (lecture.getDate().isBefore(LocalDate.now())) {
-            throw new DateNotAvailableException("Lecture's date can not be earlier than the current time");
+            throw new DateNotAvailableException("Lecture's date " + lecture.getDate() + " can not be earlier than the current time");
         }
     }
 
     private void validateVacationsForLecture(Lecture lecture) {
         if (vacationDao.getByTeacherIdAndDate(lecture.getTeacher().getId(), lecture.getDate()).isPresent()) {
-            throw new TeacherNotAvailableException("Lecture's date is on the vacation of teacher");
+            throw new TeacherNotAvailableException("Teacher is on vacation on date: " + lecture.getDate());
         }
     }
 
@@ -99,35 +99,33 @@ public class LectureService implements EntityService<Lecture> {
     }
 
     private void validateTeacherCourses(Lecture lecture) {
-        if (lecture.getTeacher().getCourses().stream().noneMatch(lecture.getCourse()::equals)) {
-            throw new TeacherNotAvailableException("The teacher doesn't have the right course");
+        if (lecture.getTeacher().getCourses().contains(lecture.getCourse())) {
+            throw new TeacherNotAvailableException("The teacher " + lecture.getTeacher().getFirstName() + " " +
+                                                   lecture.getTeacher().getLastName() +
+                                                   " doesn't have the course: " + lecture.getCourse().getName());
         }
     }
 
     private void validateMaxGroups(Lecture lecture) {
         if (lecture.getGroups().size() > maxGroups) {
-            throw new GroupLimitReachedException("Group limit reached");
+            throw new GroupLimitReachedException("The lecture can not contain more then " + maxGroups + " groups");
         }
     }
 
     private void validateAudienceBusyness(Lecture lecture) {
-        if (lectureDao.getByAudienceId(lecture.getAudience().getId()).stream().
-                anyMatch(p -> p.getDate().isEqual(lecture.getDate()) &&
-                              p.getDuration().equals(lecture.getDuration()))) {
+        if (lectureDao.getByAudienceIdAndDateAndDurationId(lecture.getAudience().getId(), lecture.getDate(), lecture.getDuration().getId()).isPresent()) {
             throw new AudienceNotAvailableException("Audience is busy on the lecture's date");
         }
     }
 
     private void validateTeacherBusyness(Lecture lecture) {
-        if (lectureDao.getByTeacherId(lecture.getTeacher().getId()).stream().
-                anyMatch(p -> p.getDate().isEqual(lecture.getDate()) &&
-                              p.getDuration().equals(lecture.getDuration()))) {
+        if (lectureDao.getByTeacherIdAndDateAndDurationId(lecture.getTeacher().getId(), lecture.getDate(), lecture.getDuration().getId()).isPresent()) {
             throw new TeacherNotAvailableException("Teacher is busy on the lecture's date");
         }
     }
 
     private void validateGroupsBusyness(Lecture lecture) {
-        if (lecture.getGroups().stream().anyMatch((p -> lectureDao.getByGroupIdAndDateAndDuration(p.getId(), lecture.getDate(), lecture.getDuration().getId()).isPresent()))) {
+        if (lecture.getGroups().stream().anyMatch((p -> lectureDao.getByGroupIdAndDateAndDurationId(p.getId(), lecture.getDate(), lecture.getDuration().getId()).isPresent()))) {
             throw new GroupNotAvailableException("One or more groups are busy on the lecture's date");
         }
     }
@@ -135,7 +133,9 @@ public class LectureService implements EntityService<Lecture> {
     private void validateAudienceStudentCapacity(Lecture lecture) {
         lecture.getGroups().forEach(p -> p.setStudents(studentDao.getByGroupId(p.getId())));
         if (lecture.getGroups().stream().mapToInt(g -> g.getStudents().size()).sum() > lecture.getAudience().getCapacity()) {
-            throw new InvalidCapacityException("Audience can not accommodate all students");
+            throw new InvalidCapacityException("Audience " + lecture.getAudience().getRoomNumber() +
+                                               "with capacity " + lecture.getAudience().getCapacity() +
+                                               " can not accommodate all students");
         }
     }
 }

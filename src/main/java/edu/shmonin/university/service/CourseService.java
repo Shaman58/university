@@ -4,7 +4,7 @@ import edu.shmonin.university.dao.CourseDao;
 import edu.shmonin.university.dao.LectureDao;
 import edu.shmonin.university.dao.TeacherDao;
 import edu.shmonin.university.exception.EntityNotFoundException;
-import edu.shmonin.university.exception.RemoveException;
+import edu.shmonin.university.exception.ForeignReferenceException;
 import edu.shmonin.university.model.Course;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,10 +57,10 @@ public class CourseService implements EntityService<Course> {
         log.debug("Delete course by id={}", courseId);
         this.get(courseId);
         if (!lectureDao.getByCourseId(courseId).isEmpty()) {
-            throw new RemoveException("There are lectures with this course");
+            throw new ForeignReferenceException("There are lectures with this course");
         }
         if (!teacherDao.getByCourseId(courseId).isEmpty()) {
-            throw new RemoveException("There are teachers with this course");
+            throw new ForeignReferenceException("There are teachers with this course");
         }
         courseDao.delete(courseId);
     }

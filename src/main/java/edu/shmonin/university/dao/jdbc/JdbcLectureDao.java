@@ -29,7 +29,9 @@ public class JdbcLectureDao implements LectureDao {
     private static final String GET_ALL_BY_DURATION = "SELECT * FROM lectures WHERE duration_id=?";
     private static final String GET_ALL_BY_GROUP = "SELECT id,date,course_id,audience_id,duration_id,teacher_id FROM lectures INNER JOIN lecture_groups ON lectures.id = lecture_groups.lecture_id WHERE group_id=?";
     private static final String GET_ALL_BY_TEACHER = "SELECT * FROM lectures WHERE teacher_id=?";
-    private static final String GET_ALL_BY_GROUP_DATE_DURATION = "SELECT id,date,course_id,audience_id,duration_id,teacher_id FROM lectures INNER JOIN lecture_groups ON lectures.id = lecture_groups.lecture_id WHERE group_id=? AND date=? AND duration_id=?";
+    private static final String GET_BY_GROUP_DATE_DURATION = "SELECT id,date,course_id,audience_id,duration_id,teacher_id FROM lectures INNER JOIN lecture_groups ON lectures.id = lecture_groups.lecture_id WHERE group_id=? AND date=? AND duration_id=?";
+    private static final String GET_BY_TEACHER_DATE_DURATION = "SELECT id,date,course_id,audience_id,duration_id,teacher_id FROM lectures  WHERE teacher_id=? AND date=? AND duration_id=?";
+    private static final String GET_BY_AUDIENCE_DATE_DURATION = "SELECT id,date,course_id,audience_id,duration_id,teacher_id FROM lectures  WHERE teacher_id=? AND date=? AND duration_id=?";
 
     private final JdbcTemplate jdbcTemplate;
     private final LectureRowMapper lectureRowMapper;
@@ -114,9 +116,27 @@ public class JdbcLectureDao implements LectureDao {
     }
 
     @Override
-    public Optional<Lecture> getByGroupIdAndDateAndDuration(int groupId, LocalDate date, int durationId) {
+    public Optional<Lecture> getByGroupIdAndDateAndDurationId(int groupId, LocalDate date, int durationId) {
         try {
-            return Optional.of(jdbcTemplate.queryForObject(GET_ALL_BY_GROUP_DATE_DURATION, lectureRowMapper, groupId, date, durationId));
+            return Optional.of(jdbcTemplate.queryForObject(GET_BY_GROUP_DATE_DURATION, lectureRowMapper, groupId, date, durationId));
+        } catch (RuntimeException e) {
+            return Optional.empty();
+        }
+    }
+
+    @Override
+    public Optional<Lecture> getByTeacherIdAndDateAndDurationId(int teacherId, LocalDate date, int durationId) {
+        try {
+            return Optional.of(jdbcTemplate.queryForObject(GET_BY_TEACHER_DATE_DURATION, lectureRowMapper, teacherId, date, durationId));
+        } catch (RuntimeException e) {
+            return Optional.empty();
+        }
+    }
+
+    @Override
+    public Optional<Lecture> getByAudienceIdAndDateAndDurationId(int audienceId, LocalDate date, int durationId) {
+        try {
+            return Optional.of(jdbcTemplate.queryForObject(GET_BY_AUDIENCE_DATE_DURATION, lectureRowMapper, audienceId, date, durationId));
         } catch (RuntimeException e) {
             return Optional.empty();
         }

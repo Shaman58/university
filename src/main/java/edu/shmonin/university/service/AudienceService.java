@@ -3,7 +3,7 @@ package edu.shmonin.university.service;
 import edu.shmonin.university.dao.AudienceDao;
 import edu.shmonin.university.dao.LectureDao;
 import edu.shmonin.university.exception.InvalidCapacityException;
-import edu.shmonin.university.exception.RemoveException;
+import edu.shmonin.university.exception.ForeignReferenceException;
 import edu.shmonin.university.exception.EntityNotFoundException;
 import edu.shmonin.university.exception.InvalidRoomNumberException;
 import edu.shmonin.university.model.Audience;
@@ -66,7 +66,7 @@ public class AudienceService implements EntityService<Audience> {
         log.debug("Delete audience by id={}", audienceId);
         this.get(audienceId);
         if (!lectureDao.getByAudienceId(audienceId).isEmpty()) {
-            throw new RemoveException("There are lectures with this audience");
+            throw new ForeignReferenceException("There are lectures with this audience");
         }
         audienceDao.delete(audienceId);
     }

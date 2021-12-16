@@ -371,31 +371,89 @@ class JdbcLectureDaoTest {
     }
 
     @Test
-    void givenGroupIdAndDateAndDurationId_whenGetByGroupDateDuration_thenReturnOptionalLectureWithCurrentGroupDateDuration() {
-        var teacher1 = new Teacher();
-        teacher1.setFirstName("name-1");
-        teacher1.setLastName("surname-1");
-        teacher1.setEmail("email-1");
-        teacher1.setCountry("country-1");
-        teacher1.setGender(Gender.MALE);
-        teacher1.setPhone("phone-1");
-        teacher1.setAddress("address-1");
-        teacher1.setBirthDate(LocalDate.of(1980, 1, 1));
-        teacher1.setScientificDegree(ScientificDegree.DOCTOR);
-        teacher1.setCourses(List.of(new Course("course-1"), new Course("course-2")));
-        teacher1.setVacations(List.of(new Vacation(LocalDate.of(2021, 1, 1), LocalDate.of(2021, 2, 1)),
+    void givenGroupIdAndDateAndDurationId_whenGetByGroupIdAndDateAndDurationId_thenReturnOptionalLectureWithCurrentGroupDateDuration() {
+        var teacher = new Teacher();
+        teacher.setFirstName("name-1");
+        teacher.setLastName("surname-1");
+        teacher.setEmail("email-1");
+        teacher.setCountry("country-1");
+        teacher.setGender(Gender.MALE);
+        teacher.setPhone("phone-1");
+        teacher.setAddress("address-1");
+        teacher.setBirthDate(LocalDate.of(1980, 1, 1));
+        teacher.setScientificDegree(ScientificDegree.DOCTOR);
+        teacher.setCourses(List.of(new Course("course-1"), new Course("course-2")));
+        teacher.setVacations(List.of(new Vacation(LocalDate.of(2021, 1, 1), LocalDate.of(2021, 2, 1)),
                 new Vacation(LocalDate.of(2021, 3, 1), LocalDate.of(2021, 4, 1))));
         var group = new Group("group-1");
         var date = LocalDate.of(2021, 1, 2);
         var duration = new Duration(LocalTime.of(9, 0, 0), LocalTime.of(10, 0, 0));
-        var lecture2 = new Lecture(date, new Course("course-1"),
+        var lecture = new Lecture(date, new Course("course-1"),
                 List.of(group, new Group("group-2"), new Group("group-3")),
                 new Audience(1, 10),
                 duration,
-                teacher1);
-        var expected = Optional.of(lecture2);
+                teacher);
+        var expected = Optional.of(lecture);
 
-        var actual = jdbcLectureDao.getByGroupIdAndDateAndDuration(1, date, 1);
+        var actual = jdbcLectureDao.getByGroupIdAndDateAndDurationId(1, date, 1);
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void givenGroupIdAndDateAndDurationId_whenGetByTeacherIdAndDateAndDurationId_thenReturnOptionalLectureWithCurrentGroupDateDuration() {
+        var teacher = new Teacher();
+        teacher.setFirstName("name-1");
+        teacher.setLastName("surname-1");
+        teacher.setEmail("email-1");
+        teacher.setCountry("country-1");
+        teacher.setGender(Gender.MALE);
+        teacher.setPhone("phone-1");
+        teacher.setAddress("address-1");
+        teacher.setBirthDate(LocalDate.of(1980, 1, 1));
+        teacher.setScientificDegree(ScientificDegree.DOCTOR);
+        teacher.setCourses(List.of(new Course("course-1"), new Course("course-2")));
+        teacher.setVacations(List.of(new Vacation(LocalDate.of(2021, 1, 1), LocalDate.of(2021, 2, 1)),
+                new Vacation(LocalDate.of(2021, 3, 1), LocalDate.of(2021, 4, 1))));
+        var date = LocalDate.of(2021, 1, 2);
+        var duration = new Duration(LocalTime.of(9, 0, 0), LocalTime.of(10, 0, 0));
+        var lecture = new Lecture(date, new Course("course-1"),
+                List.of(new Group("group-1"), new Group("group-2"), new Group("group-3")),
+                new Audience(1, 10),
+                duration,
+                teacher);
+        var expected = Optional.of(lecture);
+
+        var actual = jdbcLectureDao.getByTeacherIdAndDateAndDurationId(1, date, 1);
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void givenGroupIdAndDateAndDurationId_whenGetByAudienceIdAndDateAndDurationId_thenReturnOptionalLectureWithCurrentGroupDateDuration() {
+        var teacher = new Teacher();
+        teacher.setFirstName("name-1");
+        teacher.setLastName("surname-1");
+        teacher.setEmail("email-1");
+        teacher.setCountry("country-1");
+        teacher.setGender(Gender.MALE);
+        teacher.setPhone("phone-1");
+        teacher.setAddress("address-1");
+        teacher.setBirthDate(LocalDate.of(1980, 1, 1));
+        teacher.setScientificDegree(ScientificDegree.DOCTOR);
+        teacher.setCourses(List.of(new Course("course-1"), new Course("course-2")));
+        teacher.setVacations(List.of(new Vacation(LocalDate.of(2021, 1, 1), LocalDate.of(2021, 2, 1)),
+                new Vacation(LocalDate.of(2021, 3, 1), LocalDate.of(2021, 4, 1))));
+        var date = LocalDate.of(2021, 1, 2);
+        var duration = new Duration(LocalTime.of(9, 0, 0), LocalTime.of(10, 0, 0));
+        var lecture = new Lecture(date, new Course("course-1"),
+                List.of(new Group("group-1"), new Group("group-2"), new Group("group-3")),
+                new Audience(1, 10),
+                duration,
+                teacher);
+        var expected = Optional.of(lecture);
+
+        var actual = jdbcLectureDao.getByAudienceIdAndDateAndDurationId(1, date, 1);
 
         assertEquals(expected, actual);
     }
