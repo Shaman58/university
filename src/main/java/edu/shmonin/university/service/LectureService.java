@@ -99,7 +99,7 @@ public class LectureService implements EntityService<Lecture> {
     }
 
     private void validateTeacherCourses(Lecture lecture) {
-        if (lecture.getTeacher().getCourses().contains(lecture.getCourse())) {
+        if (!lecture.getTeacher().getCourses().contains(lecture.getCourse())) {
             throw new TeacherNotAvailableException("The teacher " + lecture.getTeacher().getFirstName() + " " +
                                                    lecture.getTeacher().getLastName() +
                                                    " doesn't have the course: " + lecture.getCourse().getName());

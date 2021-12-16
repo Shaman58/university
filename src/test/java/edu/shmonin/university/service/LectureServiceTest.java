@@ -79,9 +79,9 @@ class LectureServiceTest {
         lecture.setAudience(audience);
         lecture.setDuration(new Duration(LocalTime.of(12, 0), LocalTime.of(14, 0)));
         var teacher = new Teacher();
-        teacher.setCourses(List.of(course));
         teacher.setId(1);
         teacher.setVacations(new ArrayList<>());
+        teacher.setCourses(List.of(course));
         lecture.setTeacher(teacher);
 
         lectureService.create(lecture);
@@ -97,7 +97,7 @@ class LectureServiceTest {
         var exception = assertThrows(DateNotAvailableException.class, () -> lectureService.create(lecture));
 
         verify(lectureDao, never()).create(lecture);
-        assertEquals("Lecture's date can not be earlier than the current time", exception.getMessage());
+        assertEquals("Lecture's date " + lecture.getDate() + " can not be earlier than the current time", exception.getMessage());
     }
 
     @Test
@@ -317,7 +317,7 @@ class LectureServiceTest {
         var exception = assertThrows(DateNotAvailableException.class, () -> lectureService.update(lecture));
 
         verify(lectureDao, never()).update(lecture);
-        assertEquals("Lecture's date can not be earlier than the current time", exception.getMessage());
+        assertEquals("Lecture's date " + lecture.getDate() + " can not be earlier than the current time", exception.getMessage());
     }
 
     @Test
