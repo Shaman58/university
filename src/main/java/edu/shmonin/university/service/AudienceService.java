@@ -2,14 +2,16 @@ package edu.shmonin.university.service;
 
 import edu.shmonin.university.dao.AudienceDao;
 import edu.shmonin.university.dao.LectureDao;
-import edu.shmonin.university.exception.InvalidCapacityException;
-import edu.shmonin.university.exception.ForeignReferenceException;
 import edu.shmonin.university.exception.EntityNotFoundException;
+import edu.shmonin.university.exception.ForeignReferenceException;
+import edu.shmonin.university.exception.InvalidCapacityException;
 import edu.shmonin.university.exception.InvalidRoomNumberException;
 import edu.shmonin.university.model.Audience;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -45,6 +47,11 @@ public class AudienceService implements EntityService<Audience> {
     public List<Audience> getAll() {
         log.debug("Get all audiences");
         return audienceDao.getAll();
+    }
+
+    public Page<Audience> getAll(Pageable pageable) {
+        log.debug("Get all audiences");
+        return audienceDao.getPage(pageable);
     }
 
     @Override

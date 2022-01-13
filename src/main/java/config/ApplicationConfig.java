@@ -11,7 +11,7 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import javax.sql.DataSource;
 
 @Configuration
-@ComponentScan({"edu.shmonin.university.service","edu.shmonin.university.dao"})
+@ComponentScan({"edu.shmonin.university"})
 @PropertySource({"classpath:db.properties", "classpath:university.properties"})
 public class ApplicationConfig {
 

@@ -3,6 +3,9 @@ package edu.shmonin.university.dao.jdbc;
 import edu.shmonin.university.dao.AudienceDao;
 import edu.shmonin.university.model.Audience;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -17,10 +20,12 @@ import java.util.Optional;
 public class JdbcAudienceDao implements AudienceDao {
 
     private static final String GET_QUERY = "SELECT * FROM audiences WHERE id=?";
+    private static final String GET_COUNT_QUERY = " SELECT COUNT(*) FROM audiences";
     private static final String GET_ALL_QUERY = "SELECT * FROM audiences";
     private static final String CREATE_QUERY = "INSERT INTO audiences(room_number, capacity) VALUES(?,?)";
     private static final String UPDATE_QUERY = "UPDATE audiences SET room_number=?,capacity=? WHERE id=?";
     private static final String DELETE_QUERY = "DELETE FROM audiences WHERE id=?";
+    private static final String GET_PAGE_QUERY = "SELECT * FROM audiences order by room_number OFFSET ? LIMIT ?";
 
     private final JdbcTemplate jdbcTemplate;
     private final BeanPropertyRowMapper<Audience> audienceRowMapper;
@@ -42,6 +47,13 @@ public class JdbcAudienceDao implements AudienceDao {
     @Override
     public List<Audience> getAll() {
         return jdbcTemplate.query(GET_ALL_QUERY, audienceRowMapper);
+    }
+
+    @Override
+    public Page<Audience> getPage(Pageable pageable) {
+        int audienceQuantity = jdbcTemplate.queryForObject(GET_COUNT_QUERY, Integer.class);
+        var audiences = jdbcTemplate.query(GET_PAGE_QUERY, audienceRowMapper, pageable.getOffset(), pageable.getPageSize());
+        return new PageImpl<>(audiences, pageable, audienceQuantity);
     }
 
     @Override

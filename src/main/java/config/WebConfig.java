@@ -4,6 +4,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.web.config.EnableSpringDataWebSupport;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ViewResolverRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -14,6 +15,7 @@ import org.thymeleaf.spring5.view.ThymeleafViewResolver;
 @Configuration
 @ComponentScan("edu.shmonin.university.controller")
 @EnableWebMvc
+@EnableSpringDataWebSupport
 public class WebConfig implements WebMvcConfigurer {
 
     private final ApplicationContext applicationContext;
@@ -37,7 +39,7 @@ public class WebConfig implements WebMvcConfigurer {
         var templateEngine = new SpringTemplateEngine();
         templateEngine.setTemplateResolver(getTemplateResolver());
         templateEngine.setEnableSpringELCompiler(true);
-        
+
         return templateEngine;
     }
 

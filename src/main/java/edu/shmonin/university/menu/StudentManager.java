@@ -2,6 +2,7 @@ package edu.shmonin.university.menu;
 
 import edu.shmonin.university.model.Student;
 import edu.shmonin.university.service.StudentService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
@@ -15,11 +16,17 @@ import static java.lang.System.out;
 public class StudentManager {
 
     private final StudentService studentService;
+    private GroupManager groupManager;
     private final GenderManager genderManager;
 
     public StudentManager(StudentService studentService, GenderManager genderManager) {
         this.studentService = studentService;
         this.genderManager = genderManager;
+    }
+
+    @Autowired
+    public void setGroupManager(GroupManager groupManager) {
+        this.groupManager = groupManager;
     }
 
     public void manageStudents() {
@@ -81,6 +88,8 @@ public class StudentManager {
         student.setPhone(scanner.nextLine());
         out.println("Print student's birthdate:");
         student.setBirthDate(LocalDate.parse(scanner.nextLine()));
+        out.println("Select group:");
+        student.setGroup(groupManager.selectGroup());
         return student;
     }
 

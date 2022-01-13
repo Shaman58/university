@@ -20,6 +20,7 @@
         <slf4j.api.version>1.7.32</slf4j.api.version>
         <thymeleaf.version>3.0.14.RELEASE</thymeleaf.version>
         <servlet.api.version>4.0.1</servlet.api.version>
+        <spring.commons.version>2.6.0</spring.commons.version>
     </properties>
 
     <dependencies>
@@ -40,6 +41,12 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-webmvc</artifactId>
             <version>${spring.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-commons</artifactId>
+            <version>${spring.commons.version}</version>
         </dependency>
 
         <dependency>
