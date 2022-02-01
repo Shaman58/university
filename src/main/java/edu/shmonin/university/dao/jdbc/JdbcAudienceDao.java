@@ -20,7 +20,7 @@ import java.util.Optional;
 public class JdbcAudienceDao implements AudienceDao {
 
     private static final String GET_QUERY = "SELECT * FROM audiences WHERE id=?";
-    private static final String GET_COUNT_QUERY = " SELECT COUNT(*) FROM audiences";
+    private static final String GET_COUNT_QUERY = "SELECT COUNT(*) FROM audiences";
     private static final String GET_ALL_QUERY = "SELECT * FROM audiences";
     private static final String CREATE_QUERY = "INSERT INTO audiences(room_number, capacity) VALUES(?,?)";
     private static final String UPDATE_QUERY = "UPDATE audiences SET room_number=?,capacity=? WHERE id=?";
@@ -50,9 +50,10 @@ public class JdbcAudienceDao implements AudienceDao {
     }
 
     @Override
-    public Page<Audience> getPage(Pageable pageable) {
+    public Page<Audience> getAllSortedPaginated(Pageable pageable) {
         int audienceQuantity = jdbcTemplate.queryForObject(GET_COUNT_QUERY, Integer.class);
-        var audiences = jdbcTemplate.query(GET_PAGE_QUERY, audienceRowMapper, pageable.getOffset(), pageable.getPageSize());
+        var audiences = jdbcTemplate.query(GET_PAGE_QUERY, audienceRowMapper,
+                pageable.getOffset(), pageable.getPageSize());
         return new PageImpl<>(audiences, pageable, audienceQuantity);
     }
 

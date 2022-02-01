@@ -2,6 +2,9 @@ package edu.shmonin.university.dao.jdbc;
 
 import edu.shmonin.university.dao.VacationDao;
 import edu.shmonin.university.model.Vacation;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -18,6 +21,7 @@ public class JdbcVacationDao implements VacationDao {
 
     private static final String GET_QUERY =
             "SELECT id,start_date,end_date FROM vacations WHERE id=?";
+    private static final String GET_COUNT_QUERY = "SELECT COUNT(*) FROM vacations WHERE teacher_id=?";
     private static final String GET_ALL_QUERY =
             "SELECT id,start_date,end_date FROM vacations";
     private static final String CREATE_QUERY = "INSERT INTO vacations(start_date, end_date, teacher_id) VALUES (?,?,?)";
@@ -27,6 +31,7 @@ public class JdbcVacationDao implements VacationDao {
             "SELECT id,start_date,end_date FROM vacations WHERE teacher_id=?";
     private static final String GET_TEACHER_DATE_VACATIONS_QUERY =
             "SELECT id,start_date,end_date FROM vacations WHERE teacher_id=? AND start_date<=? AND end_date>=?";
+    private static final String GET_PAGE_QUERY = "SELECT * FROM vacations WHERE teacher_id=? order by start_date OFFSET ? LIMIT ?";
 
     private final JdbcTemplate jdbcTemplate;
     private final BeanPropertyRowMapper<Vacation> vacationRowMapper;
@@ -85,5 +90,13 @@ public class JdbcVacationDao implements VacationDao {
         } catch (RuntimeException e) {
             return Optional.empty();
         }
+    }
+
+    @Override
+    public Page<Vacation> getByTeacherIdSortedPaginated(Pageable pageable, int teacherId) {
+        int vacationQuantity = jdbcTemplate.queryForObject(GET_COUNT_QUERY, Integer.class, teacherId);
+        var vacations = jdbcTemplate.query(GET_PAGE_QUERY, vacationRowMapper, teacherId,
+                pageable.getOffset(), pageable.getPageSize());
+        return new PageImpl<>(vacations, pageable, vacationQuantity);
     }
 }

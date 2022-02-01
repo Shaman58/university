@@ -8,6 +8,8 @@ import edu.shmonin.university.model.Student;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -41,6 +43,11 @@ public class StudentService implements EntityService<Student> {
     public List<Student> getAll() {
         log.debug("Get all students");
         return studentDao.getAll();
+    }
+
+    public Page<Student> getSortedPaginated(Pageable pageable) {
+        log.debug("Get all sorted students");
+        return studentDao.getAllSortedPaginated(pageable);
     }
 
     @Override

@@ -7,6 +7,8 @@ import edu.shmonin.university.exception.ForeignReferenceException;
 import edu.shmonin.university.model.Group;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -35,6 +37,11 @@ public class GroupService implements EntityService<Group> {
     public List<Group> getAll() {
         log.debug("Get all groups");
         return groupDao.getAll();
+    }
+
+    public Page<Group> getSortedPaginated(Pageable pageable) {
+        log.debug("Get all sorted groups");
+        return groupDao.getAllSortedPaginated(pageable);
     }
 
     @Override

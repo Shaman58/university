@@ -9,6 +9,8 @@ import edu.shmonin.university.model.Lecture;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -45,6 +47,11 @@ public class LectureService implements EntityService<Lecture> {
     public List<Lecture> getAll() {
         log.debug("Get all lectures");
         return lectureDao.getAll();
+    }
+
+    public Page<Lecture> getSortedPaginated(Pageable pageable) {
+        log.debug("Get all sorted lectures");
+        return lectureDao.getAllSortedPaginated(pageable);
     }
 
     @Override

@@ -4,6 +4,9 @@ import edu.shmonin.university.dao.StudentDao;
 import edu.shmonin.university.dao.jdbc.rowmapper.StudentRowMapper;
 import edu.shmonin.university.model.Student;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -18,11 +21,13 @@ import java.util.Optional;
 public class JdbcStudentDao implements StudentDao {
 
     private static final String GET_QUERY = "SELECT * FROM students WHERE id=?";
+    private static final String GET_COUNT_QUERY = " SELECT COUNT(*) FROM students";
     private static final String GET_ALL_QUERY = "SELECT * FROM students";
     private static final String CREATE_QUERY = "INSERT INTO students(first_name, last_name, email, country, gender, phone, address, birth_date, group_id) VALUES (?,?,?,?,?,?,?,?,?)";
     private static final String UPDATE_QUERY = "UPDATE students SET first_name=?,last_name=?,email=?,country=?,gender=?,phone=?,address=?,birth_date=?, group_id=? WHERE id=?";
     private static final String DELETE_QUERY = "DELETE FROM students WHERE id=?";
     private static final String GET_GROUP_STUDENTS = "SELECT * FROM students WHERE group_id=?";
+    private static final String GET_PAGE_QUERY = "SELECT * FROM students order by last_name OFFSET ? LIMIT ?";
 
     private final JdbcTemplate jdbcTemplate;
     private StudentRowMapper studentRowMapper;
@@ -50,6 +55,14 @@ public class JdbcStudentDao implements StudentDao {
     @Override
     public List<Student> getAll() {
         return jdbcTemplate.query(GET_ALL_QUERY, studentRowMapper);
+    }
+
+    @Override
+    public Page<Student> getAllSortedPaginated(Pageable pageable) {
+        int studentsQuantity = jdbcTemplate.queryForObject(GET_COUNT_QUERY, Integer.class);
+        var students = jdbcTemplate.query(GET_PAGE_QUERY, studentRowMapper,
+                pageable.getOffset(), pageable.getPageSize());
+        return new PageImpl<>(students, pageable, studentsQuantity);
     }
 
     @Override

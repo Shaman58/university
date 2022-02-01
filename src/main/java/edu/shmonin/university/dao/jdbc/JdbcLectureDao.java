@@ -3,6 +3,9 @@ package edu.shmonin.university.dao.jdbc;
 import edu.shmonin.university.dao.LectureDao;
 import edu.shmonin.university.dao.jdbc.rowmapper.LectureRowMapper;
 import edu.shmonin.university.model.Lecture;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Repository;
@@ -18,6 +21,7 @@ import java.util.Optional;
 public class JdbcLectureDao implements LectureDao {
 
     private static final String GET_QUERY = "SELECT * FROM lectures WHERE id=?";
+    private static final String GET_COUNT_QUERY = "SELECT COUNT(*) FROM lectures";
     private static final String GET_ALL_QUERY = "SELECT * FROM lectures";
     private static final String CREATE_QUERY = "INSERT INTO lectures(date, course_id, audience_id, duration_id, teacher_id) VALUES(?,?,?,?,?)";
     private static final String UPDATE_QUERY = "UPDATE lectures SET date=?, course_id=?, audience_id=?, duration_id=?, teacher_id=? WHERE id=?";
@@ -32,6 +36,7 @@ public class JdbcLectureDao implements LectureDao {
     private static final String GET_BY_GROUP_DATE_DURATION = "SELECT id,date,course_id,audience_id,duration_id,teacher_id FROM lectures INNER JOIN lecture_groups ON lectures.id = lecture_groups.lecture_id WHERE group_id=? AND date=? AND duration_id=?";
     private static final String GET_BY_TEACHER_DATE_DURATION = "SELECT id,date,course_id,audience_id,duration_id,teacher_id FROM lectures  WHERE teacher_id=? AND date=? AND duration_id=?";
     private static final String GET_BY_AUDIENCE_DATE_DURATION = "SELECT id,date,course_id,audience_id,duration_id,teacher_id FROM lectures  WHERE teacher_id=? AND date=? AND duration_id=?";
+    private static final String GET_PAGE_QUERY = "SELECT * FROM lectures order by date OFFSET ? LIMIT ?";
 
     private final JdbcTemplate jdbcTemplate;
     private final LectureRowMapper lectureRowMapper;
@@ -53,6 +58,14 @@ public class JdbcLectureDao implements LectureDao {
     @Override
     public List<Lecture> getAll() {
         return jdbcTemplate.query(GET_ALL_QUERY, lectureRowMapper);
+    }
+
+    @Override
+    public Page<Lecture> getAllSortedPaginated(Pageable pageable) {
+        int lectureQuantity = jdbcTemplate.queryForObject(GET_COUNT_QUERY, Integer.class);
+        var lectures = jdbcTemplate.query(GET_PAGE_QUERY, lectureRowMapper,
+                pageable.getOffset(), pageable.getPageSize());
+        return new PageImpl<>(lectures, pageable, lectureQuantity);
     }
 
     @Transactional

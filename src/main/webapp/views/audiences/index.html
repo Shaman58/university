@@ -16,9 +16,9 @@
 </head>
 <body>
 
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
+<nav class="navbar navbar-expand-lg navbar-primary bg-light">
     <div class="container-fluid">
-        <a class="navbar-brand" href="#">University</a>
+        <a class="navbar-brand" href="/">University</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
                 aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -38,7 +38,7 @@
                     <a class="nav-link" href="groups">Groups</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="audiences">Audiences</a>
+                    <a class="nav-link" href="audiences">Audiences</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="durations">Durations</a>
@@ -50,8 +50,9 @@
         </div>
     </div>
 </nav>
+
 <br>
-<a class="btn btn-secondary" href="audiences/new" role="button">Add audience</a>
+<a class="btn btn-primary" href="audiences/new" role="button">Add audience</a>
 <br>
 <div class="modal-content rounded-6">
     <div class="modal-header">
@@ -64,7 +65,7 @@
             <th>Audience capacity</th>
         </tr>
         </thead>
-        <tbody th:each="audience: ${audiences}">
+        <tbody th:each="audience: ${audiencePage}">
         <tr>
             <td><a th:text="${audience.getRoomNumber()}"></a></td>
             <td><a th:text="${audience.getCapacity()}"></a></td>
@@ -81,6 +82,19 @@
         </tr>
         </tbody>
     </table>
+    <ul th:if="${audiencePage.totalPages > 1}" class="pagination pagination-sm">
+        <div th:each="pageNumber : ${pageNumbers}">
+            <li th:if="${pageNumber==audiencePage.number + 1}" class="page-item active" aria-current="page">
+                <span class="page-link" th:text=${pageNumber}></span>
+            </li>
+            <li th:unless="${pageNumber==audiencePage.number + 1}" class="page-item">
+                <a class="page-link"
+                   th:href="@{/audiences(size=${audiencePage.size}, page=${pageNumber-1})}"
+                   th:text=${pageNumber}>
+                </a>
+            </li>
+        </div>
+    </ul>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"

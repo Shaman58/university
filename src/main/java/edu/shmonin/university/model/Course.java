@@ -37,16 +37,22 @@ public class Course {
 
         var course = (Course) o;
 
+        if (id != course.id) return false;
         return Objects.equals(name, course.name);
     }
 
     @Override
     public int hashCode() {
-        return name != null ? name.hashCode() : 0;
+        int result = id;
+        result = 31 * result + (name != null ? name.hashCode() : 0);
+        return result;
     }
 
     @Override
     public String toString() {
-        return "name=" + name;
+        return "Course{" +
+               "id=" + id +
+               ", name='" + name + '\'' +
+               '}';
     }
 }

@@ -1,5 +1,7 @@
 package edu.shmonin.university.model;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 import java.time.LocalDate;
 import java.util.Objects;
 
@@ -13,6 +15,7 @@ public abstract class Human {
     private Gender gender;
     private String phone;
     private String address;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate birthDate;
 
     protected Human() {

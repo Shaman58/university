@@ -49,9 +49,9 @@ public class AudienceService implements EntityService<Audience> {
         return audienceDao.getAll();
     }
 
-    public Page<Audience> getAll(Pageable pageable) {
-        log.debug("Get all audiences");
-        return audienceDao.getPage(pageable);
+    public Page<Audience> getSortedPaginated(Pageable pageable) {
+        log.debug("Get all sorted audiences");
+        return audienceDao.getAllSortedPaginated(pageable);
     }
 
     @Override

@@ -1,6 +1,8 @@
 package edu.shmonin.university.dao;
 
 import edu.shmonin.university.model.Lecture;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -22,4 +24,6 @@ public interface LectureDao extends Dao<Lecture> {
     Optional<Lecture> getByTeacherIdAndDateAndDurationId(int teacherId, LocalDate date, int durationId);
 
     Optional<Lecture> getByAudienceIdAndDateAndDurationId(int audienceId, LocalDate date, int durationId);
+
+    Page<Lecture> getAllSortedPaginated(Pageable pageable);
 }

@@ -3,7 +3,11 @@ package edu.shmonin.university.dao.jdbc;
 import edu.shmonin.university.dao.TeacherDao;
 import edu.shmonin.university.dao.jdbc.rowmapper.TeacherRowMapper;
 import edu.shmonin.university.model.Course;
+import edu.shmonin.university.model.Student;
 import edu.shmonin.university.model.Teacher;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Repository;
@@ -18,6 +22,7 @@ import java.util.Optional;
 @Repository
 public class JdbcTeacherDao implements TeacherDao {
 
+    private static final String GET_COUNT_QUERY = " SELECT COUNT(*) FROM teachers";
     private static final String GET_QUERY = "SELECT * FROM teachers WHERE id=?";
     private static final String GET_ALL_QUERY = "SELECT * FROM teachers";
     private static final String CREATE_QUERY = "INSERT INTO teachers(first_name, last_name, email, country, gender, phone, address, birth_date, scientific_degree) VALUES (?,?,?,?,?,?,?,?,?)";
@@ -26,6 +31,7 @@ public class JdbcTeacherDao implements TeacherDao {
     private static final String DELETE_QUERY = "DELETE FROM teachers WHERE id=?";
     private static final String CREATE_TEACHER_COURSE_QUERY = "INSERT INTO teacher_courses(course_id, teacher_id) VALUES (?,?)";
     private static final String GET_BY_COURSE = "SELECT id, first_name, last_name, email, country, gender, phone, address, birth_date, scientific_degree FROM teachers INNER JOIN teacher_courses ON teachers.id = teacher_courses.teacher_id WHERE course_id=?";
+    private static final String GET_PAGE_QUERY = "SELECT * FROM teachers order by last_name OFFSET ? LIMIT ?";
 
     private final JdbcTemplate jdbcTemplate;
     private final TeacherRowMapper teacherRowMapper;
@@ -47,6 +53,14 @@ public class JdbcTeacherDao implements TeacherDao {
     @Override
     public List<Teacher> getAll() {
         return jdbcTemplate.query(GET_ALL_QUERY, teacherRowMapper);
+    }
+
+    @Override
+    public Page<Teacher> getAllSortedPaginated(Pageable pageable) {
+        int studentsQuantity = jdbcTemplate.queryForObject(GET_COUNT_QUERY, Integer.class);
+        var students = jdbcTemplate.query(GET_PAGE_QUERY, teacherRowMapper,
+                pageable.getOffset(), pageable.getPageSize());
+        return new PageImpl<>(students, pageable, studentsQuantity);
     }
 
     @Transactional

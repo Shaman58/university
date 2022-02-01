@@ -2,6 +2,9 @@ package edu.shmonin.university.dao.jdbc;
 
 import edu.shmonin.university.dao.CourseDao;
 import edu.shmonin.university.model.Course;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -16,12 +19,14 @@ import java.util.Optional;
 public class JdbcCourseDao implements CourseDao {
 
     private static final String GET_QUERY = "SELECT * FROM courses WHERE id=?";
+    private static final String GET_COUNT_QUERY = " SELECT COUNT(*) FROM courses";
     private static final String GET_ALL_QUERY = "SELECT * FROM courses";
     private static final String CREATE_QUERY = "INSERT INTO courses(name) VALUES(?)";
     private static final String UPDATE_QUERY = "UPDATE courses SET name=? WHERE id=?";
     private static final String DELETE_QUERY = "DELETE FROM courses WHERE id=?";
     private static final String GET_TEACHER_COURSES_QUERY =
             "SELECT id, name FROM courses INNER JOIN teacher_courses ON courses.id = teacher_courses.course_id WHERE teacher_id=?";
+    private static final String GET_PAGE_QUERY = "SELECT * FROM courses order by name OFFSET ? LIMIT ?";
 
     private final JdbcTemplate jdbcTemplate;
     private final BeanPropertyRowMapper<Course> courseRowMapper;
@@ -43,6 +48,14 @@ public class JdbcCourseDao implements CourseDao {
     @Override
     public List<Course> getAll() {
         return jdbcTemplate.query(GET_ALL_QUERY, courseRowMapper);
+    }
+
+    @Override
+    public Page<Course> getAllSortedPaginated(Pageable pageable) {
+        int courseQuantity = jdbcTemplate.queryForObject(GET_COUNT_QUERY, Integer.class);
+        var courses = jdbcTemplate.query(GET_PAGE_QUERY, courseRowMapper,
+                pageable.getOffset(), pageable.getPageSize());
+        return new PageImpl<>(courses, pageable, courseQuantity);
     }
 
     @Override

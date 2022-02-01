@@ -18,7 +18,7 @@
         <mockito.version>4.0.0</mockito.version>
         <logback.version>1.2.7</logback.version>
         <slf4j.api.version>1.7.32</slf4j.api.version>
-        <thymeleaf.version>3.0.14.RELEASE</thymeleaf.version>
+        <thymeleaf.version>3.1.0.M1</thymeleaf.version>
         <servlet.api.version>4.0.1</servlet.api.version>
         <spring.commons.version>2.6.0</spring.commons.version>
     </properties>
@@ -66,6 +66,12 @@
             <groupId>org.thymeleaf</groupId>
             <artifactId>thymeleaf-spring5</artifactId>
             <version>${thymeleaf.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.thymeleaf.extras</groupId>
+            <artifactId>thymeleaf-extras-java8time</artifactId>
+            <version>3.0.4.RELEASE</version>
         </dependency>
 
         <dependency>

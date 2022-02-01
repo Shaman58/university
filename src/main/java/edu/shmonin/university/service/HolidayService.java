@@ -6,6 +6,8 @@ import edu.shmonin.university.exception.EntityNotFoundException;
 import edu.shmonin.university.model.Holiday;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -33,6 +35,11 @@ public class HolidayService implements EntityService<Holiday> {
     public List<Holiday> getAll() {
         log.debug("Get all holidays");
         return holidayDao.getAll();
+    }
+
+    public Page<Holiday> getSortedPaginated(Pageable pageable) {
+        log.debug("Get all sorted holidays");
+        return holidayDao.getAllSortedPaginated(pageable);
     }
 
     @Override

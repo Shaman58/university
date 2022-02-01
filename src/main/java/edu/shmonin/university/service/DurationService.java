@@ -2,12 +2,14 @@ package edu.shmonin.university.service;
 
 import edu.shmonin.university.dao.DurationDao;
 import edu.shmonin.university.dao.LectureDao;
-import edu.shmonin.university.exception.ForeignReferenceException;
 import edu.shmonin.university.exception.EntityNotFoundException;
+import edu.shmonin.university.exception.ForeignReferenceException;
 import edu.shmonin.university.exception.InvalidDurationException;
 import edu.shmonin.university.model.Duration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -39,6 +41,11 @@ public class DurationService implements EntityService<Duration> {
     public List<Duration> getAll() {
         log.debug("Get all durations");
         return durationDao.getAll();
+    }
+
+    public Page<Duration> getSortedPaginated(Pageable pageable) {
+        log.debug("Get all sorted durations");
+        return durationDao.getAllSortedPaginated(pageable);
     }
 
     @Override

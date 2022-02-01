@@ -3,6 +3,9 @@ package edu.shmonin.university.dao.jdbc;
 import edu.shmonin.university.dao.HolidayDao;
 import edu.shmonin.university.model.Holiday;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -18,11 +21,13 @@ import java.util.Optional;
 public class JdbcHolidayDao implements HolidayDao {
 
     private static final String GET_QUERY = "SELECT * FROM holidays WHERE id=?";
+    private static final String GET_COUNT_QUERY = " SELECT COUNT(*) FROM holidays";
     private static final String GET_ALL_QUERY = "SELECT * FROM holidays";
     private static final String CREATE_QUERY = "INSERT INTO holidays(name, date) VALUES(?,?)";
     private static final String UPDATE_QUERY = "UPDATE holidays SET name=?, date=? WHERE id=?";
     private static final String DELETE_QUERY = "DELETE FROM holidays WHERE id=?";
     private static final String GET_BY_DATE_QUERY = "SELECT * FROM holidays WHERE date=?";
+    private static final String GET_PAGE_QUERY = "SELECT * FROM holidays order by name OFFSET ? LIMIT ?";
 
     private final JdbcTemplate jdbcTemplate;
     private final BeanPropertyRowMapper<Holiday> holidayRowMapper;
@@ -44,6 +49,14 @@ public class JdbcHolidayDao implements HolidayDao {
     @Override
     public List<Holiday> getAll() {
         return jdbcTemplate.query(GET_ALL_QUERY, holidayRowMapper);
+    }
+
+    @Override
+    public Page<Holiday> getAllSortedPaginated(Pageable pageable) {
+        int holidaysQuantity = jdbcTemplate.queryForObject(GET_COUNT_QUERY, Integer.class);
+        var holidays = jdbcTemplate.query(GET_PAGE_QUERY, holidayRowMapper,
+                pageable.getOffset(), pageable.getPageSize());
+        return new PageImpl<>(holidays, pageable, holidaysQuantity);
     }
 
     @Override

@@ -2,6 +2,9 @@ package edu.shmonin.university.dao.jdbc;
 
 import edu.shmonin.university.dao.DurationDao;
 import edu.shmonin.university.model.Duration;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -16,10 +19,12 @@ import java.util.Optional;
 public class JdbcDurationDao implements DurationDao {
 
     private static final String GET_QUERY = "SELECT * FROM durations WHERE id=?";
+    private static final String GET_COUNT_QUERY = "SELECT COUNT(*) FROM durations";
     private static final String GET_ALL_QUERY = "SELECT * FROM durations";
     private static final String CREATE_QUERY = "INSERT INTO durations(start_time, end_time) VALUES (?,?)";
     private static final String UPDATE_QUERY = "UPDATE durations SET start_time=?, end_time=? WHERE id=?";
     private static final String DELETE_QUERY = "DELETE FROM durations WHERE id=?";
+    private static final String GET_PAGE_QUERY = "SELECT * FROM durations order by start_time OFFSET ? LIMIT ?";
 
     private final JdbcTemplate jdbcTemplate;
     private final BeanPropertyRowMapper<Duration> durationRowMapper;
@@ -41,6 +46,14 @@ public class JdbcDurationDao implements DurationDao {
     @Override
     public List<Duration> getAll() {
         return jdbcTemplate.query(GET_ALL_QUERY, durationRowMapper);
+    }
+
+    @Override
+    public Page<Duration> getAllSortedPaginated(Pageable pageable) {
+        int durationQuantity = jdbcTemplate.queryForObject(GET_COUNT_QUERY, Integer.class);
+        var durations = jdbcTemplate.query(GET_PAGE_QUERY, durationRowMapper,
+                pageable.getOffset(), pageable.getPageSize());
+        return new PageImpl<>(durations, pageable, durationQuantity);
     }
 
     @Override

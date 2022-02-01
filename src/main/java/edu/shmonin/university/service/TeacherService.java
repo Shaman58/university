@@ -7,10 +7,13 @@ import edu.shmonin.university.exception.EntityNotFoundException;
 import edu.shmonin.university.exception.ForeignReferenceException;
 import edu.shmonin.university.exception.TeacherNotAvailableException;
 import edu.shmonin.university.model.Lecture;
+import edu.shmonin.university.model.Student;
 import edu.shmonin.university.model.Teacher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -50,6 +53,11 @@ public class TeacherService implements EntityService<Teacher> {
     public List<Teacher> getAll() {
         log.debug("Get all teachers");
         return teacherDao.getAll();
+    }
+
+    public Page<Teacher> getSortedPaginated(Pageable pageable) {
+        log.debug("Get all sorted teachers");
+        return teacherDao.getAllSortedPaginated(pageable);
     }
 
     @Override
