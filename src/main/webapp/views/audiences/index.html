@@ -51,9 +51,6 @@
     </div>
 </nav>
 
-<br>
-<a class="btn btn-primary" href="audiences/new" role="button">Add audience</a>
-<br>
 <div class="modal-content rounded-6">
     <div class="modal-header">
         <h3 class="title">Audiences:</h3>
@@ -65,35 +62,39 @@
             <th>Audience capacity</th>
         </tr>
         </thead>
-        <tbody th:each="audience: ${audiencePage}">
+        <tbody th:each="audience: ${page}">
         <tr>
             <td><a th:text="${audience.getRoomNumber()}"></a></td>
             <td><a th:text="${audience.getCapacity()}"></a></td>
             <td>
-                <form th:method="get" th:action="@{/audiences/{id}/edit (id=${audience.getId()})}">
-                    <input type="submit" value="Edit">
-                </form>
-            </td>
-            <td>
-                <form th:method="delete" th:action="@{/audiences/{id} (id=${audience.getId()})}">
-                    <input type="submit" value="Delete">
+                <form th:method="get" th:action="@{/audiences/{id}/get (id=${audience.getId()})}">
+                    <input type="submit" value="View">
                 </form>
             </td>
         </tr>
         </tbody>
     </table>
-    <ul th:if="${audiencePage.totalPages > 1}" class="pagination pagination-sm">
-        <div th:each="pageNumber : ${pageNumbers}">
-            <li th:if="${pageNumber==audiencePage.number + 1}" class="page-item active" aria-current="page">
+
+    <ul th:if="${page.totalPages > 1}" class="pagination pagination-sm">
+        <li th:if="${page.hasPrevious()}" class="page-item">
+            <a th:href="@{/audiences(size=${page.size}, page=${page.number-1})}"
+               class="page-link">Previous</a>
+        </li>
+        <th:block th:each="pageNumber : ${#numbers.sequence(1, page.totalPages)}">
+            <li th:if="${pageNumber==page.number + 1}" class="page-item active" aria-current="page">
                 <span class="page-link" th:text=${pageNumber}></span>
             </li>
-            <li th:unless="${pageNumber==audiencePage.number + 1}" class="page-item">
+            <li th:unless="${pageNumber==page.number + 1}" class="page-item">
                 <a class="page-link"
-                   th:href="@{/audiences(size=${audiencePage.size}, page=${pageNumber-1})}"
+                   th:href="@{/audiences(size=${page.size}, page=${pageNumber-1})}"
                    th:text=${pageNumber}>
                 </a>
             </li>
-        </div>
+        </th:block>
+        <li th:if="${page.hasNext()}" class="page-item">
+            <a th:href="@{/audiences(size=${page.size}, page=${page.number+1})}"
+               class="page-link">Next</a>
+        </li>
     </ul>
 </div>
 

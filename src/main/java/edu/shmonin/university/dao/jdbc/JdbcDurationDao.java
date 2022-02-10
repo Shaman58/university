@@ -49,7 +49,7 @@ public class JdbcDurationDao implements DurationDao {
     }
 
     @Override
-    public Page<Duration> getAllSortedPaginated(Pageable pageable) {
+    public Page<Duration> getAll(Pageable pageable) {
         int durationQuantity = jdbcTemplate.queryForObject(GET_COUNT_QUERY, Integer.class);
         var durations = jdbcTemplate.query(GET_PAGE_QUERY, durationRowMapper,
                 pageable.getOffset(), pageable.getPageSize());

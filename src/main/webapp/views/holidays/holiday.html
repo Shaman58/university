@@ -7,7 +7,7 @@
           rel="stylesheet"
           integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3"
           crossorigin="anonymous">
-    <title>Durations</title>
+    <title>Holiday</title>
     <style>
         body {
             padding: 20px;
@@ -26,76 +26,47 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item">
-                    <a class="nav-link" href="teachers">Teachers</a>
+                    <a class="nav-link" href="../../teachers">Teachers</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="students">Students</a>
+                    <a class="nav-link" href="../../students">Students</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="courses">Courses</a>
+                    <a class="nav-link" href="../../courses">Courses</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="groups">Groups</a>
+                    <a class="nav-link" href="../../groups">Groups</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="audiences">Audiences</a>
+                    <a class="nav-link" href="../../audiences">Audiences</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="durations">Durations</a>
+                    <a class="nav-link" href="../../durations">Durations</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="holidays">Holidays</a>
+                    <a class="nav-link" href="../../holidays">Holidays</a>
                 </li>
             </ul>
         </div>
     </div>
 </nav>
-
 <div class="modal-content rounded-6">
     <div class="modal-header">
-        <h3 class="title">Durations:</h3>
+        <h3 class="title">Holiday</h3>
     </div>
     <table class="table table-bordered table-hover">
         <thead>
         <tr>
-            <th>Duration start</th>
-            <th>Duration end</th>
+            <th>Holidays name</th>
         </tr>
         </thead>
-        <tbody th:each="duration: ${page}">
+        <tbody>
         <tr>
-            <td><a th:text="${duration.getStartTime()}"></a></td>
-            <td><a th:text="${duration.getEndTime()}"></a></td>
-            <td>
-                <form th:method="get" th:action="@{/durations/{id}/get (id=${duration.getId()})}">
-                    <input type="submit" value="View">
-                </form>
-            </td>
+            <td><a th:text="${holiday.getName()}"></a></td>
+            <td><a th:text="${holiday.getDate()}"></a></td>
         </tr>
         </tbody>
     </table>
-
-    <ul th:if="${page.totalPages > 1}" class="pagination pagination-sm">
-        <li th:if="${page.hasPrevious()}" class="page-item">
-            <a th:href="@{/audiences(size=${page.size}, page=${page.number-1})}"
-               class="page-link">Previous</a>
-        </li>
-        <th:block th:each="pageNumber : ${#numbers.sequence(1, page.totalPages)}">
-            <li th:if="${pageNumber==page.number + 1}" class="page-item active" aria-current="page">
-                <span class="page-link" th:text=${pageNumber}></span>
-            </li>
-            <li th:unless="${pageNumber==page.number + 1}" class="page-item">
-                <a class="page-link"
-                   th:href="@{/audiences(size=${page.size}, page=${pageNumber-1})}"
-                   th:text=${pageNumber}>
-                </a>
-            </li>
-        </th:block>
-        <li th:if="${page.hasNext()}" class="page-item">
-            <a th:href="@{/audiences(size=${page.size}, page=${page.number+1})}"
-               class="page-link">Next</a>
-        </li>
-    </ul>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"

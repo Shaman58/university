@@ -51,9 +51,6 @@
     </div>
 </nav>
 
-<br>
-<a class="btn btn-primary" href="courses/new" role="button">Add course</a>
-<br>
 <div class="modal-content rounded-6">
     <div class="modal-header">
         <h3 class="title">Courses:</h3>
@@ -64,34 +61,38 @@
             <th>Course name</th>
         </tr>
         </thead>
-        <tbody th:each="course: ${coursePage}">
+        <tbody th:each="course: ${page}">
         <tr>
             <td><a th:text="${course.getName()}"></a></td>
             <td>
-                <form th:method="get" th:action="@{/courses/{id}/edit (id=${course.getId()})}">
-                    <input type="submit" value="Edit">
-                </form>
-            </td>
-            <td>
-                <form th:method="delete" th:action="@{/courses/{id} (id=${course.getId()})}">
-                    <input type="submit" value="Delete">
+                <form th:method="get" th:action="@{/courses/{id}/get (id=${course.getId()})}">
+                    <input type="submit" value="View">
                 </form>
             </td>
         </tr>
         </tbody>
     </table>
-    <ul th:if="${coursePage.totalPages > 1}" class="pagination pagination-sm">
-        <div th:each="pageNumber : ${pageNumbers}">
-            <li th:if="${pageNumber==coursePage.number + 1}" class="page-item active" aria-current="page">
+
+    <ul th:if="${page.totalPages > 1}" class="pagination pagination-sm">
+        <li th:if="${page.hasPrevious()}" class="page-item">
+            <a th:href="@{/audiences(size=${page.size}, page=${page.number-1})}"
+               class="page-link">Previous</a>
+        </li>
+        <th:block th:each="pageNumber : ${#numbers.sequence(1, page.totalPages)}">
+            <li th:if="${pageNumber==page.number + 1}" class="page-item active" aria-current="page">
                 <span class="page-link" th:text=${pageNumber}></span>
             </li>
-            <li th:unless="${pageNumber==coursePage.number + 1}" class="page-item">
+            <li th:unless="${pageNumber==page.number + 1}" class="page-item">
                 <a class="page-link"
-                   th:href="@{/course(size=${coursePage.size}, page=${pageNumber-1})}"
+                   th:href="@{/audiences(size=${page.size}, page=${pageNumber-1})}"
                    th:text=${pageNumber}>
                 </a>
             </li>
-        </div>
+        </th:block>
+        <li th:if="${page.hasNext()}" class="page-item">
+            <a th:href="@{/audiences(size=${page.size}, page=${page.number+1})}"
+               class="page-link">Next</a>
+        </li>
     </ul>
 </div>
 

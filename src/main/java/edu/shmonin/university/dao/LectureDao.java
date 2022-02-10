@@ -24,6 +24,4 @@ public interface LectureDao extends Dao<Lecture> {
     Optional<Lecture> getByTeacherIdAndDateAndDurationId(int teacherId, LocalDate date, int durationId);
 
     Optional<Lecture> getByAudienceIdAndDateAndDurationId(int audienceId, LocalDate date, int durationId);
-
-    Page<Lecture> getAllSortedPaginated(Pageable pageable);
 }

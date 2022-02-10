@@ -51,7 +51,7 @@ public class JdbcCourseDao implements CourseDao {
     }
 
     @Override
-    public Page<Course> getAllSortedPaginated(Pageable pageable) {
+    public Page<Course> getAll(Pageable pageable) {
         int courseQuantity = jdbcTemplate.queryForObject(GET_COUNT_QUERY, Integer.class);
         var courses = jdbcTemplate.query(GET_PAGE_QUERY, courseRowMapper,
                 pageable.getOffset(), pageable.getPageSize());

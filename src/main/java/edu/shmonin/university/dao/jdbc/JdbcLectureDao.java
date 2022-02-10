@@ -61,7 +61,7 @@ public class JdbcLectureDao implements LectureDao {
     }
 
     @Override
-    public Page<Lecture> getAllSortedPaginated(Pageable pageable) {
+    public Page<Lecture> getAll(Pageable pageable) {
         int lectureQuantity = jdbcTemplate.queryForObject(GET_COUNT_QUERY, Integer.class);
         var lectures = jdbcTemplate.query(GET_PAGE_QUERY, lectureRowMapper,
                 pageable.getOffset(), pageable.getPageSize());

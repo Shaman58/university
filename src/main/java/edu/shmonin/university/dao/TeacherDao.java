@@ -9,6 +9,4 @@ import java.util.List;
 public interface TeacherDao extends Dao<Teacher> {
 
     List<Teacher> getByCourseId(int courseId);
-
-    Page<Teacher> getAllSortedPaginated(Pageable pageable);
 }

@@ -2,10 +2,10 @@ package edu.shmonin.university.service;
 
 import edu.shmonin.university.dao.AudienceDao;
 import edu.shmonin.university.dao.LectureDao;
+import edu.shmonin.university.exception.EntityNotFoundException;
+import edu.shmonin.university.exception.ForeignReferenceException;
 import edu.shmonin.university.exception.InvalidCapacityException;
 import edu.shmonin.university.exception.InvalidRoomNumberException;
-import edu.shmonin.university.exception.ForeignReferenceException;
-import edu.shmonin.university.exception.EntityNotFoundException;
 import edu.shmonin.university.model.Audience;
 import edu.shmonin.university.model.Lecture;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,7 +18,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.ArrayList;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.util.ReflectionTestUtils.setField;
 

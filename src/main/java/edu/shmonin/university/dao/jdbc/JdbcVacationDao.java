@@ -31,7 +31,8 @@ public class JdbcVacationDao implements VacationDao {
             "SELECT id,start_date,end_date FROM vacations WHERE teacher_id=?";
     private static final String GET_TEACHER_DATE_VACATIONS_QUERY =
             "SELECT id,start_date,end_date FROM vacations WHERE teacher_id=? AND start_date<=? AND end_date>=?";
-    private static final String GET_PAGE_QUERY = "SELECT * FROM vacations WHERE teacher_id=? order by start_date OFFSET ? LIMIT ?";
+    private static final String GET_PAGE_QUERY = "SELECT * FROM vacations order by start_date OFFSET ? LIMIT ?";
+    private static final String GET_PAGE_BY_TEACHER_ID_QUERY = "SELECT * FROM vacations WHERE teacher_id=? order by start_date OFFSET ? LIMIT ?";
 
     private final JdbcTemplate jdbcTemplate;
     private final BeanPropertyRowMapper<Vacation> vacationRowMapper;
@@ -69,6 +70,14 @@ public class JdbcVacationDao implements VacationDao {
     }
 
     @Override
+    public Page<Vacation> getAll(Pageable pageable) {
+        int vacationQuantity = jdbcTemplate.queryForObject(GET_COUNT_QUERY, Integer.class);
+        var vacations = jdbcTemplate.query(GET_PAGE_QUERY, vacationRowMapper,
+                pageable.getOffset(), pageable.getPageSize());
+        return new PageImpl<>(vacations, pageable, vacationQuantity);
+    }
+
+    @Override
     public void update(Vacation vacation) {
         jdbcTemplate.update(UPDATE_QUERY, vacation.getStartDate(), vacation.getEndDate(), vacation.getTeacher() == null ? null : vacation.getTeacher().getId(), vacation.getId());
     }
@@ -93,9 +102,9 @@ public class JdbcVacationDao implements VacationDao {
     }
 
     @Override
-    public Page<Vacation> getByTeacherIdSortedPaginated(Pageable pageable, int teacherId) {
+    public Page<Vacation> getByTeacherId(Pageable pageable, int teacherId) {
         int vacationQuantity = jdbcTemplate.queryForObject(GET_COUNT_QUERY, Integer.class, teacherId);
-        var vacations = jdbcTemplate.query(GET_PAGE_QUERY, vacationRowMapper, teacherId,
+        var vacations = jdbcTemplate.query(GET_PAGE_BY_TEACHER_ID_QUERY, vacationRowMapper, teacherId,
                 pageable.getOffset(), pageable.getPageSize());
         return new PageImpl<>(vacations, pageable, vacationQuantity);
     }

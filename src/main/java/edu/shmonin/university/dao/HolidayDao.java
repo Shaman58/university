@@ -10,6 +10,4 @@ import java.util.Optional;
 public interface HolidayDao extends Dao<Holiday> {
 
     Optional<Holiday> getByDate(LocalDate localDate);
-
-    Page<Holiday> getAllSortedPaginated(Pageable pageable);
 }

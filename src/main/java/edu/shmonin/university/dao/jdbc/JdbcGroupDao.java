@@ -56,7 +56,7 @@ public class JdbcGroupDao implements GroupDao {
     }
 
     @Override
-    public Page<Group> getAllSortedPaginated(Pageable pageable) {
+    public Page<Group> getAll(Pageable pageable) {
         int groupsQuantity = jdbcTemplate.queryForObject(GET_COUNT_QUERY, Integer.class);
         var groups = jdbcTemplate.query(GET_PAGE_QUERY, groupRowMapper,
                 pageable.getOffset(), pageable.getPageSize());

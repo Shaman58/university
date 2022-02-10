@@ -8,9 +8,9 @@ import java.util.Objects;
 public class Vacation {
 
     private int id;
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private LocalDate startDate;
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private LocalDate endDate;
     private Teacher teacher;
 

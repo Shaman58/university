@@ -2,9 +2,9 @@ package edu.shmonin.university.service;
 
 import edu.shmonin.university.dao.DurationDao;
 import edu.shmonin.university.dao.LectureDao;
-import edu.shmonin.university.exception.InvalidDurationException;
-import edu.shmonin.university.exception.ForeignReferenceException;
 import edu.shmonin.university.exception.EntityNotFoundException;
+import edu.shmonin.university.exception.ForeignReferenceException;
+import edu.shmonin.university.exception.InvalidDurationException;
 import edu.shmonin.university.model.Duration;
 import edu.shmonin.university.model.Lecture;
 import org.junit.jupiter.api.Test;

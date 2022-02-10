@@ -37,7 +37,6 @@ public class Course {
 
         var course = (Course) o;
 
-        if (id != course.id) return false;
         return Objects.equals(name, course.name);
     }
 

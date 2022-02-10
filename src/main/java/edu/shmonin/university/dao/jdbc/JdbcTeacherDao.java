@@ -56,7 +56,7 @@ public class JdbcTeacherDao implements TeacherDao {
     }
 
     @Override
-    public Page<Teacher> getAllSortedPaginated(Pageable pageable) {
+    public Page<Teacher> getAll(Pageable pageable) {
         int studentsQuantity = jdbcTemplate.queryForObject(GET_COUNT_QUERY, Integer.class);
         var students = jdbcTemplate.query(GET_PAGE_QUERY, teacherRowMapper,
                 pageable.getOffset(), pageable.getPageSize());

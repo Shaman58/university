@@ -52,7 +52,7 @@ public class JdbcHolidayDao implements HolidayDao {
     }
 
     @Override
-    public Page<Holiday> getAllSortedPaginated(Pageable pageable) {
+    public Page<Holiday> getAll(Pageable pageable) {
         int holidaysQuantity = jdbcTemplate.queryForObject(GET_COUNT_QUERY, Integer.class);
         var holidays = jdbcTemplate.query(GET_PAGE_QUERY, holidayRowMapper,
                 pageable.getOffset(), pageable.getPageSize());

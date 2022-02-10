@@ -9,7 +9,7 @@ public class Holiday {
 
     private int id;
     private String name;
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private LocalDate date;
 
     public Holiday() {

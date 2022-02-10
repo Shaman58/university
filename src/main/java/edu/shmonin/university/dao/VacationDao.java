@@ -14,5 +14,5 @@ public interface VacationDao extends Dao<Vacation> {
 
     Optional<Vacation> getByTeacherIdAndDate(int teacherId, LocalDate date);
 
-    Page<Vacation> getByTeacherIdSortedPaginated(Pageable pageable, int teacherId);
+    Page<Vacation> getByTeacherId(Pageable pageable, int teacherId);
 }

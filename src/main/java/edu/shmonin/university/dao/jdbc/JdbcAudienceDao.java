@@ -50,7 +50,7 @@ public class JdbcAudienceDao implements AudienceDao {
     }
 
     @Override
-    public Page<Audience> getAllSortedPaginated(Pageable pageable) {
+    public Page<Audience> getAll(Pageable pageable) {
         int audienceQuantity = jdbcTemplate.queryForObject(GET_COUNT_QUERY, Integer.class);
         var audiences = jdbcTemplate.query(GET_PAGE_QUERY, audienceRowMapper,
                 pageable.getOffset(), pageable.getPageSize());

@@ -15,7 +15,7 @@ public abstract class Human {
     private Gender gender;
     private String phone;
     private String address;
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private LocalDate birthDate;
 
     protected Human() {

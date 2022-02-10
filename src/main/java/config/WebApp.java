@@ -31,6 +31,6 @@ public class WebApp extends AbstractAnnotationConfigDispatcherServletInitializer
 
     private void registerHiddenFieldFilter(ServletContext servletContext) {
         servletContext.addFilter("hiddenHttpMethodFilter", new HiddenHttpMethodFilter())
-                .addMappingForUrlPatterns(null,true,"/*");
+                .addMappingForUrlPatterns(null, true, "/*");
     }
 }
