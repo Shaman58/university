@@ -7,6 +7,7 @@ import edu.shmonin.university.exception.StudentsLimitReachedException;
 import edu.shmonin.university.model.Gender;
 import edu.shmonin.university.model.Group;
 import edu.shmonin.university.model.Student;
+import edu.shmonin.university.service.implementation.StudentServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -31,7 +32,7 @@ class StudentServiceTest {
     private StudentDao studentDao;
 
     @InjectMocks
-    private StudentService studentService;
+    private StudentServiceImpl studentService;
 
     @BeforeEach
     void setUp() {

@@ -7,6 +7,7 @@ import edu.shmonin.university.exception.ForeignReferenceException;
 import edu.shmonin.university.model.Group;
 import edu.shmonin.university.model.Lecture;
 import edu.shmonin.university.model.Student;
+import edu.shmonin.university.service.implementation.GroupServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -31,7 +32,7 @@ class GroupServiceTest {
     private LectureDao lectureDao;
 
     @InjectMocks
-    private GroupService groupService;
+    private GroupServiceImpl groupService;
 
     @Test
     void givenId_whenGet_thenReturnedGroup() {

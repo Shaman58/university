@@ -19,7 +19,7 @@ public class AudiencesController {
     }
 
     @GetMapping
-    public String getPages(Model model, Pageable pageable) {
+    public String getPage(Model model, Pageable pageable) {
         model.addAttribute("page", audienceService.getAll(pageable));
         return "audiences/index";
     }

@@ -4,6 +4,7 @@ import edu.shmonin.university.dao.VacationDao;
 import edu.shmonin.university.exception.DateNotAvailableException;
 import edu.shmonin.university.exception.EntityNotFoundException;
 import edu.shmonin.university.model.Vacation;
+import edu.shmonin.university.service.implementation.VacationServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -25,7 +26,7 @@ class VacationServiceTest {
     private VacationDao vacationDao;
 
     @InjectMocks
-    private VacationService vacationService;
+    private VacationServiceImpl vacationService;
 
     @Test
     void givenId_whenGet_thenReturnedVacation() {
