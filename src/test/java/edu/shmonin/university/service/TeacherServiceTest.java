@@ -6,7 +6,6 @@ import edu.shmonin.university.dao.VacationDao;
 import edu.shmonin.university.exception.EntityNotFoundException;
 import edu.shmonin.university.exception.TeacherNotAvailableException;
 import edu.shmonin.university.model.*;
-import edu.shmonin.university.service.implementation.TeacherServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -35,7 +34,7 @@ class TeacherServiceTest {
     private LectureDao lectureDao;
 
     @InjectMocks
-    private TeacherServiceImpl teacherService;
+    private TeacherService teacherService;
 
     @BeforeEach
     void setUp() {

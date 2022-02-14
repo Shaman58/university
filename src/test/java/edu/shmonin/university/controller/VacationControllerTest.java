@@ -13,7 +13,6 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -21,12 +20,10 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import java.time.LocalDate;
 import java.util.List;
 
-import static org.hamcrest.Matchers.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@ExtendWith(SpringExtension.class)
 @ExtendWith(MockitoExtension.class)
 @ContextConfiguration(classes = {ApplicationConfig.class})
 @WebAppConfiguration
@@ -60,19 +57,8 @@ class VacationControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(view().name("vacations/index"))
                 .andExpect(forwardedUrl("vacations/index"))
-                .andExpect(model().attribute("page", hasItem(
-                        allOf(
-                                hasProperty("startDate", is(LocalDate.of(2022, 1, 1))),
-                                hasProperty("endDate", is(LocalDate.of(2022, 2, 2)))
-                        ))))
-                .andExpect(model().attribute("page", hasItem(
-                        allOf(
-                                hasProperty("startDate", is(LocalDate.of(2022, 2, 2))),
-                                hasProperty("endDate", is(LocalDate.of(2022, 3, 3)))
-                        ))))
+                .andExpect(model().attribute("page", page))
                 .andExpect(model().attribute("teacherId", 1));
-
-        verify(vacationService, times(1)).getByTeacherId(pageRequest, 1);
     }
 
     @Test
@@ -87,7 +73,5 @@ class VacationControllerTest {
                 .andExpect(view().name("vacations/vacation"))
                 .andExpect(forwardedUrl("vacations/vacation"))
                 .andExpect(model().attribute("vacation", vacation));
-
-        verify(vacationService, times(1)).get(1);
     }
 }

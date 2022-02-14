@@ -1,7 +1,6 @@
 package edu.shmonin.university.controller;
 
 import config.ApplicationConfig;
-import edu.shmonin.university.model.Audience;
 import edu.shmonin.university.model.Course;
 import edu.shmonin.university.service.CourseService;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,19 +13,16 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.List;
 
-import static org.hamcrest.Matchers.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@ExtendWith(SpringExtension.class)
 @ExtendWith(MockitoExtension.class)
 @ContextConfiguration(classes = {ApplicationConfig.class})
 @WebAppConfiguration
@@ -61,18 +57,7 @@ class CourseControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(view().name("courses/index"))
                 .andExpect(forwardedUrl("courses/index"))
-                .andExpect(model().attribute("page", hasItem(
-                        allOf(
-                                hasProperty("id", is(1)),
-                                hasProperty("name", is("course1"))
-                        )))).
-                andExpect(model().attribute("page", hasItem(
-                        allOf(
-                                hasProperty("id", is(2)),
-                                hasProperty("name", is("course2"))
-                        ))));
-
-        verify(courseService, times(1)).getAll(pageRequest);
+                .andExpect(model().attribute("page", page));
     }
 
     @Test
@@ -86,7 +71,5 @@ class CourseControllerTest {
                 .andExpect(view().name("courses/course"))
                 .andExpect(forwardedUrl("courses/course"))
                 .andExpect(model().attribute("course", course));
-
-        verify(courseService, times(1)).get(1);
     }
 }

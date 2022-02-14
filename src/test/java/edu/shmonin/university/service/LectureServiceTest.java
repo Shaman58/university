@@ -6,7 +6,6 @@ import edu.shmonin.university.dao.StudentDao;
 import edu.shmonin.university.dao.VacationDao;
 import edu.shmonin.university.exception.*;
 import edu.shmonin.university.model.*;
-import edu.shmonin.university.service.implementation.LectureServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -39,7 +38,7 @@ class LectureServiceTest {
     private StudentDao studentDao;
 
     @InjectMocks
-    private LectureServiceImpl lectureService;
+    private LectureService lectureService;
 
     @BeforeEach
     void setUp() {

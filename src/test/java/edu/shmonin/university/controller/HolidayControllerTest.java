@@ -13,7 +13,6 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -22,12 +21,10 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
-import static org.hamcrest.Matchers.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@ExtendWith(SpringExtension.class)
 @ExtendWith(MockitoExtension.class)
 @ContextConfiguration(classes = {ApplicationConfig.class})
 @WebAppConfiguration
@@ -62,20 +59,7 @@ class HolidayControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(view().name("holidays/index"))
                 .andExpect(forwardedUrl("holidays/index"))
-                .andExpect(model().attribute("page", hasItem(
-                        allOf(
-                                hasProperty("id", is(1)),
-                                hasProperty("name", is("holiday1")),
-                                hasProperty("date", is(LocalDate.now().plus(1, ChronoUnit.DAYS)))
-                        )))).
-                andExpect(model().attribute("page", hasItem(
-                        allOf(
-                                hasProperty("id", is(2)),
-                                hasProperty("name", is("holiday2")),
-                                hasProperty("date", is(LocalDate.now().plus(1, ChronoUnit.DAYS)))
-                        ))));
-
-        verify(holidayService, times(1)).getAll(pageRequest);
+                .andExpect(model().attribute("page", page));
     }
 
     @Test
@@ -89,7 +73,5 @@ class HolidayControllerTest {
                 .andExpect(view().name("holidays/holiday"))
                 .andExpect(forwardedUrl("holidays/holiday"))
                 .andExpect(model().attribute("holiday", holiday));
-
-        verify(holidayService, times(1)).get(1);
     }
 }

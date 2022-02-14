@@ -15,7 +15,6 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -23,12 +22,10 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import java.time.LocalDate;
 import java.util.List;
 
-import static org.hamcrest.Matchers.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@ExtendWith(SpringExtension.class)
 @ExtendWith(MockitoExtension.class)
 @ContextConfiguration(classes = {ApplicationConfig.class})
 @WebAppConfiguration
@@ -80,34 +77,7 @@ class TeacherControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(view().name("teachers/index"))
                 .andExpect(forwardedUrl("teachers/index"))
-                .andExpect(model().attribute("page", hasItem(
-                        allOf(
-                                hasProperty("id", is(1)),
-                                hasProperty("firstName", is("name-1")),
-                                hasProperty("lastName", is("surname-1")),
-                                hasProperty("email", is("email-1")),
-                                hasProperty("country", is("country-1")),
-                                hasProperty("gender", is(Gender.MALE)),
-                                hasProperty("phone", is("phone-1")),
-                                hasProperty("address", is("address-1")),
-                                hasProperty("birthDate", is(LocalDate.now().minusYears(24))),
-                                hasProperty("scientificDegree", is(ScientificDegree.DOCTOR))
-                        ))))
-                .andExpect(model().attribute("page", hasItem(
-                        allOf(
-                                hasProperty("id", is(2)),
-                                hasProperty("firstName", is("name-2")),
-                                hasProperty("lastName", is("surname-2")),
-                                hasProperty("email", is("email-2")),
-                                hasProperty("country", is("country-2")),
-                                hasProperty("gender", is(Gender.MALE)),
-                                hasProperty("phone", is("phone-2")),
-                                hasProperty("address", is("address-2")),
-                                hasProperty("birthDate", is(LocalDate.now().minusYears(24))),
-                                hasProperty("scientificDegree", is(ScientificDegree.DOCTOR))
-                        ))));
-
-        verify(teacherService, times(1)).getAll(pageRequest);
+                .andExpect(model().attribute("page", page));
     }
 
     @Test
@@ -130,7 +100,5 @@ class TeacherControllerTest {
                 .andExpect(view().name("teachers/teacher"))
                 .andExpect(forwardedUrl("teachers/teacher"))
                 .andExpect(model().attribute("teacher", teacher));
-
-        verify(teacherService, times(1)).get(1);
     }
 }

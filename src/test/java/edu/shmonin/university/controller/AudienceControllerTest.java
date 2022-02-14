@@ -13,19 +13,16 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.List;
 
-import static org.hamcrest.Matchers.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@ExtendWith(SpringExtension.class)
 @ExtendWith(MockitoExtension.class)
 @ContextConfiguration(classes = {ApplicationConfig.class})
 @WebAppConfiguration
@@ -60,20 +57,7 @@ class AudienceControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(view().name("audiences/index"))
                 .andExpect(forwardedUrl("audiences/index"))
-                .andExpect(model().attribute("page", hasItem(
-                        allOf(
-                                hasProperty("id", is(1)),
-                                hasProperty("roomNumber", is(1)),
-                                hasProperty("capacity", is(50))
-                        )))).
-                andExpect(model().attribute("page", hasItem(
-                        allOf(
-                                hasProperty("id", is(2)),
-                                hasProperty("roomNumber", is(2)),
-                                hasProperty("capacity", is(60))
-                        ))));
-
-        verify(audienceService, times(1)).getAll(pageRequest);
+                .andExpect(model().attribute("page", page));
     }
 
     @Test
@@ -87,7 +71,5 @@ class AudienceControllerTest {
                 .andExpect(view().name("audiences/audience"))
                 .andExpect(forwardedUrl("audiences/audience"))
                 .andExpect(model().attribute("audience", audience));
-
-        verify(audienceService, times(1)).get(1);
     }
 }

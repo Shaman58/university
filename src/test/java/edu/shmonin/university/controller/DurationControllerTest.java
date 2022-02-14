@@ -13,7 +13,6 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -21,12 +20,10 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import java.time.LocalTime;
 import java.util.List;
 
-import static org.hamcrest.Matchers.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@ExtendWith(SpringExtension.class)
 @ExtendWith(MockitoExtension.class)
 @ContextConfiguration(classes = {ApplicationConfig.class})
 @WebAppConfiguration
@@ -61,18 +58,7 @@ class DurationControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(view().name("durations/index"))
                 .andExpect(forwardedUrl("durations/index"))
-                .andExpect(model().attribute("page", hasItem(
-                        allOf(
-                                hasProperty("startTime", is(LocalTime.of(12, 0))),
-                                hasProperty("endTime", is(LocalTime.of(14, 0)))
-                        ))))
-                .andExpect(model().attribute("page", hasItem(
-                        allOf(
-                                hasProperty("startTime", is(LocalTime.of(15, 0))),
-                                hasProperty("endTime", is(LocalTime.of(17, 0)))
-                        ))));
-
-        verify(durationService, times(1)).getAll(pageRequest);
+                .andExpect(model().attribute("page", page));
     }
 
     @Test
@@ -86,7 +72,5 @@ class DurationControllerTest {
                 .andExpect(view().name("durations/duration"))
                 .andExpect(forwardedUrl("durations/duration"))
                 .andExpect(model().attribute("duration", duration));
-
-        verify(durationService, times(1)).get(1);
     }
 }

@@ -1,6 +1,6 @@
 package edu.shmonin.university.controller;
 
-import edu.shmonin.university.service.implementation.StudentServiceImpl;
+import edu.shmonin.university.service.StudentService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -8,9 +8,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class MainController {
 
-    private final StudentServiceImpl studentService;
+    private final StudentService studentService;
 
-    public MainController(StudentServiceImpl studentService) {
+    public MainController(StudentService studentService) {
         this.studentService = studentService;
     }
 

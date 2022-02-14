@@ -7,7 +7,6 @@ import edu.shmonin.university.exception.ForeignReferenceException;
 import edu.shmonin.university.exception.InvalidDurationException;
 import edu.shmonin.university.model.Duration;
 import edu.shmonin.university.model.Lecture;
-import edu.shmonin.university.service.implementation.DurationServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -32,7 +31,7 @@ class DurationServiceTest {
     private LectureDao lectureDao;
 
     @InjectMocks
-    private DurationServiceImpl durationService;
+    private DurationService durationService;
 
     @Test
     void givenId_whenGet_thenReturnDuration() {

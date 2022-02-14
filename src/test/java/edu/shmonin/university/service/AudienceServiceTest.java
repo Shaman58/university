@@ -8,7 +8,6 @@ import edu.shmonin.university.exception.InvalidCapacityException;
 import edu.shmonin.university.exception.InvalidRoomNumberException;
 import edu.shmonin.university.model.Audience;
 import edu.shmonin.university.model.Lecture;
-import edu.shmonin.university.service.implementation.AudienceServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -33,7 +32,7 @@ class AudienceServiceTest {
     private LectureDao lectureDao;
 
     @InjectMocks
-    private AudienceServiceImpl audienceService;
+    private AudienceService audienceService;
 
     @BeforeEach
     void setUp() {

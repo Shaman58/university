@@ -13,19 +13,16 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.List;
 
-import static org.hamcrest.Matchers.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@ExtendWith(SpringExtension.class)
 @ExtendWith(MockitoExtension.class)
 @ContextConfiguration(classes = {ApplicationConfig.class})
 @WebAppConfiguration
@@ -60,18 +57,7 @@ class GroupControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(view().name("groups/index"))
                 .andExpect(forwardedUrl("groups/index"))
-                .andExpect(model().attribute("page", hasItem(
-                        allOf(
-                                hasProperty("id", is(1)),
-                                hasProperty("name", is("group1"))
-                        )))).
-                andExpect(model().attribute("page", hasItem(
-                        allOf(
-                                hasProperty("id", is(2)),
-                                hasProperty("name", is("group2"))
-                        ))));
-
-        verify(groupService, times(1)).getAll(pageRequest);
+                .andExpect(model().attribute("page", page));
     }
 
     @Test
@@ -85,7 +71,5 @@ class GroupControllerTest {
                 .andExpect(view().name("groups/group"))
                 .andExpect(forwardedUrl("groups/group"))
                 .andExpect(model().attribute("group", group));
-
-        verify(groupService, times(1)).get(1);
     }
 }

@@ -8,7 +8,6 @@ import edu.shmonin.university.exception.ForeignReferenceException;
 import edu.shmonin.university.model.Course;
 import edu.shmonin.university.model.Lecture;
 import edu.shmonin.university.model.Teacher;
-import edu.shmonin.university.service.implementation.CourseServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -34,7 +33,7 @@ class CourseServiceTest {
     private TeacherDao teacherDao;
 
     @InjectMocks
-    private CourseServiceImpl courseService;
+    private CourseService courseService;
 
     @Test
     void givenId_whenGet_thenReturnCourse() {
