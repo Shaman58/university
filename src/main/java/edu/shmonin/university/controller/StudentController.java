@@ -1,6 +1,5 @@
 package edu.shmonin.university.controller;
 
-import edu.shmonin.university.service.GroupService;
 import edu.shmonin.university.service.StudentService;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
@@ -14,11 +13,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class StudentController {
 
     private final StudentService studentService;
-    private final GroupService groupService;
 
-    public StudentController(StudentService studentService, GroupService groupService) {
+    public StudentController(StudentService studentService) {
         this.studentService = studentService;
-        this.groupService = groupService;
     }
 
     @GetMapping
@@ -28,9 +25,8 @@ public class StudentController {
     }
 
     @GetMapping("/{id}/get")
-    public String get(Model model, @PathVariable("id") int id) {
+    public String get(Model model, @PathVariable int id) {
         model.addAttribute("student", studentService.get(id));
-        model.addAttribute("groups", groupService.getAll());
         return "students/student";
     }
 }

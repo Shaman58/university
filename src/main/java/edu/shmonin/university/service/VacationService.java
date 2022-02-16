@@ -63,6 +63,15 @@ public class VacationService {
         return vacationDao.getByTeacherId(teacherId);
     }
 
+    public List<Vacation> getByTeacherIdAndAcademicYear(int teacherId) {
+        log.debug("Get vacations with teacher = {} with current academic year", teacherId);
+        var startDate = LocalDate.now().getMonthValue() < 6
+                ? LocalDate.of(LocalDate.now().getYear() - 1, 9, 1)
+                : LocalDate.of(LocalDate.now().getYear(), 9, 1);
+        var endDate = startDate.plusMonths(9);
+        return vacationDao.getByTeacherIdAndDateBetween(teacherId, startDate, endDate);
+    }
+
     private void validateVacation(Vacation vacation) {
         if (vacation.getStartDate().isBefore(LocalDate.now())) {
             throw new DateNotAvailableException("Vacation start date mast be after current date");

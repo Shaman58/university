@@ -25,7 +25,7 @@ public class GroupsController {
     }
 
     @GetMapping("/{id}/get")
-    public String get(Model model, @PathVariable("id") int id) {
+    public String get(Model model, @PathVariable int id) {
         model.addAttribute("group", groupService.get(id));
         return "groups/group";
     }

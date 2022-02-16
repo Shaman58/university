@@ -19,14 +19,14 @@ public class VacationsController {
     }
 
     @GetMapping
-    public String getPages(Model model, Pageable pageable, @PathVariable("teacherId") int teacherId) {
+    public String getPages(Model model, Pageable pageable, @PathVariable int teacherId) {
         model.addAttribute("page", vacationService.getByTeacherId(pageable, teacherId));
         model.addAttribute("teacherId", teacherId);
         return "vacations/index";
     }
 
     @GetMapping("/{id}/get")
-    public String get(Model model, @PathVariable("id") int id, @PathVariable("teacherId") int teacherId) {
+    public String get(Model model, @PathVariable int id, @PathVariable int teacherId) {
         model.addAttribute("vacation", vacationService.get(id));
         model.addAttribute("teacherId", teacherId);
         return "vacations/vacation";

@@ -3,7 +3,6 @@ package edu.shmonin.university.dao.jdbc;
 import edu.shmonin.university.dao.TeacherDao;
 import edu.shmonin.university.dao.jdbc.rowmapper.TeacherRowMapper;
 import edu.shmonin.university.model.Course;
-import edu.shmonin.university.model.Student;
 import edu.shmonin.university.model.Teacher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -34,7 +33,7 @@ public class JdbcTeacherDao implements TeacherDao {
     private static final String GET_PAGE_QUERY = "SELECT * FROM teachers order by last_name OFFSET ? LIMIT ?";
 
     private final JdbcTemplate jdbcTemplate;
-    private final TeacherRowMapper teacherRowMapper;
+    private TeacherRowMapper teacherRowMapper;
 
     public JdbcTeacherDao(JdbcTemplate jdbcTemplate, TeacherRowMapper teacherRowMapper) {
         this.jdbcTemplate = jdbcTemplate;

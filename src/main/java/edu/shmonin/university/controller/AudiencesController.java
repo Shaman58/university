@@ -25,7 +25,7 @@ public class AudiencesController {
     }
 
     @GetMapping("/{id}/get")
-    public String get(Model model, @PathVariable("id") int id) {
+    public String get(Model model, @PathVariable int id) {
         model.addAttribute("audience", audienceService.get(id));
         return "audiences/audience";
     }

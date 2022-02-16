@@ -32,9 +32,9 @@ public class StudentRowMapper implements RowMapper<Student> {
         student.setPhone(resultSet.getString("phone"));
         student.setAddress(resultSet.getString("address"));
         student.setBirthDate(resultSet.getObject("birth_date", LocalDate.class));
-        var finalGroupId = resultSet.getInt("group_id");
-        student.setGroup(jdbcGroupDao.get(finalGroupId).
-                orElseThrow(() -> new EntityNotFoundException("Can not find teacher by id=" + finalGroupId)));
+        var groupId = resultSet.getInt("group_id");
+        student.setGroup(jdbcGroupDao.get(groupId).
+                orElseThrow(() -> new EntityNotFoundException("Can not find teacher by id=" + groupId)));
         return student;
     }
 }

@@ -33,6 +33,7 @@ public class JdbcVacationDao implements VacationDao {
             "SELECT id,start_date,end_date FROM vacations WHERE teacher_id=? AND start_date<=? AND end_date>=?";
     private static final String GET_PAGE_QUERY = "SELECT * FROM vacations order by start_date OFFSET ? LIMIT ?";
     private static final String GET_PAGE_BY_TEACHER_ID_QUERY = "SELECT * FROM vacations WHERE teacher_id=? order by start_date OFFSET ? LIMIT ?";
+    private static final String GET_TEACHER_YEAR_VACATIONS_QUERY = "SELECT * FROM vacations WHERE teacher_id=? AND start_date BETWEEN ? AND ?";
 
     private final JdbcTemplate jdbcTemplate;
     private final BeanPropertyRowMapper<Vacation> vacationRowMapper;
@@ -107,5 +108,10 @@ public class JdbcVacationDao implements VacationDao {
         var vacations = jdbcTemplate.query(GET_PAGE_BY_TEACHER_ID_QUERY, vacationRowMapper, teacherId,
                 pageable.getOffset(), pageable.getPageSize());
         return new PageImpl<>(vacations, pageable, vacationQuantity);
+    }
+
+    @Override
+    public List<Vacation> getByTeacherIdAndDateBetween(int teacherId, LocalDate startDate, LocalDate endDate) {
+        return jdbcTemplate.query(GET_TEACHER_YEAR_VACATIONS_QUERY, vacationRowMapper, teacherId, startDate, endDate);
     }
 }

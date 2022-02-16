@@ -25,7 +25,7 @@ public class HolidaysController {
     }
 
     @GetMapping("/{id}/get")
-    public String get(Model model, @PathVariable("id") int id) {
+    public String get(Model model, @PathVariable int id) {
         model.addAttribute("holiday", holidayService.get(id));
         return "holidays/holiday";
     }

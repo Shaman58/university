@@ -1,7 +1,7 @@
 package edu.shmonin.university.dao.jdbc;
 
 import config.TestConfig;
-import edu.shmonin.university.model.Vacation;
+import edu.shmonin.university.model.*;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -11,6 +11,7 @@ import org.springframework.test.jdbc.JdbcTestUtils;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -99,6 +100,18 @@ class JdbcVacationDaoTest {
         var expected = Optional.of(new Vacation(LocalDate.of(2021, 1, 1), date));
 
         var actual = jdbcVacationDao.getByTeacherIdAndDate(1, date);
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void givenTeacherId_whenGetByTeacherIdAndDateBetween_ThenReturnVacationsOfTheTeacherBetweenDate() {
+        var startDate = LocalDate.of(2021, 2, 20);
+        var endDate = LocalDate.of(2021, 5, 10);
+        var expected = List.of(new Vacation(LocalDate.of(2021, 3, 1),
+                LocalDate.of(2021, 4, 1)));
+
+        var actual = jdbcVacationDao.getByTeacherIdAndDateBetween(1, startDate, endDate);
 
         assertEquals(expected, actual);
     }

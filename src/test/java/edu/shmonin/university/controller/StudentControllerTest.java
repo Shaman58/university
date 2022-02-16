@@ -2,9 +2,7 @@ package edu.shmonin.university.controller;
 
 import config.ApplicationConfig;
 import edu.shmonin.university.model.Gender;
-import edu.shmonin.university.model.Group;
 import edu.shmonin.university.model.Student;
-import edu.shmonin.university.service.GroupService;
 import edu.shmonin.university.service.StudentService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -36,8 +34,6 @@ class StudentControllerTest {
 
     @Mock
     private StudentService studentService;
-    @Mock
-    private GroupService groupService;
 
     @InjectMocks
     private StudentController studentController;
@@ -93,19 +89,12 @@ class StudentControllerTest {
         student.setAddress("address");
         student.setBirthDate(LocalDate.of(1980, 1, 1));
         student.setId(1);
-        var group1 = new Group("group1");
-        group1.setId(1);
-        var group2 = new Group("group2");
-        group2.setId(2);
         when(studentService.get(1)).thenReturn(student);
-        var groups = List.of(group1, group2);
-        when(groupService.getAll()).thenReturn(groups);
 
         mockMvc.perform(get("/students/{id}/get", 1))
                 .andExpect(status().isOk())
                 .andExpect(view().name("students/student"))
                 .andExpect(forwardedUrl("students/student"))
-                .andExpect(model().attribute("student", student))
-                .andExpect(model().attribute("groups", groups));
+                .andExpect(model().attribute("student", student));
     }
 }
