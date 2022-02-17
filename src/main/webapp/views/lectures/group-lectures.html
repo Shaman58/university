@@ -7,7 +7,7 @@
           rel="stylesheet"
           integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3"
           crossorigin="anonymous">
-    <title>Teachers</title>
+    <title>Lectures</title>
     <style>
         body {
             padding: 20px;
@@ -52,23 +52,29 @@
 </nav>
 <div class="modal-content rounded-6">
     <div class="modal-header">
-        <h3 class="title">Teachers:</h3>
+        <h3 class="title">Lectures:</h3>
     </div>
     <table class="table table-bordered table-hover">
         <thead>
         <tr>
-            <th>Name</th>
-            <th>Surname</th>
-            <th>Birthdate</th>
+            <th>Course</th>
+            <th>Date</th>
+            <th>Room number</th>
+            <th>Duration</th>
         </tr>
         </thead>
-        <tbody th:each="teacher: ${page}">
+        <tbody th:each="lecture: ${page}">
         <tr>
-            <td><a th:text="${teacher.getFirstName()}"></a></td>
-            <td><a th:text="${teacher.getLastName()}"></a></td>
-            <td><a th:text="${teacher.getBirthDate()}"></a></td>
+            <td><a th:text="${lecture.getCourse().getName()}"></a></td>
+            <td><a th:text="${lecture.getDate()}"></a></td>
+            <td><a th:text="${lecture.getAudience().getRoomNumber()}"></a></td>
             <td>
-                <form th:method="get" th:action="@{/teachers/{id}/get (id=${teacher.getId()})}">
+                <a th:text="${lecture.getDuration().getStartTime()}"></a>
+                <a> - </a>
+                <a th:text="${lecture.getDuration().getEndTime()}"></a>
+            </td>
+            <td>
+                <form th:method="get" th:action="@{/lectures/{id}/get (id=${lecture.getId()})}">
                     <input type="submit" value="View">
                 </form>
             </td>
@@ -77,7 +83,7 @@
     </table>
     <ul th:if="${page.totalPages > 1}" class="pagination pagination-sm">
         <li th:if="${page.hasPrevious()}" class="page-item">
-            <a th:href="@{/teachers(size=${page.size}, page=${page.number-1})}"
+            <a th:href="@{/lectures/teacher/${groupId} (size=${page.size}, page=${page.number-1})}"
                class="page-link">Previous</a>
         </li>
         <th:block th:each="pageNumber : ${#numbers.sequence(1, page.totalPages)}">
@@ -86,13 +92,13 @@
             </li>
             <li th:unless="${pageNumber==page.number + 1}" class="page-item">
                 <a class="page-link"
-                   th:href="@{/teachers(size=${page.size}, page=${pageNumber-1})}"
+                   th:href="@{/lectures/teacher/${groupId} (size=${page.size}, page=${pageNumber-1})}"
                    th:text=${pageNumber}>
                 </a>
             </li>
         </th:block>
         <li th:if="${page.hasNext()}" class="page-item">
-            <a th:href="@{/teachers(size=${page.size}, page=${page.number+1})}"
+            <a th:href="@{/lectures/teacher/${groupId} (size=${page.size}, page=${page.number+1})}"
                class="page-link">Next</a>
         </li>
     </ul>

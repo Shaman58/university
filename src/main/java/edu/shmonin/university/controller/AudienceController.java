@@ -10,11 +10,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 @RequestMapping("/audiences")
-public class AudiencesController {
+public class AudienceController {
 
     private final AudienceService audienceService;
 
-    public AudiencesController(AudienceService audienceService) {
+    public AudienceController(AudienceService audienceService) {
         this.audienceService = audienceService;
     }
 

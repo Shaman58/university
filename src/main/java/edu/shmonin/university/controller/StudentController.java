@@ -19,7 +19,7 @@ public class StudentController {
     }
 
     @GetMapping
-    public String getPages(Model model, Pageable pageable) {
+    public String getPage(Model model, Pageable pageable) {
         model.addAttribute("page", studentService.getAll(pageable));
         return "students/index";
     }

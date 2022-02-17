@@ -10,16 +10,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 @RequestMapping("/holidays")
-public class HolidaysController {
+public class HolidayController {
 
     private final HolidayService holidayService;
 
-    public HolidaysController(HolidayService holidayService) {
+    public HolidayController(HolidayService holidayService) {
         this.holidayService = holidayService;
     }
 
     @GetMapping
-    public String getPages(Model model, Pageable pageable) {
+    public String getPage(Model model, Pageable pageable) {
         model.addAttribute("page", holidayService.getAll(pageable));
         return "holidays/index";
     }

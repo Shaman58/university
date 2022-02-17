@@ -10,16 +10,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 @RequestMapping("/groups")
-public class GroupsController {
+public class GroupController {
 
     private final GroupService groupService;
 
-    public GroupsController(GroupService groupService) {
+    public GroupController(GroupService groupService) {
         this.groupService = groupService;
     }
 
     @GetMapping
-    public String getPages(Model model, Pageable pageable) {
+    public String getPage(Model model, Pageable pageable) {
         model.addAttribute("page", groupService.getAll(pageable));
         return "groups/index";
     }

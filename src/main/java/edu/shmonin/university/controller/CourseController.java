@@ -10,16 +10,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 @RequestMapping("/courses")
-public class CoursesController {
+public class CourseController {
 
     private final CourseService courseService;
 
-    public CoursesController(CourseService courseService) {
+    public CourseController(CourseService courseService) {
         this.courseService = courseService;
     }
 
     @GetMapping
-    public String getPages(Model model, Pageable pageable) {
+    public String getPage(Model model, Pageable pageable) {
         model.addAttribute("page", courseService.getAll(pageable));
         return "courses/index";
     }

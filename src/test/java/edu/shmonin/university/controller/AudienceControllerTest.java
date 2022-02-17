@@ -34,11 +34,11 @@ class AudienceControllerTest {
     private AudienceService audienceService;
 
     @InjectMocks
-    private AudiencesController audiencesController;
+    private AudienceController audienceController;
 
     @BeforeEach
     void setUp() {
-        this.mockMvc = MockMvcBuilders.standaloneSetup(audiencesController)
+        this.mockMvc = MockMvcBuilders.standaloneSetup(audienceController)
                 .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
                 .build();
     }

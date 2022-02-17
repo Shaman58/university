@@ -17,6 +17,10 @@ public interface LectureDao extends Dao<Lecture> {
 
     List<Lecture> getByGroupId(int groupId);
 
+    Page<Lecture> getByGroupIdAndPeriod(Pageable pageable, int groupId, LocalDate startDate, LocalDate endDate);
+
+    Page<Lecture> getByTeacherIdAndPeriod(Pageable pageable, int teacherId, LocalDate startDate, LocalDate endDate);
+
     List<Lecture> getByTeacherId(int teacherId);
 
     Optional<Lecture> getByGroupIdAndDateAndDurationId(int groupId, LocalDate date, int durationId);

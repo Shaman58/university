@@ -11,18 +11,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 @RequestMapping("/teachers")
-public class TeachersController {
+public class TeacherController {
 
     private final TeacherService teacherService;
     private final VacationService vacationService;
 
-    public TeachersController(TeacherService teacherService, VacationService vacationService) {
+    public TeacherController(TeacherService teacherService, VacationService vacationService) {
         this.teacherService = teacherService;
         this.vacationService = vacationService;
     }
 
     @GetMapping
-    public String getPages(Model model, Pageable pageable) {
+    public String getPage(Model model, Pageable pageable) {
         model.addAttribute("page", teacherService.getAll(pageable));
         return "teachers/index";
     }

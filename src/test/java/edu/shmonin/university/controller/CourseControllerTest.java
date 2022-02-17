@@ -34,11 +34,11 @@ class CourseControllerTest {
     private CourseService courseService;
 
     @InjectMocks
-    private CoursesController coursesController;
+    private CourseController courseController;
 
     @BeforeEach
     void setUp() {
-        this.mockMvc = MockMvcBuilders.standaloneSetup(coursesController)
+        this.mockMvc = MockMvcBuilders.standaloneSetup(courseController)
                 .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
                 .build();
     }

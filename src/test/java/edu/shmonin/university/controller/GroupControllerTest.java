@@ -34,11 +34,11 @@ class GroupControllerTest {
     private GroupService groupService;
 
     @InjectMocks
-    private GroupsController groupsController;
+    private GroupController groupController;
 
     @BeforeEach
     void setUp() {
-        this.mockMvc = MockMvcBuilders.standaloneSetup(groupsController)
+        this.mockMvc = MockMvcBuilders.standaloneSetup(groupController)
                 .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
                 .build();
     }

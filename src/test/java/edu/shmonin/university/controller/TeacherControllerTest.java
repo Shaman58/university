@@ -41,11 +41,11 @@ class TeacherControllerTest {
     VacationService vacationService;
 
     @InjectMocks
-    private TeachersController teachersController;
+    private TeacherController teacherController;
 
     @BeforeEach
     void setUp() {
-        this.mockMvc = MockMvcBuilders.standaloneSetup(teachersController)
+        this.mockMvc = MockMvcBuilders.standaloneSetup(teacherController)
                 .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
                 .build();
     }

@@ -36,11 +36,11 @@ class HolidayControllerTest {
     private HolidayService holidayService;
 
     @InjectMocks
-    private HolidaysController holidaysController;
+    private HolidayController holidayController;
 
     @BeforeEach
     void setUp() {
-        this.mockMvc = MockMvcBuilders.standaloneSetup(holidaysController)
+        this.mockMvc = MockMvcBuilders.standaloneSetup(holidayController)
                 .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
                 .build();
     }
