@@ -66,6 +66,7 @@
             <th>Phone</th>
             <th>Address</th>
             <th>Courses</th>
+            <th>Vacations</th>
         </tr>
         </thead>
         <tbody>
@@ -83,9 +84,30 @@
                     <li class="list-group-item" th:text="${course.getName}"/>
                 </ul>
             </td>
-            <td><a class="btn btn-primary"
-                   role="button"
-                   th:href="@{/teachers/{teacherId}/vacations (teacherId=${teacher.getId()})}">Vacations</a>
+            <td>
+                <ul class="list-group">
+                    <table class="table table-bordered table-hover">
+                        <thead>
+                        <tr>
+                            <th>Start</th>
+                            <th>End</th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tbody th:each="vacation: ${vacations}">
+                        <tr>
+                            <td><a th:text="${vacation.getStartDate()}"></a></td>
+                            <td><a th:text="${vacation.getEndDate()}"></a></td>
+                            <td>
+                                <form th:method="get"
+                                      th:action="@{/teachers/{teacherId}/vacations/{id}/get (teacherId=${teacher.getId()}, id=${vacation.getId()})}">
+                                    <input type="submit" value="View">
+                                </form>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </ul>
             </td>
         </tr>
         </tbody>

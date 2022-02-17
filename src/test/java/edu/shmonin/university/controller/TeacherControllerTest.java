@@ -4,7 +4,9 @@ import config.ApplicationConfig;
 import edu.shmonin.university.model.Gender;
 import edu.shmonin.university.model.ScientificDegree;
 import edu.shmonin.university.model.Teacher;
+import edu.shmonin.university.model.Vacation;
 import edu.shmonin.university.service.TeacherService;
+import edu.shmonin.university.service.VacationService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -35,6 +37,8 @@ class TeacherControllerTest {
 
     @Mock
     private TeacherService teacherService;
+    @Mock
+    VacationService vacationService;
 
     @InjectMocks
     private TeachersController teachersController;
@@ -73,6 +77,7 @@ class TeacherControllerTest {
         var pageRequest = PageRequest.of(0, 20);
         var page = new PageImpl<>(List.of(teacher1, teacher2), pageRequest, 2);
         when(teacherService.getAll(pageRequest)).thenReturn(page);
+
         mockMvc.perform(get("/teachers"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("teachers/index"))
@@ -93,12 +98,15 @@ class TeacherControllerTest {
         teacher.setBirthDate(LocalDate.now().minusYears(24));
         teacher.setScientificDegree(ScientificDegree.DOCTOR);
         teacher.setId(1);
+        var vacations = List.of(new Vacation(LocalDate.of(2021, 3, 1), LocalDate.of(2021, 4, 1)));
         when(teacherService.get(1)).thenReturn(teacher);
+        when(vacationService.getByTeacherIdAndAcademicYear(1)).thenReturn(vacations);
 
         mockMvc.perform(get("/teachers/{id}/get", 1))
                 .andExpect(status().isOk())
                 .andExpect(view().name("teachers/teacher"))
                 .andExpect(forwardedUrl("teachers/teacher"))
-                .andExpect(model().attribute("teacher", teacher));
+                .andExpect(model().attribute("teacher", teacher))
+                .andExpect(model().attribute("vacations", vacations));
     }
 }

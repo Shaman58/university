@@ -148,4 +148,16 @@ class VacationServiceTest {
 
         assertEquals(expected, actual);
     }
+
+    @Test
+    void givenTeacherId_getByTeacherIdAndAcademicYear_thenReturnedVacations() {
+        var startDate = LocalDate.of(2021, 3, 1);
+        var endDate = LocalDate.of(2021, 4, 1);
+        var expected = List.of(new Vacation(startDate, endDate));
+        when(vacationDao.getByTeacherIdAndDateBetween(1, LocalDate.of(2021, 9, 1), LocalDate.of(2022, 6, 1))).thenReturn(expected);
+
+        var actual = vacationService.getByTeacherIdAndAcademicYear(1);
+
+        assertEquals(expected, actual);
+    }
 }
