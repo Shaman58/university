@@ -27,7 +27,7 @@ public class JdbcStudentDao implements StudentDao {
     private static final String UPDATE_QUERY = "UPDATE students SET first_name=?,last_name=?,email=?,country=?,gender=?,phone=?,address=?,birth_date=?, group_id=? WHERE id=?";
     private static final String DELETE_QUERY = "DELETE FROM students WHERE id=?";
     private static final String GET_GROUP_STUDENTS = "SELECT * FROM students WHERE group_id=?";
-    private static final String GET_PAGE_QUERY = "SELECT * FROM students order by last_name OFFSET ? LIMIT ?";
+    private static final String GET_PAGE_QUERY = "SELECT * FROM students order by last_name LIMIT ? OFFSET ?";
 
     private final JdbcTemplate jdbcTemplate;
     private StudentRowMapper studentRowMapper;
@@ -61,7 +61,7 @@ public class JdbcStudentDao implements StudentDao {
     public Page<Student> getAll(Pageable pageable) {
         int studentsQuantity = jdbcTemplate.queryForObject(GET_COUNT_QUERY, Integer.class);
         var students = jdbcTemplate.query(GET_PAGE_QUERY, studentRowMapper,
-                pageable.getOffset(), pageable.getPageSize());
+                pageable.getPageSize(), pageable.getOffset());
         return new PageImpl<>(students, pageable, studentsQuantity);
     }
 

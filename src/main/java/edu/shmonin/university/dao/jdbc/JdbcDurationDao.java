@@ -24,7 +24,7 @@ public class JdbcDurationDao implements DurationDao {
     private static final String CREATE_QUERY = "INSERT INTO durations(start_time, end_time) VALUES (?,?)";
     private static final String UPDATE_QUERY = "UPDATE durations SET start_time=?, end_time=? WHERE id=?";
     private static final String DELETE_QUERY = "DELETE FROM durations WHERE id=?";
-    private static final String GET_PAGE_QUERY = "SELECT * FROM durations order by start_time OFFSET ? LIMIT ?";
+    private static final String GET_PAGE_QUERY = "SELECT * FROM durations order by start_time LIMIT ? OFFSET ?";
 
     private final JdbcTemplate jdbcTemplate;
     private final BeanPropertyRowMapper<Duration> durationRowMapper;
@@ -52,7 +52,7 @@ public class JdbcDurationDao implements DurationDao {
     public Page<Duration> getAll(Pageable pageable) {
         int durationQuantity = jdbcTemplate.queryForObject(GET_COUNT_QUERY, Integer.class);
         var durations = jdbcTemplate.query(GET_PAGE_QUERY, durationRowMapper,
-                pageable.getOffset(), pageable.getPageSize());
+                pageable.getPageSize(), pageable.getOffset());
         return new PageImpl<>(durations, pageable, durationQuantity);
     }
 

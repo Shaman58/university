@@ -4,6 +4,8 @@ import config.TestConfig;
 import edu.shmonin.university.model.*;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
@@ -81,7 +83,7 @@ class JdbcLectureDaoTest {
                 new Audience(1, 10),
                 new Duration(LocalTime.of(9, 0, 0), LocalTime.of(10, 0, 0)),
                 teacher1);
-        var lecture3 = new Lecture(LocalDate.of(2021, 1, 1),
+        var lecture3 = new Lecture(LocalDate.of(2021, 1, 3),
                 new Course("course-1"),
                 List.of(new Group("group-3")),
                 new Audience(2, 20),
@@ -90,6 +92,47 @@ class JdbcLectureDaoTest {
         var expected = List.of(lecture1, lecture2, lecture3);
 
         var actual = jdbcLectureDao.getAll();
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void givenPageable_whenGetAll_thenReturnLecturePage() {
+        var pageRequest = PageRequest.of(0, 20);
+        var teacher1 = new Teacher();
+        teacher1.setFirstName("name-1");
+        teacher1.setLastName("surname-1");
+        teacher1.setEmail("email-1");
+        teacher1.setCountry("country-1");
+        teacher1.setGender(Gender.MALE);
+        teacher1.setPhone("phone-1");
+        teacher1.setAddress("address-1");
+        teacher1.setBirthDate(LocalDate.of(1980, 1, 1));
+        teacher1.setScientificDegree(ScientificDegree.DOCTOR);
+        teacher1.setCourses(List.of(new Course("course-1"), new Course("course-2")));
+        teacher1.setVacations(List.of(new Vacation(LocalDate.of(2021, 1, 1), LocalDate.of(2021, 2, 1)),
+                new Vacation(LocalDate.of(2021, 3, 1), LocalDate.of(2021, 4, 1))));
+        var lecture1 = new Lecture(LocalDate.of(2021, 1, 1),
+                new Course("course-1"),
+                List.of(new Group("group-1"), new Group("group-2")),
+                new Audience(1, 10),
+                new Duration(LocalTime.of(9, 0, 0), LocalTime.of(10, 0, 0)),
+                teacher1);
+        var lecture2 = new Lecture(LocalDate.of(2021, 1, 2),
+                new Course("course-1"),
+                List.of(new Group("group-1"), new Group("group-2"), new Group("group-3")),
+                new Audience(1, 10),
+                new Duration(LocalTime.of(9, 0, 0), LocalTime.of(10, 0, 0)),
+                teacher1);
+        var lecture3 = new Lecture(LocalDate.of(2021, 1, 3),
+                new Course("course-1"),
+                List.of(new Group("group-3")),
+                new Audience(2, 20),
+                new Duration(LocalTime.of(11, 0, 0), LocalTime.of(12, 0, 0)),
+                teacher1);
+        var expected = new PageImpl<>(List.of(lecture1, lecture2, lecture3), pageRequest, 1);
+
+        var actual = jdbcLectureDao.getAll(pageRequest);
 
         assertEquals(expected, actual);
     }
@@ -249,7 +292,7 @@ class JdbcLectureDaoTest {
                 new Audience(1, 10),
                 new Duration(LocalTime.of(9, 0, 0), LocalTime.of(10, 0, 0)),
                 teacher1);
-        var lecture3 = new Lecture(LocalDate.of(2021, 1, 1),
+        var lecture3 = new Lecture(LocalDate.of(2021, 1, 3),
                 new Course("course-1"),
                 List.of(new Group("group-3")),
                 new Audience(2, 20),
@@ -357,7 +400,7 @@ class JdbcLectureDaoTest {
                 new Audience(1, 10),
                 new Duration(LocalTime.of(9, 0, 0), LocalTime.of(10, 0, 0)),
                 teacher1);
-        var lecture3 = new Lecture(LocalDate.of(2021, 1, 1),
+        var lecture3 = new Lecture(LocalDate.of(2021, 1, 3),
                 new Course("course-1"),
                 List.of(new Group("group-3")),
                 new Audience(2, 20),
@@ -454,6 +497,76 @@ class JdbcLectureDaoTest {
         var expected = Optional.of(lecture);
 
         var actual = jdbcLectureDao.getByAudienceIdAndDateAndDurationId(1, date, 1);
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void givenGroupIdAndPeriodAndPageRequest_whenGetByGroupIdAndPeriod_thenReturnPageOfLectures() {
+        var pageRequest = PageRequest.of(0, 20);
+        var teacher1 = new Teacher();
+        teacher1.setFirstName("name-1");
+        teacher1.setLastName("surname-1");
+        teacher1.setEmail("email-1");
+        teacher1.setCountry("country-1");
+        teacher1.setGender(Gender.MALE);
+        teacher1.setPhone("phone-1");
+        teacher1.setAddress("address-1");
+        teacher1.setBirthDate(LocalDate.of(1980, 1, 1));
+        teacher1.setScientificDegree(ScientificDegree.DOCTOR);
+        teacher1.setCourses(List.of(new Course("course-1"), new Course("course-2")));
+        teacher1.setVacations(List.of(new Vacation(LocalDate.of(2021, 1, 1), LocalDate.of(2021, 2, 1)),
+                new Vacation(LocalDate.of(2021, 3, 1), LocalDate.of(2021, 4, 1))));
+        var lecture1 = new Lecture(LocalDate.of(2021, 1, 1),
+                new Course("course-1"),
+                List.of(new Group("group-1"), new Group("group-2")),
+                new Audience(1, 10),
+                new Duration(LocalTime.of(9, 0, 0), LocalTime.of(10, 0, 0)),
+                teacher1);
+        var lecture2 = new Lecture(LocalDate.of(2021, 1, 2),
+                new Course("course-1"),
+                List.of(new Group("group-1"), new Group("group-2"), new Group("group-3")),
+                new Audience(1, 10),
+                new Duration(LocalTime.of(9, 0, 0), LocalTime.of(10, 0, 0)),
+                teacher1);
+        var expected = new PageImpl<>(List.of(lecture1, lecture2), pageRequest, 1);
+
+        var actual = jdbcLectureDao.getByGroupIdAndPeriod(pageRequest, 1, LocalDate.of(2021, 1, 1), LocalDate.of(2021, 1, 2));
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void givenTeacherIdAndPeriodAndPageable_whenGetByTeacherIdAndPeriod_thenReturnPageOfLectures() {
+        var pageRequest = PageRequest.of(0, 20);
+        var teacher1 = new Teacher();
+        teacher1.setFirstName("name-1");
+        teacher1.setLastName("surname-1");
+        teacher1.setEmail("email-1");
+        teacher1.setCountry("country-1");
+        teacher1.setGender(Gender.MALE);
+        teacher1.setPhone("phone-1");
+        teacher1.setAddress("address-1");
+        teacher1.setBirthDate(LocalDate.of(1980, 1, 1));
+        teacher1.setScientificDegree(ScientificDegree.DOCTOR);
+        teacher1.setCourses(List.of(new Course("course-1"), new Course("course-2")));
+        teacher1.setVacations(List.of(new Vacation(LocalDate.of(2021, 1, 1), LocalDate.of(2021, 2, 1)),
+                new Vacation(LocalDate.of(2021, 3, 1), LocalDate.of(2021, 4, 1))));
+        var lecture1 = new Lecture(LocalDate.of(2021, 1, 1),
+                new Course("course-1"),
+                List.of(new Group("group-1"), new Group("group-2")),
+                new Audience(1, 10),
+                new Duration(LocalTime.of(9, 0, 0), LocalTime.of(10, 0, 0)),
+                teacher1);
+        var lecture2 = new Lecture(LocalDate.of(2021, 1, 2),
+                new Course("course-1"),
+                List.of(new Group("group-1"), new Group("group-2"), new Group("group-3")),
+                new Audience(1, 10),
+                new Duration(LocalTime.of(9, 0, 0), LocalTime.of(10, 0, 0)),
+                teacher1);
+        var expected = new PageImpl<>(List.of(lecture1, lecture2), pageRequest, 1);
+
+        var actual = jdbcLectureDao.getByTeacherIdAndPeriod(pageRequest, 1, LocalDate.of(2021, 1, 1), LocalDate.of(2021, 1, 2));
 
         assertEquals(expected, actual);
     }

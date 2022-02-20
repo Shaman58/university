@@ -61,7 +61,7 @@ VALUES ('2021-01-01', 1, 1, 1, 1);
 INSERT INTO lectures(date, course_id, audience_id, duration_id, teacher_id)
 VALUES ('2021-01-02', 1, 1, 1, 1);
 INSERT INTO lectures(date, course_id, audience_id, duration_id, teacher_id)
-VALUES ('2021-01-01', 1, 2, 2, 1);
+VALUES ('2021-01-03', 1, 2, 2, 1);
 INSERT INTO lecture_groups(group_id, lecture_id)
 VALUES (1, 1);
 INSERT INTO lecture_groups(group_id, lecture_id)

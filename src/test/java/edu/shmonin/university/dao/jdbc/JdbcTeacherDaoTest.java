@@ -4,6 +4,8 @@ import config.TestConfig;
 import edu.shmonin.university.model.*;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
@@ -90,6 +92,53 @@ class JdbcTeacherDaoTest {
         var expected = List.of(teacher1, teacher2, teacher3);
 
         var actual = jdbcTeacherDao.getAll();
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void givenPageRequest_whenGetAll_thenReturnPageOfTeachers() {
+        var pageRequest = PageRequest.of(0, 20);
+        var teacher1 = new Teacher();
+        teacher1.setFirstName("name-1");
+        teacher1.setLastName("surname-1");
+        teacher1.setEmail("email-1");
+        teacher1.setCountry("country-1");
+        teacher1.setGender(Gender.MALE);
+        teacher1.setPhone("phone-1");
+        teacher1.setAddress("address-1");
+        teacher1.setBirthDate(LocalDate.of(1980, 1, 1));
+        teacher1.setScientificDegree(ScientificDegree.DOCTOR);
+        teacher1.setCourses(List.of(new Course("course-1"), new Course("course-2")));
+        teacher1.setVacations(List.of(new Vacation(LocalDate.of(2021, 1, 1), LocalDate.of(2021, 2, 1)),
+                new Vacation(LocalDate.of(2021, 3, 1), LocalDate.of(2021, 4, 1))));
+        var teacher2 = new Teacher();
+        teacher2.setFirstName("name-2");
+        teacher2.setLastName("surname-2");
+        teacher2.setEmail("email-2");
+        teacher2.setCountry("country-2");
+        teacher2.setGender(Gender.MALE);
+        teacher2.setPhone("phone-2");
+        teacher2.setAddress("address-2");
+        teacher2.setBirthDate(LocalDate.of(1980, 1, 2));
+        teacher2.setScientificDegree(ScientificDegree.DOCTOR);
+        teacher2.setCourses(List.of(new Course("course-1"), new Course("course-3")));
+        var teacher3 = new Teacher();
+        teacher3.setFirstName("name-3");
+        teacher3.setLastName("surname-3");
+        teacher3.setEmail("email-3");
+        teacher3.setCountry("country-3");
+        teacher3.setGender(Gender.FEMALE);
+        teacher3.setPhone("phone-3");
+        teacher3.setAddress("address-3");
+        teacher3.setBirthDate(LocalDate.of(1980, 1, 3));
+        teacher3.setScientificDegree(ScientificDegree.BACHELOR);
+        teacher3.setCourses(Collections.singletonList(new Course("course-3")));
+        teacher1.setVacations(Collections.singletonList(new Vacation(LocalDate.of(2021, 5, 1), LocalDate.of(2021, 6, 1))));
+        var teachers = List.of(teacher1, teacher2, teacher3);
+        var expected = new PageImpl<>(teachers, pageRequest, 1);
+
+        var actual = jdbcTeacherDao.getAll(pageRequest);
 
         assertEquals(expected, actual);
     }

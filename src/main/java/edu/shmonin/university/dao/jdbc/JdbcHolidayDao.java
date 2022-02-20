@@ -27,7 +27,7 @@ public class JdbcHolidayDao implements HolidayDao {
     private static final String UPDATE_QUERY = "UPDATE holidays SET name=?, date=? WHERE id=?";
     private static final String DELETE_QUERY = "DELETE FROM holidays WHERE id=?";
     private static final String GET_BY_DATE_QUERY = "SELECT * FROM holidays WHERE date=?";
-    private static final String GET_PAGE_QUERY = "SELECT * FROM holidays order by name OFFSET ? LIMIT ?";
+    private static final String GET_PAGE_QUERY = "SELECT * FROM holidays order by name LIMIT ? OFFSET ?";
 
     private final JdbcTemplate jdbcTemplate;
     private final BeanPropertyRowMapper<Holiday> holidayRowMapper;
@@ -55,7 +55,7 @@ public class JdbcHolidayDao implements HolidayDao {
     public Page<Holiday> getAll(Pageable pageable) {
         int holidaysQuantity = jdbcTemplate.queryForObject(GET_COUNT_QUERY, Integer.class);
         var holidays = jdbcTemplate.query(GET_PAGE_QUERY, holidayRowMapper,
-                pageable.getOffset(), pageable.getPageSize());
+                pageable.getPageSize(), pageable.getOffset());
         return new PageImpl<>(holidays, pageable, holidaysQuantity);
     }
 

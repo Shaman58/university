@@ -27,7 +27,7 @@ public class JdbcGroupDao implements GroupDao {
     private static final String DELETE_QUERY = "DELETE FROM groups WHERE id=?";
     private static final String GET_LECTURE_GROUPS_QUERY =
             "SELECT id,name FROM groups INNER JOIN lecture_groups ON groups.id = lecture_groups.group_id WHERE lecture_id =?";
-    private static final String GET_PAGE_QUERY = "SELECT * FROM groups order by name OFFSET ? LIMIT ?";
+    private static final String GET_PAGE_QUERY = "SELECT * FROM groups order by name LIMIT ? OFFSET ?";
 
     private final JdbcTemplate jdbcTemplate;
     private GroupRowMapper groupRowMapper;
@@ -59,7 +59,7 @@ public class JdbcGroupDao implements GroupDao {
     public Page<Group> getAll(Pageable pageable) {
         int groupsQuantity = jdbcTemplate.queryForObject(GET_COUNT_QUERY, Integer.class);
         var groups = jdbcTemplate.query(GET_PAGE_QUERY, groupRowMapper,
-                pageable.getOffset(), pageable.getPageSize());
+                pageable.getPageSize(), pageable.getOffset());
         return new PageImpl<>(groups, pageable, groupsQuantity);
     }
 

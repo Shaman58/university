@@ -77,7 +77,7 @@
 
     <ul th:if="${page.totalPages > 1}" class="pagination pagination-sm">
         <li th:if="${page.hasPrevious()}" class="page-item">
-            <a th:href="@{/audiences(size=${page.size}, page=${page.number-1})}"
+            <a th:href="@{/durations(size=${page.size}, page=${page.number-1})}"
                class="page-link">Previous</a>
         </li>
         <th:block th:each="pageNumber : ${#numbers.sequence(1, page.totalPages)}">
@@ -86,13 +86,13 @@
             </li>
             <li th:unless="${pageNumber==page.number + 1}" class="page-item">
                 <a class="page-link"
-                   th:href="@{/audiences(size=${page.size}, page=${pageNumber-1})}"
+                   th:href="@{/durations(size=${page.size}, page=${pageNumber-1})}"
                    th:text=${pageNumber}>
                 </a>
             </li>
         </th:block>
         <li th:if="${page.hasNext()}" class="page-item">
-            <a th:href="@{/audiences(size=${page.size}, page=${page.number+1})}"
+            <a th:href="@{/durations(size=${page.size}, page=${page.number+1})}"
                class="page-link">Next</a>
         </li>
     </ul>

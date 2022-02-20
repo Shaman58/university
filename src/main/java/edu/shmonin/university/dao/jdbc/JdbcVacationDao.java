@@ -21,7 +21,7 @@ public class JdbcVacationDao implements VacationDao {
 
     private static final String GET_QUERY =
             "SELECT id,start_date,end_date FROM vacations WHERE id=?";
-    private static final String GET_COUNT_QUERY = "SELECT COUNT(*) FROM vacations WHERE teacher_id=?";
+    private static final String GET_COUNT_QUERY = "SELECT COUNT(*) FROM vacations";
     private static final String GET_ALL_QUERY =
             "SELECT id,start_date,end_date FROM vacations";
     private static final String CREATE_QUERY = "INSERT INTO vacations(start_date, end_date, teacher_id) VALUES (?,?,?)";
@@ -31,9 +31,10 @@ public class JdbcVacationDao implements VacationDao {
             "SELECT id,start_date,end_date FROM vacations WHERE teacher_id=?";
     private static final String GET_TEACHER_DATE_VACATIONS_QUERY =
             "SELECT id,start_date,end_date FROM vacations WHERE teacher_id=? AND start_date<=? AND end_date>=?";
-    private static final String GET_PAGE_QUERY = "SELECT * FROM vacations order by start_date OFFSET ? LIMIT ?";
-    private static final String GET_PAGE_BY_TEACHER_ID_QUERY = "SELECT * FROM vacations WHERE teacher_id=? order by start_date OFFSET ? LIMIT ?";
+    private static final String GET_PAGE_QUERY = "SELECT * FROM vacations order by start_date LIMIT ? OFFSET ?";
+    private static final String GET_PAGE_BY_TEACHER_ID_QUERY = "SELECT * FROM vacations WHERE teacher_id=? order by start_date LIMIT ? OFFSET ?";
     private static final String GET_TEACHER_YEAR_VACATIONS_QUERY = "SELECT * FROM vacations WHERE teacher_id=? AND start_date BETWEEN ? AND ?";
+    private static final String GET_BY_TEACHER_ID_COUNT_QUERY = "SELECT  COUNT(*) FROM vacations WHERE teacher_id=?";
 
     private final JdbcTemplate jdbcTemplate;
     private final BeanPropertyRowMapper<Vacation> vacationRowMapper;
@@ -74,7 +75,7 @@ public class JdbcVacationDao implements VacationDao {
     public Page<Vacation> getAll(Pageable pageable) {
         int vacationQuantity = jdbcTemplate.queryForObject(GET_COUNT_QUERY, Integer.class);
         var vacations = jdbcTemplate.query(GET_PAGE_QUERY, vacationRowMapper,
-                pageable.getOffset(), pageable.getPageSize());
+                pageable.getPageSize(), pageable.getOffset());
         return new PageImpl<>(vacations, pageable, vacationQuantity);
     }
 
@@ -104,9 +105,9 @@ public class JdbcVacationDao implements VacationDao {
 
     @Override
     public Page<Vacation> getByTeacherId(Pageable pageable, int teacherId) {
-        int vacationQuantity = jdbcTemplate.queryForObject(GET_COUNT_QUERY, Integer.class, teacherId);
+        int vacationQuantity = jdbcTemplate.queryForObject(GET_BY_TEACHER_ID_COUNT_QUERY, Integer.class, teacherId);
         var vacations = jdbcTemplate.query(GET_PAGE_BY_TEACHER_ID_QUERY, vacationRowMapper, teacherId,
-                pageable.getOffset(), pageable.getPageSize());
+                pageable.getPageSize(), pageable.getOffset());
         return new PageImpl<>(vacations, pageable, vacationQuantity);
     }
 

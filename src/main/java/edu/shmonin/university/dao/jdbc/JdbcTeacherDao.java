@@ -30,7 +30,7 @@ public class JdbcTeacherDao implements TeacherDao {
     private static final String DELETE_QUERY = "DELETE FROM teachers WHERE id=?";
     private static final String CREATE_TEACHER_COURSE_QUERY = "INSERT INTO teacher_courses(course_id, teacher_id) VALUES (?,?)";
     private static final String GET_BY_COURSE = "SELECT id, first_name, last_name, email, country, gender, phone, address, birth_date, scientific_degree FROM teachers INNER JOIN teacher_courses ON teachers.id = teacher_courses.teacher_id WHERE course_id=?";
-    private static final String GET_PAGE_QUERY = "SELECT * FROM teachers order by last_name OFFSET ? LIMIT ?";
+    private static final String GET_PAGE_QUERY = "SELECT * FROM teachers order by last_name LIMIT ? OFFSET ?";
 
     private final JdbcTemplate jdbcTemplate;
     private TeacherRowMapper teacherRowMapper;
@@ -58,7 +58,7 @@ public class JdbcTeacherDao implements TeacherDao {
     public Page<Teacher> getAll(Pageable pageable) {
         int studentsQuantity = jdbcTemplate.queryForObject(GET_COUNT_QUERY, Integer.class);
         var students = jdbcTemplate.query(GET_PAGE_QUERY, teacherRowMapper,
-                pageable.getOffset(), pageable.getPageSize());
+                pageable.getPageSize(), pageable.getOffset());
         return new PageImpl<>(students, pageable, studentsQuantity);
     }
 

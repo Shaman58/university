@@ -25,7 +25,7 @@ public class JdbcAudienceDao implements AudienceDao {
     private static final String CREATE_QUERY = "INSERT INTO audiences(room_number, capacity) VALUES(?,?)";
     private static final String UPDATE_QUERY = "UPDATE audiences SET room_number=?,capacity=? WHERE id=?";
     private static final String DELETE_QUERY = "DELETE FROM audiences WHERE id=?";
-    private static final String GET_PAGE_QUERY = "SELECT * FROM audiences order by room_number OFFSET ? LIMIT ?";
+    private static final String GET_PAGE_QUERY = "SELECT * FROM audiences order by room_number LIMIT ? OFFSET ?";
 
     private final JdbcTemplate jdbcTemplate;
     private final BeanPropertyRowMapper<Audience> audienceRowMapper;
@@ -53,7 +53,7 @@ public class JdbcAudienceDao implements AudienceDao {
     public Page<Audience> getAll(Pageable pageable) {
         int audienceQuantity = jdbcTemplate.queryForObject(GET_COUNT_QUERY, Integer.class);
         var audiences = jdbcTemplate.query(GET_PAGE_QUERY, audienceRowMapper,
-                pageable.getOffset(), pageable.getPageSize());
+                pageable.getPageSize(), pageable.getOffset());
         return new PageImpl<>(audiences, pageable, audienceQuantity);
     }
 

@@ -4,6 +4,8 @@ import config.TestConfig;
 import edu.shmonin.university.model.Audience;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
@@ -41,6 +43,20 @@ class JdbcAudienceDaoTest {
         expected.add(new Audience(3, 30));
 
         var actual = jdbcAudienceDao.getAll();
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void givenPageRequest_whenGetAll_thenReturnPageOfAudiences() {
+        var pageRequest = PageRequest.of(0, 20);
+        var audiences = new ArrayList<Audience>();
+        audiences.add(new Audience(1, 10));
+        audiences.add(new Audience(2, 20));
+        audiences.add(new Audience(3, 30));
+        var expected = new PageImpl<>(audiences, pageRequest, 1);
+
+        var actual = jdbcAudienceDao.getAll(pageRequest);
 
         assertEquals(expected, actual);
     }

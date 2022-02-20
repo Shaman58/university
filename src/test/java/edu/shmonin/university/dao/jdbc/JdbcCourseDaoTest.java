@@ -4,6 +4,8 @@ import config.TestConfig;
 import edu.shmonin.university.model.Course;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
@@ -41,6 +43,20 @@ class JdbcCourseDaoTest {
         expected.add(new Course("course-3"));
 
         var actual = jdbcCourseDao.getAll();
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void givenPageRequest_whenGetAll_thenReturnPageOfCourses() {
+        var pageRequest = PageRequest.of(0, 20);
+        var courses = new ArrayList<Course>();
+        courses.add(new Course("course-1"));
+        courses.add(new Course("course-2"));
+        courses.add(new Course("course-3"));
+        var expected = new PageImpl<>(courses, pageRequest, 1);
+
+        var actual = jdbcCourseDao.getAll(pageRequest);
 
         assertEquals(expected, actual);
     }

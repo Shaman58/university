@@ -26,7 +26,7 @@ public class JdbcCourseDao implements CourseDao {
     private static final String DELETE_QUERY = "DELETE FROM courses WHERE id=?";
     private static final String GET_TEACHER_COURSES_QUERY =
             "SELECT id, name FROM courses INNER JOIN teacher_courses ON courses.id = teacher_courses.course_id WHERE teacher_id=?";
-    private static final String GET_PAGE_QUERY = "SELECT * FROM courses order by name OFFSET ? LIMIT ?";
+    private static final String GET_PAGE_QUERY = "SELECT * FROM courses order by name LIMIT ? OFFSET ?";
 
     private final JdbcTemplate jdbcTemplate;
     private final BeanPropertyRowMapper<Course> courseRowMapper;
@@ -54,7 +54,7 @@ public class JdbcCourseDao implements CourseDao {
     public Page<Course> getAll(Pageable pageable) {
         int courseQuantity = jdbcTemplate.queryForObject(GET_COUNT_QUERY, Integer.class);
         var courses = jdbcTemplate.query(GET_PAGE_QUERY, courseRowMapper,
-                pageable.getOffset(), pageable.getPageSize());
+                pageable.getPageSize(), pageable.getOffset());
         return new PageImpl<>(courses, pageable, courseQuantity);
     }
 

@@ -1,9 +1,11 @@
 package edu.shmonin.university.dao.jdbc;
 
 import config.TestConfig;
-import edu.shmonin.university.model.*;
+import edu.shmonin.university.model.Vacation;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
@@ -43,6 +45,20 @@ class JdbcVacationDaoTest {
         expected.add(new Vacation(LocalDate.of(2021, 5, 1), LocalDate.of(2021, 6, 1)));
 
         var actual = jdbcVacationDao.getAll();
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void givenPageRequest_whenGetAll_thenReturnPageOfVacations() {
+        var pageRequest = PageRequest.of(0, 20);
+        var vacations = new ArrayList<Vacation>();
+        vacations.add(new Vacation(LocalDate.of(2021, 1, 1), LocalDate.of(2021, 2, 1)));
+        vacations.add(new Vacation(LocalDate.of(2021, 3, 1), LocalDate.of(2021, 4, 1)));
+        vacations.add(new Vacation(LocalDate.of(2021, 5, 1), LocalDate.of(2021, 6, 1)));
+        var expected = new PageImpl<>(vacations, pageRequest, 1);
+
+        var actual = jdbcVacationDao.getAll(pageRequest);
 
         assertEquals(expected, actual);
     }
@@ -112,6 +128,19 @@ class JdbcVacationDaoTest {
                 LocalDate.of(2021, 4, 1)));
 
         var actual = jdbcVacationDao.getByTeacherIdAndDateBetween(1, startDate, endDate);
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void givenPageRequestAndTeacherId_whenGetByTeacherId_ThenReturnPageOfTeachersVacations() {
+        var pageRequest = PageRequest.of(0, 20);
+        var vacations = new ArrayList<Vacation>();
+        vacations.add(new Vacation(LocalDate.of(2021, 1, 1), LocalDate.of(2021, 2, 1)));
+        vacations.add(new Vacation(LocalDate.of(2021, 3, 1), LocalDate.of(2021, 4, 1)));
+        var expected = new PageImpl<>(vacations, pageRequest, 1);
+
+        var actual = jdbcVacationDao.getByTeacherId(pageRequest, 1);
 
         assertEquals(expected, actual);
     }

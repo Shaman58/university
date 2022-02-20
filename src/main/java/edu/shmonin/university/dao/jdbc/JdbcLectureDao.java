@@ -36,11 +36,11 @@ public class JdbcLectureDao implements LectureDao {
     private static final String GET_BY_GROUP_DATE_DURATION = "SELECT id,date,course_id,audience_id,duration_id,teacher_id FROM lectures INNER JOIN lecture_groups ON lectures.id = lecture_groups.lecture_id WHERE group_id=? AND date=? AND duration_id=?";
     private static final String GET_BY_TEACHER_DATE_DURATION = "SELECT id,date,course_id,audience_id,duration_id,teacher_id FROM lectures  WHERE teacher_id=? AND date=? AND duration_id=?";
     private static final String GET_BY_AUDIENCE_DATE_DURATION = "SELECT id,date,course_id,audience_id,duration_id,teacher_id FROM lectures  WHERE teacher_id=? AND date=? AND duration_id=?";
-    private static final String GET_PAGE_QUERY = "SELECT * FROM lectures ORDER BY date OFFSET ? LIMIT ?";
+    private static final String GET_PAGE_QUERY = "SELECT * FROM lectures ORDER BY date LIMIT ? OFFSET ?";
     private static final String GET_COUNT_BY_GROUP_AND_PERIOD = "SELECT COUNT(*) FROM lectures INNER JOIN lecture_groups ON lectures.id = lecture_groups.lecture_id WHERE group_id=? AND date BETWEEN ? AND ?";
-    private static final String GET_BY_GROUP_AND_PERIOD_PAGE_QUERY = "SELECT * FROM lectures INNER JOIN lecture_groups ON lectures.id = lecture_groups.lecture_id WHERE group_id=? AND date BETWEEN ? AND ? ORDER BY date OFFSET ? LIMIT ?";
+    private static final String GET_BY_GROUP_AND_PERIOD_PAGE_QUERY = "SELECT * FROM lectures INNER JOIN lecture_groups ON lectures.id = lecture_groups.lecture_id WHERE group_id=? AND date BETWEEN ? AND ? ORDER BY date LIMIT ? OFFSET ?";
     private static final String GET_COUNT_BY_TEACHER_AND_PERIOD = "SELECT COUNT(*) FROM lectures WHERE teacher_id=? AND date BETWEEN ? AND ?";
-    private static final String GET_BY_TEACHER_AND_PERIOD_PAGE_QUERY = "SELECT * FROM lectures WHERE teacher_id=? AND date BETWEEN ? AND ? ORDER BY date OFFSET ? LIMIT ?";
+    private static final String GET_BY_TEACHER_AND_PERIOD_PAGE_QUERY = "SELECT * FROM lectures WHERE teacher_id=? AND date BETWEEN ? AND ? ORDER BY date LIMIT ? OFFSET ?";
 
     private final JdbcTemplate jdbcTemplate;
     private final LectureRowMapper lectureRowMapper;
@@ -69,7 +69,7 @@ public class JdbcLectureDao implements LectureDao {
     public Page<Lecture> getAll(Pageable pageable) {
         int lectureQuantity = jdbcTemplate.queryForObject(GET_COUNT_QUERY, Integer.class);
         var lectures = jdbcTemplate.query(GET_PAGE_QUERY, lectureRowMapper,
-                pageable.getOffset(), pageable.getPageSize());
+                pageable.getPageSize(), pageable.getOffset());
         return new PageImpl<>(lectures, pageable, lectureQuantity);
     }
 
@@ -132,7 +132,7 @@ public class JdbcLectureDao implements LectureDao {
     public Page<Lecture> getByGroupIdAndPeriod(Pageable pageable, int groupId, LocalDate startDate, LocalDate endDate) {
         int lectureQuantity = jdbcTemplate.queryForObject(GET_COUNT_BY_GROUP_AND_PERIOD, Integer.class, groupId, startDate, endDate);
         var lectures = jdbcTemplate.query(GET_BY_GROUP_AND_PERIOD_PAGE_QUERY, lectureRowMapper, groupId, startDate, endDate,
-                pageable.getOffset(), pageable.getPageSize());
+                pageable.getPageSize(), pageable.getOffset());
         return new PageImpl<>(lectures, pageable, lectureQuantity);
     }
 
@@ -145,7 +145,7 @@ public class JdbcLectureDao implements LectureDao {
     public Page<Lecture> getByTeacherIdAndPeriod(Pageable pageable, int teacherId, LocalDate startDate, LocalDate endDate) {
         int lectureQuantity = jdbcTemplate.queryForObject(GET_COUNT_BY_TEACHER_AND_PERIOD, Integer.class, teacherId, startDate, endDate);
         var lectures = jdbcTemplate.query(GET_BY_TEACHER_AND_PERIOD_PAGE_QUERY, lectureRowMapper, teacherId, startDate, endDate,
-                pageable.getOffset(), pageable.getPageSize());
+                pageable.getPageSize(), pageable.getOffset());
         return new PageImpl<>(lectures, pageable, lectureQuantity);
     }
 

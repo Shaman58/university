@@ -4,6 +4,8 @@ import config.TestConfig;
 import edu.shmonin.university.model.Duration;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
@@ -42,6 +44,20 @@ class JdbcDurationDaoTest {
         expected.add(new Duration(LocalTime.of(13, 0), LocalTime.of(14, 0)));
 
         var actual = jdbcDurationDao.getAll();
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void givenPageRequest_whenGetAll_thenReturnAllDurations_thenReturnPageOfDurations() {
+        var pageRequest = PageRequest.of(0, 20);
+        var durations = new ArrayList<Duration>();
+        durations.add(new Duration(LocalTime.of(9, 0), LocalTime.of(10, 0)));
+        durations.add(new Duration(LocalTime.of(11, 0), LocalTime.of(12, 0)));
+        durations.add(new Duration(LocalTime.of(13, 0), LocalTime.of(14, 0)));
+        var expected = new PageImpl<>(durations, pageRequest, 1);
+
+        var actual = jdbcDurationDao.getAll(pageRequest);
 
         assertEquals(expected, actual);
     }

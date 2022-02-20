@@ -4,6 +4,8 @@ import config.TestConfig;
 import edu.shmonin.university.model.Holiday;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
@@ -42,6 +44,20 @@ class JdbcHolidayDaoTest {
         expected.add(new Holiday("holiday-3", LocalDate.of(2021, 1, 3)));
 
         var actual = jdbcHolidayDao.getAll();
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void givenPageRequest_whenGetAll_thenReturnPageOfHolidays() {
+        var pageRequest = PageRequest.of(0, 20);
+        var holidays = new ArrayList<Holiday>();
+        holidays.add(new Holiday("holiday-1", LocalDate.of(2021, 1, 1)));
+        holidays.add(new Holiday("holiday-2", LocalDate.of(2021, 1, 2)));
+        holidays.add(new Holiday("holiday-3", LocalDate.of(2021, 1, 3)));
+        var expected = new PageImpl<>(holidays, pageRequest, 1);
+
+        var actual = jdbcHolidayDao.getAll(pageRequest);
 
         assertEquals(expected, actual);
     }

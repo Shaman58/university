@@ -4,6 +4,8 @@ import config.TestConfig;
 import edu.shmonin.university.model.Group;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
@@ -42,6 +44,20 @@ class JdbcGroupDaoTest {
         expected.add(new Group("group-3"));
 
         var actual = jdbcGroupDao.getAll();
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void givenPageRequest_whenGetAll_thenReturnPageOfGroups() {
+        var pageRequest = PageRequest.of(0, 20);
+        var groups = new ArrayList<Group>();
+        groups.add(new Group("group-1"));
+        groups.add(new Group("group-2"));
+        groups.add(new Group("group-3"));
+        var expected = new PageImpl<>(groups, pageRequest, 1);
+
+        var actual = jdbcGroupDao.getAll(pageRequest);
 
         assertEquals(expected, actual);
     }
