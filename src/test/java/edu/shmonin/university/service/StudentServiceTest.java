@@ -13,6 +13,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -55,6 +57,18 @@ class StudentServiceTest {
         when(studentDao.getAll()).thenReturn(expected);
 
         var actual = studentService.getAll();
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void givenPageRequest_whenGetAll_thenReturnedPageOfStudents() {
+        var pageRequest = PageRequest.of(0, 20);
+        var students = List.of(new Student());
+        var expected = new PageImpl<>(students, pageRequest, 1);
+        when(studentDao.getAll(pageRequest)).thenReturn(expected);
+
+        var actual = studentService.getAll(pageRequest);
 
         assertEquals(expected, actual);
     }

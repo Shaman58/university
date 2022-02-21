@@ -12,6 +12,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,6 +51,18 @@ class GroupServiceTest {
         when(groupDao.getAll()).thenReturn(expected);
 
         var actual = groupService.getAll();
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void givenPageRequest_whenGetAll_thenReturnedPageOfGroups() {
+        var pageRequest = PageRequest.of(0, 20);
+        var groups = List.of(new Group("group1"), new Group("group2"));
+        var expected = new PageImpl<>(groups, pageRequest, 1);
+        when(groupDao.getAll(pageRequest)).thenReturn(expected);
+
+        var actual = groupService.getAll(pageRequest);
 
         assertEquals(expected, actual);
     }

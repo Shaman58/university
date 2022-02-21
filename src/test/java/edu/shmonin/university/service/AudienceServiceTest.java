@@ -14,6 +14,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 
 import java.util.ArrayList;
 import java.util.Optional;
@@ -58,6 +60,20 @@ class AudienceServiceTest {
         when(audienceDao.getAll()).thenReturn(expected);
 
         var actual = audienceService.getAll();
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void givenPageRequest_whenGetAll_thenReturnedPageOfAudiences() {
+        var pageRequest = PageRequest.of(0, 20);
+        var audiences = new ArrayList<Audience>();
+        audiences.add(new Audience(1, 30));
+        audiences.add(new Audience(2, 60));
+        var expected = new PageImpl<>(audiences, pageRequest, 1);
+        when(audienceDao.getAll(pageRequest)).thenReturn(expected);
+
+        var actual = audienceService.getAll(pageRequest);
 
         assertEquals(expected, actual);
     }

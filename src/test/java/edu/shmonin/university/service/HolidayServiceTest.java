@@ -9,6 +9,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
@@ -46,6 +48,20 @@ class HolidayServiceTest {
         when(holidayDao.getAll()).thenReturn(expected);
 
         var actual = holidayService.getAll();
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void givenPageRequest_whenGetAll_ThenReturnedPageOfHolidays() {
+        var pageRequest = PageRequest.of(0, 20);
+        var holidays = List.of(
+                new Holiday("holiday1", LocalDate.now().plus(1, ChronoUnit.DAYS)),
+                new Holiday("holiday2", LocalDate.now().plus(1, ChronoUnit.DAYS)));
+        var expected = new PageImpl<>(holidays, pageRequest, 1);
+        when(holidayDao.getAll(pageRequest)).thenReturn(expected);
+
+        var actual = holidayService.getAll(pageRequest);
 
         assertEquals(expected, actual);
     }

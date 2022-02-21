@@ -12,6 +12,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -51,6 +53,20 @@ class DurationServiceTest {
         when(durationDao.getAll()).thenReturn(expected);
 
         var actual = durationService.getAll();
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void givenPageRequest_whenGetAll_thenReturnPageOfDurations() {
+        var pageRequest = PageRequest.of(0, 20);
+        var durations = List.of(
+                new Duration(LocalTime.of(12, 0), LocalTime.of(14, 0)),
+                new Duration(LocalTime.of(15, 0), LocalTime.of(17, 0)));
+        var expected = new PageImpl<>(durations, pageRequest, 1);
+        when(durationDao.getAll(pageRequest)).thenReturn(expected);
+
+        var actual = durationService.getAll(pageRequest);
 
         assertEquals(expected, actual);
     }

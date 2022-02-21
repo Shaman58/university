@@ -9,6 +9,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -145,6 +147,22 @@ class VacationServiceTest {
         when(vacationDao.getByTeacherId(1)).thenReturn(expected);
 
         var actual = vacationService.getByTeacherId(1);
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void givenIdAndPageRequest_whenGetByTeacherId_thenReturnedPageOfVacations() {
+        var pageRequest = PageRequest.of(0, 20);
+        var vacations = List.of(
+                new Vacation(LocalDate.of(2021, 1, 1),
+                        LocalDate.of(2021, 2, 1)),
+                new Vacation(LocalDate.of(2021, 2, 1),
+                        LocalDate.of(2021, 3, 1)));
+        var expected = new PageImpl<>(vacations, pageRequest, 1);
+        when(vacationDao.getByTeacherId(pageRequest, 1)).thenReturn(expected);
+
+        var actual = vacationService.getByTeacherId(pageRequest, 1);
 
         assertEquals(expected, actual);
     }

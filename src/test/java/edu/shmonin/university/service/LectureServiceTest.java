@@ -12,6 +12,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -61,6 +63,48 @@ class LectureServiceTest {
         when(lectureDao.getAll()).thenReturn(expected);
 
         var actual = lectureService.getAll();
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void givenPageRequest_whenGetAll_thenReturnPageOfLectures() {
+        var pageRequest = PageRequest.of(0, 20);
+        var lectures = List.of(new Lecture());
+        var expected = new PageImpl<>(lectures, pageRequest, 1);
+        when(lectureDao.getAll(pageRequest)).thenReturn(expected);
+
+        var actual = lectureService.getAll(pageRequest);
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void givenGroupIdAndPageRequest_whenGetByGroupIdAndAcademicYear_thenReturnedPageOfLectures() {
+        var pageRequest = PageRequest.of(0, 20);
+        var startDate = LocalDate.now().getMonthValue() < 6
+                ? LocalDate.of(LocalDate.now().getYear() - 1, 9, 1)
+                : LocalDate.of(LocalDate.now().getYear(), 9, 1);
+        var endDate = startDate.plusMonths(9);
+        var expected = new PageImpl<>(new ArrayList<Lecture>(), pageRequest, 1);
+        when(lectureDao.getByGroupIdAndPeriod(pageRequest, 1, startDate, endDate)).thenReturn(expected);
+
+        var actual = lectureService.getByGroupIdAndAcademicYear(pageRequest, 1);
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void givenTeacherIdAndPageRequest_whenGetByTeacherIdAndAcademicYear_thenReturnedPageOfLectures() {
+        var pageRequest = PageRequest.of(0, 20);
+        var startDate = LocalDate.now().getMonthValue() < 6
+                ? LocalDate.of(LocalDate.now().getYear() - 1, 9, 1)
+                : LocalDate.of(LocalDate.now().getYear(), 9, 1);
+        var endDate = startDate.plusMonths(9);
+        var expected = new PageImpl<>(new ArrayList<Lecture>(), pageRequest, 1);
+        when(lectureDao.getByTeacherIdAndPeriod(pageRequest, 1, startDate, endDate)).thenReturn(expected);
+
+        var actual = lectureService.getByTeacherIdAndAcademicYear(pageRequest, 1);
 
         assertEquals(expected, actual);
     }
