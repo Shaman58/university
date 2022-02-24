@@ -1,17 +1,14 @@
 package edu.shmonin.university.config;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.annotation.*;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
 import javax.sql.DataSource;
 
 @Configuration
-@ComponentScan("edu.shmonin.university")
+@ComponentScan(basePackages = {"edu.shmonin.university"}, excludeFilters = {@ComponentScan.Filter(type = FilterType.ANNOTATION, value = Configuration.class)})
 @PropertySource({"classpath:db.properties", "classpath:university.properties"})
 public class ApplicationConfig {
 
