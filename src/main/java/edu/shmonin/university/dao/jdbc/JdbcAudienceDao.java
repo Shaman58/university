@@ -10,6 +10,7 @@ import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Statement;
 import java.util.List;
@@ -49,6 +50,7 @@ public class JdbcAudienceDao implements AudienceDao {
         return jdbcTemplate.query(GET_ALL_QUERY, audienceRowMapper);
     }
 
+    @Transactional
     @Override
     public Page<Audience> getAll(Pageable pageable) {
         int audienceQuantity = jdbcTemplate.queryForObject(GET_COUNT_QUERY, Integer.class);

@@ -22,7 +22,7 @@ public class VacationController {
     public String getPage(Model model, Pageable pageable, @PathVariable int teacherId) {
         model.addAttribute("page", vacationService.getByTeacherId(pageable, teacherId));
         model.addAttribute("teacherId", teacherId);
-        return "vacations/index";
+        return "vacations/all";
     }
 
     @GetMapping("/{id}/get")

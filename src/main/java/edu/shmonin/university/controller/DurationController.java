@@ -20,7 +20,7 @@ public class DurationController {
     @GetMapping
     public String getPage(Model model, Pageable pageable) {
         model.addAttribute("page", durationService.getAll(pageable));
-        return "durations/index";
+        return "durations/all";
     }
 
     @GetMapping("/{id}/get")

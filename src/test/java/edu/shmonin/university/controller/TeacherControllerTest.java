@@ -80,8 +80,8 @@ class TeacherControllerTest {
 
         mockMvc.perform(get("/teachers"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("teachers/index"))
-                .andExpect(forwardedUrl("teachers/index"))
+                .andExpect(view().name("teachers/all"))
+                .andExpect(forwardedUrl("teachers/all"))
                 .andExpect(model().attribute("page", page));
     }
 

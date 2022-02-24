@@ -56,8 +56,8 @@ class DurationControllerTest {
 
         mockMvc.perform(get("/durations"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("durations/index"))
-                .andExpect(forwardedUrl("durations/index"))
+                .andExpect(view().name("durations/all"))
+                .andExpect(forwardedUrl("durations/all"))
                 .andExpect(model().attribute("page", page));
     }
 

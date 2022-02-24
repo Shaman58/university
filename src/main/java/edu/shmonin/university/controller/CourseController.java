@@ -21,7 +21,7 @@ public class CourseController {
     @GetMapping
     public String getPage(Model model, Pageable pageable) {
         model.addAttribute("page", courseService.getAll(pageable));
-        return "courses/index";
+        return "courses/all";
     }
 
     @GetMapping("/{id}/get")

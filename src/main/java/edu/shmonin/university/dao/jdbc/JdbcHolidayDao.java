@@ -10,6 +10,7 @@ import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Statement;
 import java.time.LocalDate;
@@ -51,6 +52,7 @@ public class JdbcHolidayDao implements HolidayDao {
         return jdbcTemplate.query(GET_ALL_QUERY, holidayRowMapper);
     }
 
+    @Transactional
     @Override
     public Page<Holiday> getAll(Pageable pageable) {
         int holidaysQuantity = jdbcTemplate.queryForObject(GET_COUNT_QUERY, Integer.class);

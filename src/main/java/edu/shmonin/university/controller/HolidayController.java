@@ -21,7 +21,7 @@ public class HolidayController {
     @GetMapping
     public String getPage(Model model, Pageable pageable) {
         model.addAttribute("page", holidayService.getAll(pageable));
-        return "holidays/index";
+        return "holidays/all";
     }
 
     @GetMapping("/{id}/get")

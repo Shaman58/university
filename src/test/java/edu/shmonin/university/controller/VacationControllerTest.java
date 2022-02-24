@@ -55,8 +55,8 @@ class VacationControllerTest {
         when(vacationService.getByTeacherId(pageRequest, 1)).thenReturn(page);
         mockMvc.perform(get("/teachers/{teacherId}/vacations", 1))
                 .andExpect(status().isOk())
-                .andExpect(view().name("vacations/index"))
-                .andExpect(forwardedUrl("vacations/index"))
+                .andExpect(view().name("vacations/all"))
+                .andExpect(forwardedUrl("vacations/all"))
                 .andExpect(model().attribute("page", page))
                 .andExpect(model().attribute("teacherId", 1));
     }

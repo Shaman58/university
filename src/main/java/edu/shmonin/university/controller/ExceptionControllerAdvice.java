@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import java.time.LocalDate;
 
 @ControllerAdvice
-public class ExceptionController {
+public class ExceptionControllerAdvice {
 
     @ExceptionHandler(ServiceException.class)
     public String getException(ServiceException e, Model model) {

@@ -57,8 +57,8 @@ class HolidayControllerTest {
 
         mockMvc.perform(get("/holidays"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("holidays/index"))
-                .andExpect(forwardedUrl("holidays/index"))
+                .andExpect(view().name("holidays/all"))
+                .andExpect(forwardedUrl("holidays/all"))
                 .andExpect(model().attribute("page", page));
     }
 

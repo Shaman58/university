@@ -11,6 +11,7 @@ import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Statement;
 import java.util.List;
@@ -57,6 +58,7 @@ public class JdbcStudentDao implements StudentDao {
         return jdbcTemplate.query(GET_ALL_QUERY, studentRowMapper);
     }
 
+    @Transactional
     @Override
     public Page<Student> getAll(Pageable pageable) {
         int studentsQuantity = jdbcTemplate.queryForObject(GET_COUNT_QUERY, Integer.class);

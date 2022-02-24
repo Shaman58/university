@@ -15,8 +15,7 @@ public class MainController {
     }
 
     @GetMapping("/")
-    public String first(Model model) {
-        model.addAttribute("students", studentService.getAll());
+    public String first() {
         return "main";
     }
 }

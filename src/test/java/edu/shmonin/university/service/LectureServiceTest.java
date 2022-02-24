@@ -82,14 +82,12 @@ class LectureServiceTest {
     @Test
     void givenGroupIdAndPageRequest_whenGetByGroupIdAndAcademicYear_thenReturnedPageOfLectures() {
         var pageRequest = PageRequest.of(0, 20);
-        var startDate = LocalDate.now().getMonthValue() < 6
-                ? LocalDate.of(LocalDate.now().getYear() - 1, 9, 1)
-                : LocalDate.of(LocalDate.now().getYear(), 9, 1);
-        var endDate = startDate.plusMonths(9);
+        var startDate = LocalDate.of(2021, 9, 1);
+        var endDate = LocalDate.of(2021, 10, 1);
         var expected = new PageImpl<>(new ArrayList<Lecture>(), pageRequest, 1);
         when(lectureDao.getByGroupIdAndPeriod(pageRequest, 1, startDate, endDate)).thenReturn(expected);
 
-        var actual = lectureService.getByGroupIdAndAcademicYear(pageRequest, 1);
+        var actual = lectureService.getByGroupIdAndPeriod(pageRequest, 1, startDate, endDate);
 
         assertEquals(expected, actual);
     }
@@ -97,14 +95,12 @@ class LectureServiceTest {
     @Test
     void givenTeacherIdAndPageRequest_whenGetByTeacherIdAndAcademicYear_thenReturnedPageOfLectures() {
         var pageRequest = PageRequest.of(0, 20);
-        var startDate = LocalDate.now().getMonthValue() < 6
-                ? LocalDate.of(LocalDate.now().getYear() - 1, 9, 1)
-                : LocalDate.of(LocalDate.now().getYear(), 9, 1);
-        var endDate = startDate.plusMonths(9);
+        var startDate = LocalDate.of(2021, 9, 1);
+        var endDate = LocalDate.of(2021, 10, 1);
         var expected = new PageImpl<>(new ArrayList<Lecture>(), pageRequest, 1);
         when(lectureDao.getByTeacherIdAndPeriod(pageRequest, 1, startDate, endDate)).thenReturn(expected);
 
-        var actual = lectureService.getByTeacherIdAndAcademicYear(pageRequest, 1);
+        var actual = lectureService.getByTeacherIdAndPeriod(pageRequest, 1, startDate, endDate);
 
         assertEquals(expected, actual);
     }

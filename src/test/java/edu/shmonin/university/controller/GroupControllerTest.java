@@ -55,8 +55,8 @@ class GroupControllerTest {
 
         mockMvc.perform(get("/groups"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("groups/index"))
-                .andExpect(forwardedUrl("groups/index"))
+                .andExpect(view().name("groups/all"))
+                .andExpect(forwardedUrl("groups/all"))
                 .andExpect(model().attribute("page", page));
     }
 

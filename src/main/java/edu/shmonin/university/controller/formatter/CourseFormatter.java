@@ -1,4 +1,4 @@
-package edu.shmonin.university.controller;
+package edu.shmonin.university.controller.formatter;
 
 import edu.shmonin.university.model.Course;
 import org.springframework.format.Formatter;

@@ -21,7 +21,7 @@ public class AudienceController {
     @GetMapping
     public String getPage(Model model, Pageable pageable) {
         model.addAttribute("page", audienceService.getAll(pageable));
-        return "audiences/index";
+        return "audiences/all";
     }
 
     @GetMapping("/{id}/get")

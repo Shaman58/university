@@ -10,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Statement;
 import java.util.List;
@@ -55,6 +56,7 @@ public class JdbcGroupDao implements GroupDao {
         return jdbcTemplate.query(GET_ALL_QUERY, groupRowMapper);
     }
 
+    @Transactional
     @Override
     public Page<Group> getAll(Pageable pageable) {
         int groupsQuantity = jdbcTemplate.queryForObject(GET_COUNT_QUERY, Integer.class);

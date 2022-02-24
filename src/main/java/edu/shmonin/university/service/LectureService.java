@@ -52,17 +52,13 @@ public class LectureService {
         return lectureDao.getAll(pageable);
     }
 
-    public Page<Lecture> getByGroupIdAndAcademicYear(Pageable pageable, int groupId) {
+    public Page<Lecture> getByGroupIdAndPeriod(Pageable pageable, int groupId, LocalDate startDate, LocalDate endDate) {
         log.debug("Get lectures with groupId = {} and current academic year", groupId);
-        var startDate = getAcademicYearStart();
-        var endDate = startDate.plusMonths(9);
         return lectureDao.getByGroupIdAndPeriod(pageable, groupId, startDate, endDate);
     }
 
-    public Page<Lecture> getByTeacherIdAndAcademicYear(Pageable pageable, int teacherId) {
+    public Page<Lecture> getByTeacherIdAndPeriod(Pageable pageable, int teacherId, LocalDate startDate, LocalDate endDate) {
         log.debug("Get lectures with teacherId = {} and current academic year", teacherId);
-        var startDate = getAcademicYearStart();
-        var endDate = startDate.plusMonths(9);
         return lectureDao.getByTeacherIdAndPeriod(pageable, teacherId, startDate, endDate);
     }
 
@@ -153,11 +149,5 @@ public class LectureService {
                                                "with capacity " + lecture.getAudience().getCapacity() +
                                                " can not accommodate all students");
         }
-    }
-
-    private LocalDate getAcademicYearStart() {
-        return LocalDate.now().getMonthValue() < 6
-                ? LocalDate.of(LocalDate.now().getYear() - 1, 9, 1)
-                : LocalDate.of(LocalDate.now().getYear(), 9, 1);
     }
 }

@@ -21,7 +21,7 @@ public class GroupController {
     @GetMapping
     public String getPage(Model model, Pageable pageable) {
         model.addAttribute("page", groupService.getAll(pageable));
-        return "groups/index";
+        return "groups/all";
     }
 
     @GetMapping("/{id}/get")

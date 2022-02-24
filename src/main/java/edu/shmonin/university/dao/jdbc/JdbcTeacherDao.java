@@ -33,7 +33,7 @@ public class JdbcTeacherDao implements TeacherDao {
     private static final String GET_PAGE_QUERY = "SELECT * FROM teachers order by last_name LIMIT ? OFFSET ?";
 
     private final JdbcTemplate jdbcTemplate;
-    private TeacherRowMapper teacherRowMapper;
+    private final TeacherRowMapper teacherRowMapper;
 
     public JdbcTeacherDao(JdbcTemplate jdbcTemplate, TeacherRowMapper teacherRowMapper) {
         this.jdbcTemplate = jdbcTemplate;
@@ -54,6 +54,7 @@ public class JdbcTeacherDao implements TeacherDao {
         return jdbcTemplate.query(GET_ALL_QUERY, teacherRowMapper);
     }
 
+    @Transactional
     @Override
     public Page<Teacher> getAll(Pageable pageable) {
         int studentsQuantity = jdbcTemplate.queryForObject(GET_COUNT_QUERY, Integer.class);

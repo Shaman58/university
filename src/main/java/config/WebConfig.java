@@ -1,6 +1,6 @@
 package config;
 
-import edu.shmonin.university.controller.CourseFormatter;
+import edu.shmonin.university.controller.formatter.CourseFormatter;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;

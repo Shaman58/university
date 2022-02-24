@@ -72,8 +72,8 @@ class StudentControllerTest {
         when(studentService.getAll(pageRequest)).thenReturn(page);
         mockMvc.perform(get("/students"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("students/index"))
-                .andExpect(forwardedUrl("students/index"))
+                .andExpect(view().name("students/all"))
+                .andExpect(forwardedUrl("students/all"))
                 .andExpect(model().attribute("page", page));
     }
 

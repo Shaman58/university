@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.time.LocalDate;
+
 @Controller
 @RequestMapping("/lectures")
 public class LectureController {
@@ -18,16 +20,22 @@ public class LectureController {
         this.lectureService = lectureService;
     }
 
-    @GetMapping("/teacher/{teacherId}")
-    public String getTeacherLecturesPage(Model model, Pageable pageable, @PathVariable int teacherId) {
-        model.addAttribute("page", lectureService.getByTeacherIdAndAcademicYear(pageable, teacherId));
+    @GetMapping("/teacher/{teacherId}/{startDate}/{endDate}")
+    public String getTeacherLecturesPage(Model model, Pageable pageable,
+                                         @PathVariable int teacherId,
+                                         @PathVariable LocalDate startDate,
+                                         @PathVariable LocalDate endDate) {
+        model.addAttribute("page", lectureService.getByTeacherIdAndPeriod(pageable, teacherId, startDate, endDate));
         model.addAttribute("teacherId", teacherId);
         return "lectures/teacher-lectures";
     }
 
-    @GetMapping("/group/{groupId}")
-    public String getGroupLecturesPage(Model model, Pageable pageable, @PathVariable int groupId) {
-        model.addAttribute("page", lectureService.getByGroupIdAndAcademicYear(pageable, groupId));
+    @GetMapping("/group/{groupId}/{startDate}/{endDate}")
+    public String getGroupLecturesPage(Model model, Pageable pageable,
+                                       @PathVariable int groupId,
+                                       @PathVariable LocalDate startDate,
+                                       @PathVariable LocalDate endDate) {
+        model.addAttribute("page", lectureService.getByGroupIdAndPeriod(pageable, groupId, startDate, endDate));
         model.addAttribute("teacherId", groupId);
         return "lectures/group-lectures";
     }

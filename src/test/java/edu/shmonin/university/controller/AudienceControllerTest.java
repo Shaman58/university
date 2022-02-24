@@ -55,8 +55,8 @@ class AudienceControllerTest {
 
         mockMvc.perform(get("/audiences"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("audiences/index"))
-                .andExpect(forwardedUrl("audiences/index"))
+                .andExpect(view().name("audiences/all"))
+                .andExpect(forwardedUrl("audiences/all"))
                 .andExpect(model().attribute("page", page));
     }
 
