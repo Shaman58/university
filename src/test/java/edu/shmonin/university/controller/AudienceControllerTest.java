@@ -1,6 +1,6 @@
 package edu.shmonin.university.controller;
 
-import config.ApplicationConfig;
+import edu.shmonin.university.config.ApplicationConfig;
 import edu.shmonin.university.model.Audience;
 import edu.shmonin.university.service.AudienceService;
 import org.junit.jupiter.api.BeforeEach;

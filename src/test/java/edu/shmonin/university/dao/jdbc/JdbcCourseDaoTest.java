@@ -1,6 +1,6 @@
 package edu.shmonin.university.dao.jdbc;
 
-import config.TestConfig;
+import edu.shmonin.university.config.TestConfig;
 import edu.shmonin.university.model.Course;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

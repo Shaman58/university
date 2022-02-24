@@ -1,6 +1,6 @@
 package edu.shmonin.university.dao.jdbc;
 
-import config.TestConfig;
+import edu.shmonin.university.config.TestConfig;
 import edu.shmonin.university.model.Gender;
 import edu.shmonin.university.model.Student;
 import org.junit.jupiter.api.Test;

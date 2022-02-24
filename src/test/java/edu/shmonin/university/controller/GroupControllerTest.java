@@ -1,6 +1,6 @@
 package edu.shmonin.university.controller;
 
-import config.ApplicationConfig;
+import edu.shmonin.university.config.ApplicationConfig;
 import edu.shmonin.university.model.Group;
 import edu.shmonin.university.service.GroupService;
 import org.junit.jupiter.api.BeforeEach;

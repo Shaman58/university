@@ -1,6 +1,6 @@
 package edu.shmonin.university.controller;
 
-import config.ApplicationConfig;
+import edu.shmonin.university.config.ApplicationConfig;
 import edu.shmonin.university.model.Gender;
 import edu.shmonin.university.model.Student;
 import edu.shmonin.university.service.StudentService;

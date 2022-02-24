@@ -1,4 +1,4 @@
-package config;
+package edu.shmonin.university.config;
 
 import edu.shmonin.university.controller.formatter.CourseFormatter;
 import org.springframework.context.ApplicationContext;
