@@ -5,9 +5,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDate;
 
@@ -24,8 +24,8 @@ public class LectureController {
     @GetMapping("/teacher/{teacherId}")
     public String getTeacherLecturesPage(Model model, Pageable pageable,
                                          @PathVariable int teacherId,
-                                         @ModelAttribute LocalDate startDate,
-                                         @ModelAttribute LocalDate endDate) {
+                                         @RequestParam LocalDate startDate,
+                                         @RequestParam LocalDate endDate) {
         model.addAttribute("page", lectureService.getByTeacherIdAndPeriod(pageable, teacherId, startDate, endDate));
         model.addAttribute("teacherId", teacherId);
         return "lectures/teacher-lectures";
@@ -34,8 +34,8 @@ public class LectureController {
     @GetMapping("/group/{groupId}")
     public String getGroupLecturesPage(Model model, Pageable pageable,
                                        @PathVariable int groupId,
-                                       @ModelAttribute LocalDate startDate,
-                                       @ModelAttribute LocalDate endDate) {
+                                       @RequestParam LocalDate startDate,
+                                       @RequestParam LocalDate endDate) {
         model.addAttribute("page", lectureService.getByGroupIdAndPeriod(pageable, groupId, startDate, endDate));
         model.addAttribute("teacherId", groupId);
         return "lectures/group-lectures";
