@@ -5,6 +5,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -20,21 +21,21 @@ public class LectureController {
         this.lectureService = lectureService;
     }
 
-    @GetMapping("/teacher/{teacherId}/{startDate}/{endDate}")
+    @GetMapping("/teacher/{teacherId}")
     public String getTeacherLecturesPage(Model model, Pageable pageable,
                                          @PathVariable int teacherId,
-                                         @PathVariable LocalDate startDate,
-                                         @PathVariable LocalDate endDate) {
+                                         @ModelAttribute LocalDate startDate,
+                                         @ModelAttribute LocalDate endDate) {
         model.addAttribute("page", lectureService.getByTeacherIdAndPeriod(pageable, teacherId, startDate, endDate));
         model.addAttribute("teacherId", teacherId);
         return "lectures/teacher-lectures";
     }
 
-    @GetMapping("/group/{groupId}/{startDate}/{endDate}")
+    @GetMapping("/group/{groupId}")
     public String getGroupLecturesPage(Model model, Pageable pageable,
                                        @PathVariable int groupId,
-                                       @PathVariable LocalDate startDate,
-                                       @PathVariable LocalDate endDate) {
+                                       @ModelAttribute LocalDate startDate,
+                                       @ModelAttribute LocalDate endDate) {
         model.addAttribute("page", lectureService.getByGroupIdAndPeriod(pageable, groupId, startDate, endDate));
         model.addAttribute("teacherId", groupId);
         return "lectures/group-lectures";
