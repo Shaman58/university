@@ -48,7 +48,7 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addFormatters(FormatterRegistry registry) {
-        var groupFormatter = new CourseFormatter();
-        registry.addFormatter(groupFormatter);
+        var courseFormatter = new CourseFormatter();
+        registry.addFormatter(courseFormatter);
     }
 }

@@ -66,6 +66,12 @@
         <tr>
             <td><a th:text="${vacation.getStartDate()}"></a></td>
             <td><a th:text="${vacation.getEndDate()}"></a></td>
+            <td>
+                <form th:method="delete"
+                      th:action="@{/teachers/{teacherId}/vacations/{id} (id=${id}, teacherId=${teacherId})}">
+                    <input type="submit" value="Delete">
+                </form>
+            </td>
         </tr>
         </tbody>
     </table>

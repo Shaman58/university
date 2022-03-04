@@ -104,10 +104,30 @@
                                     <input type="submit" value="View">
                                 </form>
                             </td>
+                            <td>
+                                <form th:method="get"
+                                      th:action="@{/teachers/{teacherId}/vacations/{id}/edit (teacherId=${teacher.getId()}, id=${vacation.getId()})}">
+                                    <input type="submit" value="Edit">
+                                </form>
+                            </td>
                         </tr>
                         </tbody>
+                        <form th:method="get"
+                              th:action="@{/teachers/{teacherId}/vacations/new (teacherId=${teacher.getId()})}">
+                            <input type="submit" value="New vacation">
+                        </form>
                     </table>
                 </ul>
+            </td>
+            <td>
+                <form th:method="get" th:action="@{/teachers/{id}/edit (id=${teacher.getId()})}">
+                    <input type="submit" value="Edit">
+                </form>
+            </td>
+            <td>
+                <form th:method="delete" th:action="@{/teachers/{id} (id=${teacher.getId()})}">
+                    <input type="submit" value="Delete">
+                </form>
             </td>
         </tr>
         </tbody>

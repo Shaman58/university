@@ -13,7 +13,10 @@ public class CourseFormatter implements Formatter<Course> {
         var course = new Course();
         if (text != null) {
             String[] parts = text.split(",");
-            course.setId(Integer.parseInt(parts[0]));
+            course.setId(Integer.parseInt(parts[0].split("=")[1]));
+            if (parts.length > 1) {
+                course.setName(parts[1].split("'")[1]);
+            }
         }
         return course;
     }

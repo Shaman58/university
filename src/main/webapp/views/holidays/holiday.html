@@ -64,6 +64,16 @@
         <tr>
             <td><a th:text="${holiday.getName()}"></a></td>
             <td><a th:text="${holiday.getDate()}"></a></td>
+            <td>
+                <form th:method="get" th:action="@{/holidays/{id}/edit (id=${holiday.getId()})}">
+                    <input type="submit" value="Edit">
+                </form>
+            </td>
+            <td>
+                <form th:method="delete" th:action="@{/holidays/{id} (id=${holiday.getId()})}">
+                    <input type="submit" value="Delete">
+                </form>
+            </td>
         </tr>
         </tbody>
     </table>

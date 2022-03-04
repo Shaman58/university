@@ -64,6 +64,16 @@
         <tbody>
         <tr>
             <td><a th:text="${course.getName()}"></a></td>
+            <td>
+                <form th:method="get" th:action="@{/courses/{id}/edit (id=${course.getId()})}">
+                    <input type="submit" value="Edit">
+                </form>
+            </td>
+            <td>
+                <form th:method="delete" th:action="@{/courses/{id} (id=${course.getId()})}">
+                    <input type="submit" value="Delete">
+                </form>
+            </td>
         </tr>
         </tbody>
     </table>
