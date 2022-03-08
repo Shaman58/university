@@ -1,5 +1,6 @@
 package edu.shmonin.university.config;
 
+import com.zaxxer.hikari.HikariDataSource;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -25,18 +26,29 @@ public class ApplicationConfig {
     private String dbPassword;
 
     @Bean
-    public DataSource getDataSource() {
-        var dataSource = new DriverManagerDataSource();
+    public DataSource dataSource() {
+        var dataSource = new HikariDataSource();
         dataSource.setDriverClassName(dbDriverClass);
-        dataSource.setUrl(dbUrl);
+        dataSource.setJdbcUrl(dbUrl);
         dataSource.setUsername(dbUser);
         dataSource.setPassword(dbPassword);
 
         return dataSource;
     }
 
+//    @Bean
+//    public DataSource dataSource() {
+//        var dataSource = new DriverManagerDataSource();
+//        dataSource.setDriverClassName(dbDriverClass);
+//        dataSource.setUrl(dbUrl);
+//        dataSource.setUsername(dbUser);
+//        dataSource.setPassword(dbPassword);
+//
+//        return dataSource;
+//    }
+
     @Bean
-    public JdbcTemplate getJdbcTemplate(DataSource dataSource) {
+    public JdbcTemplate jdbcTemplate(DataSource dataSource) {
         return new JdbcTemplate(dataSource);
     }
 }

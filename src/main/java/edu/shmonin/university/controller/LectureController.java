@@ -1,15 +1,15 @@
 package edu.shmonin.university.controller;
 
+import edu.shmonin.university.model.Lecture;
 import edu.shmonin.university.service.LectureService;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Controller
 @RequestMapping("/lectures")
@@ -19,6 +19,12 @@ public class LectureController {
 
     public LectureController(LectureService lectureService) {
         this.lectureService = lectureService;
+    }
+
+
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody Lecture getAll() {
+        return lectureService.get(3000);
     }
 
     @GetMapping("/teacher/{teacherId}")

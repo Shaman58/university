@@ -51,4 +51,6 @@ public class WebConfig implements WebMvcConfigurer {
         var courseFormatter = new CourseFormatter();
         registry.addFormatter(courseFormatter);
     }
+
+
 }
