@@ -25,27 +25,27 @@ public class ApplicationConfig {
     @Value("${db.password}")
     private String dbPassword;
 
-    @Bean
-    public DataSource dataSource() {
-        var dataSource = new HikariDataSource();
-        dataSource.setDriverClassName(dbDriverClass);
-        dataSource.setJdbcUrl(dbUrl);
-        dataSource.setUsername(dbUser);
-        dataSource.setPassword(dbPassword);
-
-        return dataSource;
-    }
-
 //    @Bean
 //    public DataSource dataSource() {
-//        var dataSource = new DriverManagerDataSource();
+//        var dataSource = new HikariDataSource();
 //        dataSource.setDriverClassName(dbDriverClass);
-//        dataSource.setUrl(dbUrl);
+//        dataSource.setJdbcUrl(dbUrl);
 //        dataSource.setUsername(dbUser);
 //        dataSource.setPassword(dbPassword);
 //
 //        return dataSource;
 //    }
+
+    @Bean
+    public DataSource dataSource() {
+        var dataSource = new DriverManagerDataSource();
+        dataSource.setDriverClassName(dbDriverClass);
+        dataSource.setUrl(dbUrl);
+        dataSource.setUsername(dbUser);
+        dataSource.setPassword(dbPassword);
+
+        return dataSource;
+    }
 
     @Bean
     public JdbcTemplate jdbcTemplate(DataSource dataSource) {
